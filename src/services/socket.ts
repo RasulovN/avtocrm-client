@@ -7,7 +7,7 @@ import { API_ORIGIN } from './api';
 let socket: Socket | null = null;
 
 function resolveOrigin(): string {
-  // API_ORIGIN dev'da http://localhost:8000, prod'da https://api.avtoyon.uz.
+  // API_ORIGIN dev'da http://localhost:8000, prod'da https://avto.smart-city-qarshi.uz.
   // Bo'sh bo'lsa (proxy rejimi) — joriy origin (vite proxy /socket.io'ni uzatadi).
   if (API_ORIGIN && API_ORIGIN.trim() !== '') return API_ORIGIN;
   return window.location.origin;

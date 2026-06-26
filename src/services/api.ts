@@ -6,11 +6,11 @@ import { useAuthStore } from '../app/store';
 
 // API manzili .env fayllardan olinadi (.env.development / .env.production).
 // Dev: Vite proxy orqali lokal backend (default `/api`). Prod: to'liq API URL.
-const BaSE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://api.avtoyon.uz/api');
+const BaSE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://avto.smart-city-qarshi.uz/api');
 
 // Media/rasm origin'i. Dev'da bo'sh — Vite proxy `/media`'ni lokal backendga uzatadi.
 const MEDIA_ORIGIN =
-  import.meta.env.VITE_MEDIA_ORIGIN ?? (isDev ? '' : 'https://api.avtoyon.uz');
+  import.meta.env.VITE_MEDIA_ORIGIN ?? (isDev ? '' : 'https://avto.smart-city-qarshi.uz');
 
 export const URL = MEDIA_ORIGIN || '/';
 export const MEDIA_URL = `${MEDIA_ORIGIN}/`;
