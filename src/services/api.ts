@@ -4,6 +4,18 @@ import { handleError } from '../utils/errorHandler';
 import { isDev } from '../config/environment';
 import { useAuthStore } from '../app/store';
 
+// Axios konfiguratsiyasini loyihaga xos qo'shimcha xossalar bilan kengaytiramiz.
+// Shu tufayli xom `api.get/post(...)` chaqiruvlarida ham `skipGlobalErrorHandler`
+// kabi maydonlar TypeScript tomonidan qabul qilinadi.
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    expectedErrorStatuses?: number[];
+    skipGlobalErrorHandler?: boolean;
+    _retry?: boolean;
+    _refreshFailed?: boolean;
+  }
+}
+
 // API manzili .env fayllardan olinadi (.env.development / .env.production).
 // Dev: Vite proxy orqali lokal backend (default `/api`). Prod: to'liq API URL.
 const BaSE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://avto.smart-city-qarshi.uz/api');

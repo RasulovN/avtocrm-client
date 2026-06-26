@@ -70,6 +70,14 @@ export const rbacApi = {
     apiClient.put<CompanyUser>(`/rbac/${scope}/users/${id}/`, data).then((r) => r.data),
   deleteUser: (scope: 'platform' | 'company', id: number) =>
     apiClient.delete(`/rbac/${scope}/users/${id}/`).then((r) => r.data),
+  // super admin: barcha foydalanuvchilar ro'yxatidan istalganini o'chirish.
+  // cascadeCompany=true — kompaniyaga tegishli bo'lsa, kompaniya bilan birga o'chiradi.
+  deleteAnyUser: (id: number, opts?: { cascadeCompany?: boolean }) =>
+    apiClient
+      .delete(`/rbac/all-users/${id}/`, {
+        params: opts?.cascadeCompany ? { cascade_company: 'true' } : undefined,
+      })
+      .then((r) => r.data),
 };
 
 // ===================== COMPANIES =====================

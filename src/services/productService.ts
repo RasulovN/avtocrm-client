@@ -558,7 +558,7 @@ export const productService = {
   },
 
   downloadImportTemplate: async (): Promise<Blob> => {
-    const response = await apiClient.get('/products/products/import/template/', {
+    const response = await apiClient.get<Blob>('/products/products/import/template/', {
       responseType: 'blob',
     });
     return response.data;

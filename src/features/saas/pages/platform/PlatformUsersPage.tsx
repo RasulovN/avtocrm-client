@@ -339,6 +339,9 @@ function AllUsersTab() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const [toDelete, setToDelete] = useState<AllUserRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
   // search debounce
   useEffect(() => {
     const id = setTimeout(() => {
@@ -366,6 +369,28 @@ function AllUsersTab() {
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
 
+  const hasCompany = !!toDelete?.company_id;
+
+  const remove = async () => {
+    if (!toDelete) return;
+    setDeleting(true);
+    try {
+      await rbacApi.deleteAnyUser(toDelete.id, { cascadeCompany: hasCompany });
+      toast.success(
+        hasCompany
+          ? t('user.userCompanyDeleted', 'Kompaniya va foydalanuvchi o\'chirildi')
+          : t('user.deleted', 'Foydalanuvchi o\'chirildi'),
+      );
+      setToDelete(null);
+      if (items.length === 1 && page > 1) setPage(page - 1);
+      else load();
+    } catch (err) {
+      toast.error(apiError(err, t('common.error', 'Xatolik yuz berdi')));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <Card>
@@ -390,18 +415,19 @@ function AllUsersTab() {
                   <TableHead>{t('user.company', 'Kompaniya')}</TableHead>
                   <TableHead>{t('user.role', 'Rol')}</TableHead>
                   <TableHead className="text-center">{t('user.statusCol', 'Holat')}</TableHead>
+                  <TableHead className="text-right">{t('common.actions', 'Amallar')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-32 text-center">
+                    <TableCell colSpan={7} className="h-32 text-center">
                       <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                       {t('common.noData', 'Ma\'lumot yo\'q')}
                     </TableCell>
                   </TableRow>
@@ -430,6 +456,20 @@ function AllUsersTab() {
                           <Badge variant="outline">{t('common.inactive', 'Nofaol')}</Badge>
                         )}
                       </TableCell>
+                      <TableCell className="text-right">
+                        {u.is_superuser ? (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setToDelete(u)}
+                            title={t('common.delete', 'O\'chirish')}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -455,6 +495,34 @@ function AllUsersTab() {
           )}
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={!!toDelete}
+        onOpenChange={(o) => !o && setToDelete(null)}
+        onConfirm={remove}
+        variant="destructive"
+        loading={deleting}
+        title={
+          hasCompany
+            ? t('user.deleteWithCompanyTitle', 'Kompaniya va foydalanuvchini o\'chirish')
+            : t('user.deleteUserTitle', 'Foydalanuvchini o\'chirish')
+        }
+        description={
+          hasCompany
+            ? t(
+                'user.deleteWithCompanyConfirm',
+                'Bu foydalanuvchi "{{company}}" kompaniyasiga tegishli. Uni o\'chirish uchun kompaniya va uning BARCHA ma\'lumotlari (do\'konlar, mahsulotlar, sotuvlar, xodimlar) ham o\'chiriladi. Bu amalni qaytarib bo\'lmaydi. Davom etasizmi?',
+                { company: toDelete?.company_name ?? '' },
+              )
+            : t('user.deleteConfirm', 'Ushbu foydalanuvchini o\'chirmoqchimisiz?')
+        }
+        confirmText={
+          hasCompany
+            ? t('user.deleteWithCompanyAction', 'Kompaniya bilan o\'chirish')
+            : t('common.delete', 'O\'chirish')
+        }
+        cancelText={t('common.cancel', 'Bekor qilish')}
+      />
     </div>
   );
 }

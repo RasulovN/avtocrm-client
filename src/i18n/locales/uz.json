@@ -1222,6 +1222,11 @@
     "deleteConfirm": "Ushbu rolni o'chirmoqchimisiz?"
   },
   "user": {
+    "deleteUserTitle": "Foydalanuvchini o'chirish",
+    "deleteWithCompanyTitle": "Kompaniya va foydalanuvchini o'chirish",
+    "deleteWithCompanyConfirm": "Bu foydalanuvchi \"{{company}}\" kompaniyasiga tegishli. Uni o'chirish uchun kompaniya va uning BARCHA ma'lumotlari (do'konlar, mahsulotlar, sotuvlar, xodimlar) ham o'chiriladi. Bu amalni qaytarib bo'lmaydi. Davom etasizmi?",
+    "deleteWithCompanyAction": "Kompaniya bilan o'chirish",
+    "userCompanyDeleted": "Kompaniya va foydalanuvchi o'chirildi",
     "allUsers": "Barcha foydalanuvchilar",
     "company": "Kompaniya",
     "pageTitle": "Foydalanuvchilar",

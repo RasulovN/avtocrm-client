@@ -1222,6 +1222,11 @@
     "deleteConfirm": "Do you want to delete this role?"
   },
   "user": {
+    "deleteUserTitle": "Delete user",
+    "deleteWithCompanyTitle": "Delete company and user",
+    "deleteWithCompanyConfirm": "This user belongs to the company \"{{company}}\". To delete the user, the company and ALL its data (stores, products, sales, staff) will also be deleted. This action cannot be undone. Continue?",
+    "deleteWithCompanyAction": "Delete with company",
+    "userCompanyDeleted": "Company and user deleted",
     "allUsers": "All users",
     "company": "Company",
     "pageTitle": "Users",
