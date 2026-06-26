@@ -1,0 +1,584 @@
+// User and Auth Types
+export type UserRole = 'admin' | 'store_user' | 'store_admin' | 's' | 'su' | 'm';
+
+export interface UserLog {
+  id: string;
+  action: string;
+  ip_address?: string;
+  user_agent?: string;
+  created_at: string;
+}
+
+export interface UserStore {
+  id: number;
+  name: string;
+  phone_number?: string;
+  address?: string;
+  type?: string;
+  is_active?: boolean;
+}
+
+export interface User {
+  id: string;
+  user_id?: string;
+  role: string;
+  is_superuser?: boolean;
+  full_name: string;
+  phone_number: string;
+  email?: string;
+  store_id?: string;
+  store_name?: string;
+  stores?: UserStore[];
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  history?: UserLog[];
+}
+
+export interface UserFormData {
+  full_name: string;
+  email: string;
+  password?: string;
+  confirm_password?: string;
+  role: UserRole;
+  phone_number: string;
+  store_id?: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+// Product Types
+export interface ProductStoreInventory {
+  store_id: string;
+  store_name: string;
+  quantity: number;
+  purchase_price?: number;
+  selling_price?: number;
+  wholesale_price?: number;
+  location_name?: string;
+  location_description?: string;
+}
+
+export interface ProductLocation {
+  name: string;
+  description?: string;
+}
+
+export interface ProductImage {
+  id?: number;
+  image: string;
+  product: number;
+}
+
+export interface ProductBatch {
+  id: number;
+  product: number;
+  product_name?: string;
+  store: number;
+  store_name: string;
+  quantity: number;
+  purchase_price: string;
+  selling_price: string;
+  wholesale_price?: string;
+  barcode: string;
+  shtrix_code: string | null;
+  location?: ProductLocation | null;
+}
+
+export interface Product {
+  id: string;
+  product_id?: string;
+  item_id?: string;
+  name: string;
+  name_uz_cyrl?: string;
+  description: string;
+  description_uz_cyrl?: string;
+  category: number;
+  category_name?: string;
+  unit_measurement?: number;
+  unit_measurement_name?: string;
+  supplier_id?: string;
+  supplier_name?: string;
+  sku?: string;
+  image?: string;
+  images?: ProductImage[] | string[] | string;
+  barcode?: string;
+  barcode_img?: string;
+  shtrix_code?: string | null;
+  total_count?: number;
+  is_active?: boolean;
+  created_at: string;
+  updated_at: string;
+  batches?: ProductBatch[];
+  min_stock?: number;
+  // Aggregated data (new format for list page)
+  total_quantity?: number;
+  min_purchase_price?: number;
+  max_purchase_price?: number;
+  min_selling_price?: number;
+  max_selling_price?: number;
+  wholesale_price?: number;
+  inventory_by_store?: ProductStoreInventory[];
+  location_id?: string;
+  location_name?: string;
+  location_description?: string;
+  // Legacy fields (for backward compatibility)
+  store_id?: string;
+  store_name?: string;
+  purchase_price?: number;
+  selling_price?: number;
+  quantity?: number;
+}
+
+export interface ProductFormData {
+  category?: string;
+  unit_measurement?: string;
+  location?: string;
+  item_id?: string;
+  name: string;
+  name_uz_cyrl?: string;
+  description?: string;
+  description_uz_cyrl?: string;
+  images?: string[] | string | File[] | (string | File)[];
+  // On update: IDs of existing product images to remove (maps to `delete_image_ids`).
+  delete_image_ids?: number[];
+  min_stock?: number;
+  is_active?: boolean;
+  sku?: string;
+  barcode?: string;
+  barcode_img?: string;
+  total_count?: number;
+  category_id?: string;
+  supplier_id?: string;
+  store_id?: string;
+  image?: string | File | null;
+  purchase_price?: number | string;
+  selling_price?: number | string;
+}
+
+// Category Types
+export interface Category {
+  id: string;
+  slug?: string;
+  name: string;
+  name_uz?: string;
+  name_uz_cyrl?: string;
+  name_ru?: string;
+  name_en?: string;
+  description?: string;
+  description_uz?: string;
+  description_uz_cyrl?: string;
+  description_ru?: string;
+  description_en?: string;
+  image?: string;
+  created_at?: string;
+}
+
+export interface CategoryFormData {
+  name_uz: string;
+  name_uz_cyrl: string;
+  name_ru?: string;
+  name_en?: string;
+  description_uz: string;
+  description_uz_cyrl: string;
+  description_ru?: string;
+  description_en?: string;
+  image?: File | string | null;
+}
+
+export interface ProductUnit {
+  id: string;
+  measurement_uz: string;
+  measurement_uz_cyrl: string;
+  measurement_ru?: string;
+  measurement_en?: string;
+}
+
+export interface ProductUnitFormData {
+  measurement_uz: string;
+  measurement_uz_cyrl: string;
+  measurement_ru?: string;
+  measurement_en?: string;
+}
+
+// Supplier Types
+export interface Supplier {
+  id: string;
+  name: string;
+  name_uz?: string;
+  name_uz_cyrl?: string;
+  description?: string;
+  description_uz?: string;
+  description_uz_cyrl?: string;
+  inn?: string;
+  phone?: string;
+  phone_number?: string;
+  email?: string;
+  address?: string;
+  address_uz?: string;
+  address_uz_cyrl?: string;
+  is_active?: boolean;
+  debt: number | string;
+  total_purchase_amount?: string | number;
+  total_debt?: string | number;
+  created_at?: string;
+}
+
+export interface SupplierFormData {
+  name_uz: string;
+  name_uz_cyrl: string;
+  description_uz: string;
+  description_uz_cyrl: string;
+  address_uz: string;
+  address_uz_cyrl: string;
+  phone_number: string;
+  inn: string;
+}
+
+// Store Types
+export interface Store {
+  id: string;
+  name: string;
+  name_uz?: string;
+  name_uz_cyrl?: string;
+  address?: string;
+  address_uz?: string;
+  address_uz_cyrl?: string;
+  phone?: string;
+  phone_number?: string;
+  type?: 'b' | 's';
+  latitude?: string;
+  longitude?: string;
+  is_active?: boolean;
+  sellers?: unknown[];
+  is_warehouse: boolean;
+  created_at: string;
+}
+
+export interface StoreFormData {
+  name: string;
+  name_uz?: string;
+  name_uz_cyrl?: string;
+  address?: string;
+  address_uz?: string;
+  address_uz_cyrl?: string;
+  phone?: string;
+  phone_number?: string;
+  type?: string;
+  latitude?: string;
+  longitude?: string;
+  is_warehouse: boolean;
+}
+
+// Inventory Types (Incoming Stock)
+export interface InventoryItem {
+  id: string;
+  product_id: string;
+  product_name?: string;
+  product_sku?: string;
+  product_barcode?: string;
+  shtrix_code?: string;
+  quantity: number;
+  purchase_price: number;
+  selling_price?: number;
+  total: number;
+}
+
+export interface Inventory {
+  id: string;
+  supplier_id: string;
+  supplier_name?: string;
+  store_id: string;
+  store_name?: string;
+  items: InventoryItem[];
+  total: number;
+  paid: number;
+  debt: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  created_at: string;
+}
+
+export interface InventoryFormData {
+  supplier: number;
+  store: number;
+  cash_amount: string;
+  card_amount: string;
+  items: {
+    product: number;
+    quantity: number;
+    purchase_price: string;
+    selling_price: string;
+    wholesale_price: string;
+  }[];
+}
+
+export interface ContractEntryItem {
+  id?: number;
+  product: number;
+  quantity: number;
+  purchase_price: string;
+  selling_price: string;
+  barcode?: string | null;
+  shtrix_code?: string | null;
+}
+
+export interface ContractEntry {
+  id: number;
+  supplier: number;
+  supplier_name?: string;
+  store: number;
+  store_name?: string;
+  created_by: number;
+  full_name: string;
+  items: ContractEntryItem[];
+  paid_amount?: string;
+  debt?: number;
+}
+
+// Low Stock Types
+export interface LowStockItem {
+  id: number;
+  store: number;
+  store_name: string;
+  product: number;
+  product_name: string;
+  current_quantity: number;
+  min_stock: number;
+  action_type: 'purchase' | 'transfer';
+  status: 'open' | 'resolved';
+  resolved_at: string | null;
+  created_at: string;
+}
+
+export interface LowStockPaginatedResponse {
+  count: number;
+  total_pages: number;
+  current_page: number;
+  next: string | null;
+  previous: string | null;
+  results: LowStockItem[];
+}
+
+// Transfer Types
+export interface TransferItem {
+  id: string;
+  product: number;
+  product_name?: string;
+  sku?: string;
+  product_sku?: string;
+  product_barcode?: string;
+  quantity: number;
+  purchase_price?: string;
+  selling_price?: string;
+}
+
+export interface Transfer {
+  id: string;
+  from_store?: number | string;
+  from_store_id?: string;
+  from_store_name?: string;
+  to_store?: number | string;
+  to_store_id?: string;
+  to_store_name?: string;
+  status: string;
+  created_by?: number | string;
+  approved_by?: number | string;
+  approved_by_name?: string;
+  approved_at?: string | null;
+  items?: TransferItem[];
+  created_at: string;
+  product?: number | string;
+  product_name?: string;
+  quantity?: number;
+  purchase_price?: string;
+  selling_price?: string;
+}
+
+export interface TransferFormData {
+  from_store: string;
+  to_store: string;
+  items: {
+    product: string;
+    quantity: number;
+  }[];
+}
+
+// Sales Types
+export interface SalePayment {
+  type: 'cash' | 'card';
+  amount: number;
+}
+
+export interface SaleItem {
+  id: number;
+  product: number;
+  product_name?: string;
+  quantity: number;
+  unit_price: string;
+  total_price: string;
+}
+
+export interface SalePayment {
+  id: number;
+  amount: string;
+  type: 'cash' | 'card';
+  created_at: string;
+}
+
+export interface Sale {
+  id: string;
+  store: number;
+  store_name?: string;
+  seller: number;
+  seller_name?: string;
+  customer: number | null;
+  customer_name?: string | null;
+  payments: SalePayment[];
+  status: 'partial' | 'paid' | 'completed';
+  total_amount: string;
+  paid_amount: string;
+  debt?: number | null;
+  debt_due_date?: string;
+  total_increase?: string;
+  total_decrease?: string;
+  discount_type?: string;
+  discount_value?: string;
+  discount_amount?: string;
+  items: SaleItem[];
+  created_at: string;
+}
+
+export interface SaleFormData {
+  store: number;
+  customer?: number;
+  items: {
+    product: number;
+    quantity: number;
+    price: string;
+  }[];
+  payments: {
+    type: 'cash' | 'card';
+    amount: string;
+  }[];
+  discount_type?: 'p' | 'f';
+  discount_value?: string;
+}
+
+// Customer Types
+export interface CustomerOrderItem {
+  product_id: string;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  total: number;
+}
+
+export interface CustomerOrder {
+  id: string;
+  order_id: string;
+  sale_id?: string;
+  store_id: string;
+  store_name?: string;
+  created_at: string;
+  total_amount: number;
+  paid_amount: number;
+  debt_amount: number;
+  payment_method?: 'cash' | 'card' | 'mixed';
+  items: CustomerOrderItem[];
+}
+
+export interface Customer {
+  id: string;
+  full_name: string;
+  phone_number: string;
+  store_id: string;
+  store_name?: string;
+  latest_order_id?: string;
+  order_count: number;
+  total_spent: number;
+  total_paid: number;
+  total_debt: number;
+  last_order_at?: string;
+  orders: CustomerOrder[];
+}
+
+// Dashboard Stats Types
+export interface DashboardStats {
+  total_products_in_stock: number;
+  monthly_revenue: string;
+  total_customer_debt: string;
+  total_supplier_debt: string;
+  report_date: string;
+}
+
+// API Response Types
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+// Sale Return Types
+export interface SaleReturnItem {
+  id: number;
+  sale_item: number;
+  product: number;
+  product_name?: string;
+  quantity: number;
+}
+
+export interface SaleReturn {
+  id: number;
+  sale: number;
+  store: number;
+  store_name?: string;
+  customer: number;
+  seller: number;
+  seller_name?: string;
+  total_refund: string;
+  comment?: string;
+  items: SaleReturnItem[];
+  created_at?: string;
+}
+
+export interface SaleReturnFormItem {
+  sale_item: number;
+  quantity: number;
+}
+
+export interface SaleReturnFormData {
+  sale: number;
+  items: SaleReturnFormItem[];
+  comment?: string;
+}
+
+// Form Types
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+// Filter Types
+export interface ProductFilters {
+  search?: string;
+  category?: string;
+  store_id?: string;
+  stock_status?: string;
+}
+
+export interface PaginationParams {
+  page: number;
+  limit: number;
+}

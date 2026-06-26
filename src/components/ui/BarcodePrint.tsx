@@ -1,0 +1,230 @@
+import { useEffect, useRef, useState, memo, useMemo, useCallback } from 'react';
+import JsBarcode from 'jsbarcode';
+import { cloneDomSafely } from '../../utils/xss';
+
+const isImageUrl = (value: string): boolean => {
+  if (!value) return false;
+  return value.startsWith('/media/') || value.startsWith('http://') || value.startsWith('https://');
+};
+
+interface BarcodePrintProps {
+  value: string;
+  productName?: string;
+  showName?: boolean;
+  thermalPrinter?: boolean;
+  displayValue?: boolean;
+}
+
+const barcodeOptions = {
+  thermal: {
+    format: 'CODE128',
+    width: 1.8,
+    height: 60,
+    displayValue: false,
+    fontSize: 7,
+    margin: 0,
+    textMargin: 0,
+  },
+  normal: {
+    format: 'CODE128',
+    width: 3,
+    height: 80,
+    fontSize: 11,
+    margin: 0,
+    textMargin: 4,
+  },
+};
+
+export const BarcodePrint = memo(function BarcodePrint({ value, productName, showName = true, thermalPrinter = false, displayValue = true }: BarcodePrintProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const isImage = isImageUrl(value);
+
+  useEffect(() => {
+    if (!svgRef.current || !value || isImage) return;
+
+    try {
+      const options = thermalPrinter ? barcodeOptions.thermal : { ...barcodeOptions.normal, displayValue };
+      JsBarcode(svgRef.current, value, options);
+    } catch (error) {
+      console.error('Failed to generate barcode:', error);
+    }
+  }, [value, thermalPrinter, displayValue, isImage]);
+
+  if (isImage) {
+    return (
+      <div className="flex flex-col items-center">
+        {showName && productName && (
+          <span className="text-xs mb-1">{productName}</span>
+        )}
+        <img src={value} alt="Barcode" className="max-w-[180px] h-auto" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center">
+      {showName && productName && (
+        <span className="text-xs mb-1">{productName}</span>
+      )}
+      <svg ref={svgRef} />
+    </div>
+  );
+});
+
+interface BarcodePrintAllProps {
+  items: Array<{
+    barcode?: string;
+    shtrix_code?: string;
+    product_name?: string;
+    quantity: number;
+  }>;
+}
+
+const BarcodeDisplay = memo(function BarcodeDisplay({ value, isImage = false, thermalPrinter = false }: { value: string; isImage?: boolean; thermalPrinter?: boolean }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (!svgRef.current || !value || isImage) return;
+
+    try {
+      const options = thermalPrinter ? {
+        format: 'CODE128',
+        width: 1.5,
+        height: 42,
+        displayValue: true,
+        fontSize: 9,
+        margin: 2,
+        textMargin: 2,
+      } : {
+        format: 'CODE128',
+        width: 1.8,
+        height: 48,
+        displayValue: true,
+        fontSize: 10,
+        margin: 0,
+        textMargin: 4,
+      };
+
+      JsBarcode(svgRef.current, value, options);
+    } catch (error) {
+      console.error('Failed to generate barcode:', error);
+    }
+  }, [value, isImage, thermalPrinter]);
+
+  if (isImage) {
+    return <img src={value} alt="Barcode" className="max-w-[150px] h-auto" />;
+  }
+
+  return <svg ref={svgRef} />;
+});
+
+export const BarcodePrintAll = memo(function BarcodePrintAll({ items }: BarcodePrintAllProps) {
+  const [printMode, setPrintMode] = useState(false);
+  const printContentRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useCallback(() => {
+    if (!printContentRef.current) return;
+
+    const htmlContent = `<!DOCTYPE html>
+      <html>
+        <head>
+          <title>Print Barcodes</title>
+          <style>
+            @media print {
+              .page-break { page-break-after: always; }
+            }
+            body { 
+              font-family: Arial, sans-serif; 
+              padding: 20px;
+            }
+            .barcode-item { 
+              display: inline-block; 
+              margin: 10px; 
+              padding: 10px; 
+              border: 1px dashed #ccc;
+              text-align: center;
+              page-break-inside: avoid;
+            }
+            .product-name { 
+              font-size: 11px; 
+              margin-bottom: 3px; 
+            }
+            .barcode-container svg, .barcode-container img {
+              max-width: 150px;
+              max-height: 80px;
+            }
+          </style>
+        </head>
+        <body>
+          ${cloneDomSafely(printContentRef.current)}
+           <script>
+             window.onload = function() {
+               setTimeout(function() { window.print(); }, 500);
+             };
+           </script>
+         </body>
+       </html>
+     `;
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    window.open(blobUrl, '_blank');
+  }, []);
+
+  const allBarcodes = useMemo(() => items
+    .filter(item => item.shtrix_code || item.barcode)
+    .map(item => {
+      const barcodeValue = item.shtrix_code || item.barcode || '';
+      if (!barcodeValue) return undefined;
+      return {
+        barcode: barcodeValue,
+        isImage: isImageUrl(barcodeValue),
+        product_name: item.product_name,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== undefined), [items]);
+
+  if (allBarcodes.length === 0) return null;
+
+  return (
+    <div className="space-y-4">
+      {!printMode && (
+        <button
+          onClick={() => setPrintMode(true)}
+          className="text-sm text-blue-600 hover:underline"
+        >
+          {printMode ? 'Close' : `Show Barcodes (${allBarcodes.length})`}
+        </button>
+      )}
+
+      {printMode && (
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <button
+              onClick={handlePrint}
+              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+            >
+              Print All
+            </button>
+            <button
+              onClick={() => setPrintMode(false)}
+              className="px-3 py-1 bg-gray-200 rounded text-sm"
+            >
+              Close
+            </button>
+          </div>
+
+          <div ref={printContentRef} className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded">
+            {allBarcodes.map((item, idx) => (
+              <div key={idx} className="barcode-item p-2 bg-white">
+                <div className="product-name text-xs">{item.product_name}</div>
+                <div className="barcode-container">
+                  <BarcodeDisplay value={item.barcode} isImage={item.isImage} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
