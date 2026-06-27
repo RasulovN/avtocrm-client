@@ -49,6 +49,7 @@ export function LeadsPage() {
       await leadsApi.update(lead.id, { status });
       setItems((prev) => prev.map((l) => (l.id === lead.id ? { ...l, status } : l)));
       if (status === 'approved') toast.success("Tasdiqlandi — mijozga email yuborildi");
+      else if (status === 'contacted') toast.success("Bog'lanildi — mijozga email yuborildi");
       else if (status === 'rejected') toast.success("Rad etildi — mijozga email yuborildi");
       else toast.success('Status yangilandi');
     } catch {
