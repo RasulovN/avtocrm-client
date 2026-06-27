@@ -174,7 +174,21 @@ export interface LeadCreatePayload {
   stores_range?: string;
   message?: string;
   locale?: string;
+  source?: string; // "qayerdan bildingiz" kanali
 }
+// Super admin qo'lda yaratish / to'liq tahrirlash uchun payload.
+export interface LeadAdminPayload {
+  name?: string;
+  phone?: string;
+  email?: string;
+  company?: string | null;
+  stores_range?: string | null;
+  message?: string | null;
+  source?: string;
+  status?: string;
+  note?: string | null;
+}
+export type LeadCounts = Record<string, number>;
 
 export const leadsApi = {
   // PUBLIC — landing "Demo so'rash" formasi
@@ -182,8 +196,10 @@ export const leadsApi = {
     apiClient.post<{ ok: boolean; id: number }>('/leads/', data, { skipGlobalErrorHandler: true }).then((r) => r.data),
   // super admin
   list: (params?: Record<string, unknown>) =>
-    apiClient.get<Paginated<Lead> & { new_count: number }>('/leads/', { params }).then((r) => r.data),
-  update: (id: number, data: { status?: string; note?: string | null }) =>
+    apiClient.get<Paginated<Lead> & { new_count: number; counts: LeadCounts }>('/leads/', { params }).then((r) => r.data),
+  createAdmin: (data: LeadAdminPayload) =>
+    apiClient.post<Lead>('/leads/manual/', data).then((r) => r.data),
+  update: (id: number, data: LeadAdminPayload) =>
     apiClient.patch<Lead>(`/leads/${id}/`, data).then((r) => r.data),
   remove: (id: number) => apiClient.delete(`/leads/${id}/`).then((r) => r.data),
 };

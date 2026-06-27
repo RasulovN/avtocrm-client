@@ -67,6 +67,10 @@ const iconFor = (name: string) => {
   return hit ? SOCIAL_ICONS[hit] : GENERIC_SOCIAL
 }
 
+// Lead manba kodlari (i18n sourceOpts tartibiga mos). Bu kodlar backendga
+// yuboriladi — cyrl transliteratsiyasidan himoyalanishi uchun shu yerda saqlanadi.
+const LANDING_SOURCE_CODES = ['instagram', 'telegram', 'facebook', 'youtube', 'google', 'referral', 'website', 'other'] as const
+
 export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, lang: LandingLang): string {
   const sect = 'scroll-margin-top:84px'
   const demo = buildDemo(lang)
@@ -535,7 +539,10 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
         </div>
         <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.emailLabel}</label><input data-lead="email" type="email" placeholder="${t.contact.emailPh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
         <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.company}</label><input data-lead="company" placeholder="${t.contact.companyPh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
-        <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.storesL}</label><select data-lead="stores_range" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px">${t.contact.storeOpts.map((o) => `<option>${o}</option>`).join('')}</select></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.storesL}</label><select data-lead="stores_range" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px">${t.contact.storeOpts.map((o) => `<option>${o}</option>`).join('')}</select></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.sourceL}</label><select data-lead="source" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"><option value="">—</option>${t.contact.sourceOpts.map((o, i) => `<option value="${LANDING_SOURCE_CODES[i] ?? ''}">${o.l}</option>`).join('')}</select></div>
+        </div>
         <button data-asp-lead-submit style="margin-top:6px;background:var(--primary);color:#fff;border:0;padding:14px;border-radius:11px;font-weight:700;font-size:15.5px;cursor:pointer;font-family:inherit;box-shadow:0 14px 30px -10px var(--primary)">${t.contact.submit}</button>
         <p data-lead-status style="font-size:13px;text-align:center;min-height:18px;margin:0"></p>
         <p style="font-size:12px;color:var(--ink-4);text-align:center">${t.contact.privacy}</p>

@@ -138,10 +138,12 @@ export function AspLanding() {
           name, phone, email,
           company: val('company') || undefined,
           stores_range: val('stores_range') || undefined,
+          source: val('source') || undefined, // tanlangan kanal; bo'sh bo'lsa backend "sayt" qiladi
           locale: lang,
         })
         setStatus(t.contact.success, 'var(--green)')
         form.querySelectorAll<HTMLInputElement>('input[data-lead]').forEach((i) => (i.value = ''))
+        form.querySelectorAll<HTMLSelectElement>('select[data-lead]').forEach((s) => (s.selectedIndex = 0))
       } catch {
         setStatus(t.contact.error, 'var(--red)')
       } finally {

@@ -32,7 +32,7 @@ export interface AspDict {
   sec: { eyebrow: string; title: string; desc: string; items: string[] }
   story: { eyebrow: string; title: string; items: { quote: string; m: { l: string; v: string }[]; name: string; role: string; initials: string }[] }
   faq: { eyebrow: string; title: string; items: { q: string; a: string }[] }
-  contact: { eyebrow: string; title: string; sub: string; phoneLabel: string; phone: string; emailLabel: string; email: string; emailPh: string; tgLabel: string; tg: string; mapLabel: string; formTitle: string; formNote: string; name: string; namePh: string; phoneL: string; phonePh: string; company: string; companyPh: string; storesL: string; storeOpts: string[]; submit: string; privacy: string; sending: string; success: string; error: string }
+  contact: { eyebrow: string; title: string; sub: string; phoneLabel: string; phone: string; emailLabel: string; email: string; emailPh: string; tgLabel: string; tg: string; mapLabel: string; formTitle: string; formNote: string; name: string; namePh: string; phoneL: string; phonePh: string; company: string; companyPh: string; storesL: string; storeOpts: string[]; sourceL: string; sourceOpts: { v: string; l: string }[]; submit: string; privacy: string; sending: string; success: string; error: string }
   footer: { tagline: string; product: string; productLinks: string[]; industries: string; industryLinks: string[]; company: string; companyLinks: string[]; rights: string; privacy: string; terms: string }
 }
 
@@ -262,6 +262,12 @@ export const RU: AspDict = {
     formTitle: 'Запросить демо', formNote: 'Ответим в течение рабочего дня.',
     name: 'Имя', namePh: 'Ваше имя', phoneL: 'Телефон', phonePh: '+998', company: 'Компания', companyPh: 'Название компании',
     storesL: 'Количество магазинов', storeOpts: ['1 магазин', '2–5 магазинов', '6–15 магазинов', '16+ / сеть'],
+    sourceL: 'Откуда вы о нас узнали?',
+    sourceOpts: [
+      { v: 'instagram', l: 'Instagram' }, { v: 'telegram', l: 'Telegram' }, { v: 'facebook', l: 'Facebook' },
+      { v: 'youtube', l: 'YouTube' }, { v: 'google', l: 'Поиск Google' }, { v: 'referral', l: 'Рекомендация' },
+      { v: 'website', l: 'Сайт' }, { v: 'other', l: 'Другое' },
+    ],
     submit: 'Получить демонстрацию', privacy: 'Нажимая, вы соглашаетесь с политикой конфиденциальности.',
     sending: 'Отправляем…', success: 'Спасибо! Мы свяжемся с вами в ближайшее время.', error: 'Не удалось отправить. Попробуйте позже.',
   },
@@ -500,6 +506,12 @@ export const UZ: AspDict = {
     formTitle: 'Demo so\'rash', formNote: 'Ish kuni davomida javob beramiz.',
     name: 'Ism', namePh: 'Ismingiz', phoneL: 'Telefon', phonePh: '+998', company: 'Kompaniya', companyPh: 'Kompaniya nomi',
     storesL: 'Do\'konlar soni', storeOpts: ['1 do\'kon', '2–5 do\'kon', '6–15 do\'kon', '16+ / tarmoq'],
+    sourceL: 'Bizni qayerdan bildingiz?',
+    sourceOpts: [
+      { v: 'instagram', l: 'Instagram' }, { v: 'telegram', l: 'Telegram' }, { v: 'facebook', l: 'Facebook' },
+      { v: 'youtube', l: 'YouTube' }, { v: 'google', l: 'Google qidiruv' }, { v: 'referral', l: 'Tavsiya orqali' },
+      { v: 'website', l: 'Sayt' }, { v: 'other', l: 'Boshqa' },
+    ],
     submit: 'Namoyish olish', privacy: 'Bosish orqali siz maxfiylik siyosatiga rozilik bildirasiz.',
     sending: 'Yuborilmoqda…', success: 'Rahmat! Tez orada siz bilan bog\'lanamiz.', error: 'Yuborib bo\'lmadi. Keyinroq urinib ko\'ring.',
   },
@@ -738,6 +750,12 @@ export const EN: AspDict = {
     formTitle: 'Request a Demo', formNote: 'We will reply within one business day.',
     name: 'Name', namePh: 'Your name', phoneL: 'Phone', phonePh: '+998', company: 'Company', companyPh: 'Company name',
     storesL: 'Number of stores', storeOpts: ['1 store', '2–5 stores', '6–15 stores', '16+ / network'],
+    sourceL: 'How did you hear about us?',
+    sourceOpts: [
+      { v: 'instagram', l: 'Instagram' }, { v: 'telegram', l: 'Telegram' }, { v: 'facebook', l: 'Facebook' },
+      { v: 'youtube', l: 'YouTube' }, { v: 'google', l: 'Google search' }, { v: 'referral', l: 'Referral' },
+      { v: 'website', l: 'Website' }, { v: 'other', l: 'Other' },
+    ],
     submit: 'Get a demo', privacy: 'By clicking, you agree to the privacy policy.',
     sending: 'Sending…', success: 'Thank you! We will contact you shortly.', error: 'Could not send. Please try again later.',
   },
