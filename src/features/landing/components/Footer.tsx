@@ -12,7 +12,7 @@ export function Footer() {
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-400 font-bold text-white">A</span>
-            <span className="text-lg font-bold text-slate-900 dark:text-white">AutoCRM</span>
+            <span className="text-lg font-bold text-slate-900 dark:text-white">Zumex</span>
           </div>
           <p className="mt-3 max-w-sm text-sm text-slate-500 dark:text-slate-400">{t.footer.tagline}</p>
         </div>
@@ -27,13 +27,13 @@ export function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-slate-900 dark:text-white">{t.footer.contact}</h4>
           <ul className="mt-3 space-y-2 text-sm text-slate-500 dark:text-slate-400">
-            <li><a href="mailto:info@avtoyon.uz" className="hover:text-indigo-700 dark:hover:text-indigo-300">info@avtoyon.uz</a></li>
+            <li><a href="mailto:info@zumex.uz" className="hover:text-indigo-700 dark:hover:text-indigo-300">info@zumex.uz</a></li>
             <li><a href="tel:+998000000000" className="hover:text-indigo-700 dark:hover:text-indigo-300">+998 00 000 00 00</a></li>
           </ul>
         </div>
       </div>
       <div className={`${CONTAINER} mt-10 border-t border-slate-100 pt-6 text-center text-sm text-slate-400 dark:border-slate-800/60 dark:text-slate-500`}>
-        © {year} AutoCRM. {t.footer.rights}
+        © {year} Zumex. {t.footer.rights}
       </div>
     </footer>
   )

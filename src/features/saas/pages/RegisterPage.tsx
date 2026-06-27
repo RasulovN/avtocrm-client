@@ -51,7 +51,7 @@ export function RegisterPage() {
               <Car className="w-8 h-8 text-primary-foreground" />
             </div>
             <div className="space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight">AutoCRM</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Zumex</h1>
               <CardDescription className="text-base">{t('auth.register', "Ro'yxatdan o'tish")}</CardDescription>
             </div>
           </CardHeader>

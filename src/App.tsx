@@ -28,6 +28,8 @@ const PlansPage = lazy(() => import('./features/saas/pages/platform/PlansPage').
 const AdminSubscriptionsPage = lazy(() => import('./features/saas/pages/platform/SubscriptionsPage').then((m) => ({ default: m.SubscriptionsPage })));
 const CompanyCategoriesPage = lazy(() => import('./features/saas/pages/platform/CompanyCategoriesPage').then((m) => ({ default: m.CompanyCategoriesPage })));
 const GeoPage = lazy(() => import('./features/saas/pages/platform/GeoPage').then((m) => ({ default: m.GeoPage })));
+const LeadsPage = lazy(() => import('./features/saas/pages/platform/LeadsPage').then((m) => ({ default: m.LeadsPage })));
+const SiteSettingsPage = lazy(() => import('./features/saas/pages/platform/SiteSettingsPage').then((m) => ({ default: m.SiteSettingsPage })));
 const PlatformRolesPage = lazy(() => import('./features/saas/pages/platform/PlatformRolesPage').then((m) => ({ default: m.PlatformRolesPage })));
 const PlatformUsersPage = lazy(() => import('./features/saas/pages/platform/PlatformUsersPage').then((m) => ({ default: m.PlatformUsersPage })));
 const PlatformNotificationsPage = lazy(() => import('./features/saas/pages/platform/NotificationsPage').then((m) => ({ default: m.NotificationsPage })));
@@ -40,7 +42,8 @@ const LandingPricingPage = lazy(() => import('./features/landing/LandingPricingP
 
 // Ildiz: autentifikatsiya bo'lsa ilovaga yo'naltiradi, aks holda landing'ni ko'rsatadi.
 function PublicHome() {
-  const authed = useAuthStore((s) => s.isAuthenticated)();
+  // Qiymatlarga (funksiyaga emas) obuna — login/logout'da reaktiv qayta render bo'ladi.
+  const authed = useAuthStore((s) => !!s.user || !!s.token);
   return authed ? <RootRedirect /> : <LandingHomePage />;
 }
 
@@ -85,7 +88,7 @@ function DocumentMetaSync() {
   useEffect(() => {
     const HTML_LANG_MAP: Record<string, string> = { uz: 'uz', cyrl: 'uz-Cyrl', ru: 'ru', en: 'en' };
     document.documentElement.lang = HTML_LANG_MAP[i18n.language] ?? 'uz';
-    document.title = t('seo.defaultTitle', 'AutoCRM');
+    document.title = t('seo.defaultTitle', 'Zumex');
   }, [i18n.language, location.pathname, t]);
   return null;
 }
@@ -94,8 +97,13 @@ function App() {
   const { theme } = useThemeStore();
   const { t, i18n } = useTranslation();
   const checkAuth = useAuthStore((s) => s.checkAuth);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  // user/token qiymatlariga obuna bo'lamiz — shunda login VA logout'da App qayta
+  // render bo'lib, /login·/register route elementlari yangidan baholanadi (aks holda
+  // logout'dan keyin eski <RootRedirect/> qolib, sahifa bo'sh ko'rinardi).
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const isAuthLoading = useAuthStore((s) => s.isLoading);
+  const authed = !!user || !!token;
 
   useEffect(() => { checkAuth(); }, [checkAuth]);
   useEffect(() => {
@@ -141,8 +149,8 @@ function App() {
       <Suspense fallback={fallback}>
         <Routes>
           {/* Public auth */}
-          <Route path="/login" element={isAuthenticated() ? <RootRedirect /> : <LoginPage />} />
-          <Route path="/register" element={isAuthenticated() ? <RootRedirect /> : <RegisterPage />} />
+          <Route path="/login" element={authed ? <RootRedirect /> : <LoginPage />} />
+          <Route path="/register" element={authed ? <RootRedirect /> : <RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:uidb64/:token" element={<ResetPasswordPage />} />
@@ -165,6 +173,8 @@ function App() {
           <Route path="/:lang/admin/subscriptions" element={platformRoute(<AdminSubscriptionsPage />)} />
           <Route path="/:lang/admin/company-categories" element={platformRoute(<CompanyCategoriesPage />)} />
           <Route path="/:lang/admin/geo" element={platformRoute(<GeoPage />)} />
+          <Route path="/:lang/admin/leads" element={platformRoute(<LeadsPage />)} />
+          <Route path="/:lang/admin/site-settings" element={platformRoute(<SiteSettingsPage />)} />
           <Route path="/:lang/admin/roles" element={platformRoute(<PlatformRolesPage />)} />
           <Route path="/:lang/admin/users" element={platformRoute(<PlatformUsersPage />)} />
           <Route path="/:lang/admin/notifications" element={platformRoute(<PlatformNotificationsPage />)} />

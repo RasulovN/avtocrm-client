@@ -18,11 +18,11 @@ declare module 'axios' {
 
 // API manzili .env fayllardan olinadi (.env.development / .env.production).
 // Dev: Vite proxy orqali lokal backend (default `/api`). Prod: to'liq API URL. https://api.zumex.uz 
-const BaSE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://zumex.uz/api');
+const BaSE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://api.zumex.uz/api');
 
 // Media/rasm origin'i. Dev'da bo'sh — Vite proxy `/media`'ni lokal backendga uzatadi.
 const MEDIA_ORIGIN =
-  import.meta.env.VITE_MEDIA_ORIGIN ?? (isDev ? '' : 'https://zumex.uz');
+  import.meta.env.VITE_MEDIA_ORIGIN ?? (isDev ? '' : 'https://api.zumex.uz');
 
 export const URL = MEDIA_ORIGIN || '/';
 export const MEDIA_URL = `${MEDIA_ORIGIN}/`;

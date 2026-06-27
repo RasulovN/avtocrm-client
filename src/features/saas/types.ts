@@ -114,6 +114,7 @@ export interface Company {
   owner?: { id: number; full_name: string | null; phone_number: string | null };
   users_count?: number;
   subscription_active?: boolean;
+  contact?: import('./contact.types').ContactInfo;
 }
 
 // ---- Plans / subscriptions ----

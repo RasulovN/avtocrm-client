@@ -12,7 +12,7 @@ export interface AppNotification {
 
 type Subscriber = (notifications: AppNotification[]) => void;
 
-const WS_URL = 'wss://api.avtoyon.uz/ws/notifications/';
+const WS_URL = 'wss://api.zumex.uz/ws/notifications/';
 
 class NotificationSocketService {
   private ws: WebSocket | null = null;

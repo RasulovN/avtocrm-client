@@ -125,7 +125,7 @@ export function LoginPage() {
         </Card>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          © {new Date().getFullYear()} AutoCRM. SaaS Business Management Platform
+          © {new Date().getFullYear()} Zumex. SaaS Business Management Platform
         </p>
       </div>
     </main>

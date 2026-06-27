@@ -3,7 +3,7 @@ import { latinToCyrillic } from '../utils/transliteration';
 import type { Product, ProductFormData, ProductFilters, PaginatedResponse, ApiResponse, ProductStoreInventory } from '../types';
 import { logger } from '../utils/logger';
 
-const BACKEND_FALLBACK_URL = 'https://zumex.uz/api';
+const BACKEND_FALLBACK_URL = 'https://api.zumex.uz/api';
 
 const resolveImageUrl = (image?: string | unknown) => {
   if (typeof image !== 'string' || !image) return '';

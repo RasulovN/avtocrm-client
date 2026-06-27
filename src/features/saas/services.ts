@@ -4,6 +4,7 @@ import type {
   CompanyCategory, Country, Region, District, Company, Plan, Subscription,
   SubscribeResponse, Paginated,
 } from './types';
+import type { ContactInfo } from './contact.types';
 
 // ===================== AUTH =====================
 export const saasAuth = {
@@ -86,6 +87,8 @@ export const companiesApi = {
     apiClient.post('/companies/onboarding/', data).then((r) => r.data),
   me: () => apiClient.get<Company>('/companies/me/').then((r) => r.data),
   updateMe: (data: Record<string, unknown>) => apiClient.put<Company>('/companies/me/', data).then((r) => r.data),
+  updateContact: (data: Partial<ContactInfo>) =>
+    apiClient.put<ContactInfo>('/companies/me/contact/', data).then((r) => r.data),
 
   // super admin
   list: (params?: Record<string, unknown>) =>
@@ -145,4 +148,52 @@ export const subscriptionsApi = {
     apiClient.get<Paginated<Subscription>>('/subscriptions/', { params }).then((r) => r.data),
   manage: (id: number, action: 'activate' | 'cancel' | 'extend', days?: number) =>
     apiClient.patch(`/subscriptions/${id}/`, { action, days }).then((r) => r.data),
+};
+
+// ===================== LEADS (demo so'rovlar) =====================
+export interface Lead {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  company: string | null;
+  stores_range: string | null;
+  message: string | null;
+  source: string;
+  status: string;
+  locale: string | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface LeadCreatePayload {
+  name: string;
+  phone: string;
+  email: string;
+  company?: string;
+  stores_range?: string;
+  message?: string;
+  locale?: string;
+}
+
+export const leadsApi = {
+  // PUBLIC — landing "Demo so'rash" formasi
+  create: (data: LeadCreatePayload) =>
+    apiClient.post<{ ok: boolean; id: number }>('/leads/', data, { skipGlobalErrorHandler: true }).then((r) => r.data),
+  // super admin
+  list: (params?: Record<string, unknown>) =>
+    apiClient.get<Paginated<Lead> & { new_count: number }>('/leads/', { params }).then((r) => r.data),
+  update: (id: number, data: { status?: string; note?: string | null }) =>
+    apiClient.patch<Lead>(`/leads/${id}/`, data).then((r) => r.data),
+  remove: (id: number) => apiClient.delete(`/leads/${id}/`).then((r) => r.data),
+};
+
+// ===================== SITE SETTINGS (landing aloqa/ijtimoiy) =====================
+// Landing sozlamalari endi yagona ContactInfo shaklida.
+export type LandingSettings = ContactInfo;
+
+export const siteSettingsApi = {
+  getPublic: () => apiClient.get<LandingSettings>('/site-settings/landing/public/', { skipGlobalErrorHandler: true }).then((r) => r.data),
+  get: () => apiClient.get<LandingSettings>('/site-settings/landing/').then((r) => r.data),
+  update: (data: Partial<LandingSettings>) => apiClient.put<LandingSettings>('/site-settings/landing/', data).then((r) => r.data),
 };

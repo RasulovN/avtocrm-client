@@ -8,7 +8,7 @@ export function CompanyLayout({ children }: { children: ReactNode }) {
   return (
     <NotificationProvider>
       <NotificationToast />
-      <AppShell menu={COMPANY_MENU} brandTitle="AutoCRM" brandSubtitle="Biznes paneli" gated>
+      <AppShell menu={COMPANY_MENU} brandTitle="Zumex" brandSubtitle="Biznes paneli" gated>
         {children}
       </AppShell>
     </NotificationProvider>

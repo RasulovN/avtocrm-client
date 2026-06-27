@@ -3,6 +3,7 @@ import {
   Store, BarChart3, Settings, Users, ClipboardCheck, AlertTriangle, Shield,
   Building2, CreditCard, Tags, MapPin, UserCog, Receipt, Wallet, Undo2,
   Plus, List, LocationEdit, Ruler, Bell, Activity, SlidersHorizontal, Database,
+  Inbox, Globe,
 } from 'lucide-react';
 
 export interface SubMenuEntry {
@@ -84,6 +85,7 @@ export const COMPANY_MENU: MenuEntry[] = [
 export const PLATFORM_MENU: MenuEntry[] = [
   { label: 'admin.dashboardNav', fallback: 'Bosh sahifa', path: '/admin', icon: LayoutDashboard, permission: 'platform.dashboard.view' },
   { label: 'admin.companies', fallback: 'Kompaniyalar', path: '/admin/companies', icon: Building2, permission: 'platform.companies.view' },
+  { label: 'admin.leads', fallback: 'Demo zayavkalar', path: '/admin/leads', icon: Inbox, permission: 'platform.leads.view' },
 
   // Ma'lumotnomalar — submenu (sohalar + manzillar)
   {
@@ -115,4 +117,5 @@ export const PLATFORM_MENU: MenuEntry[] = [
   },
 
   { label: 'admin.notifications', fallback: 'Bildirishnomalar', path: '/admin/notifications', icon: Bell, permission: 'platform.dashboard.view' },
+  { label: 'admin.siteSettings', fallback: 'Landing sozlamalari', path: '/admin/site-settings', icon: Globe, permission: 'platform.settings.view' },
 ];

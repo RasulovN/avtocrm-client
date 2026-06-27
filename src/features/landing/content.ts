@@ -27,7 +27,7 @@ const uz: Dict = {
     badge: 'Savdo va ombor uchun yagona tizim',
     title1: 'Biznesingizni',
     title2: 'bitta tizimda boshqaring',
-    subtitle: "AutoCRM — sotuv, ombor, kirim, inventarizatsiya, do'konlar va xodimlarni bitta zamonaviy platformada birlashtiradi. Shtrix-kod, hisobotlar va jonli bildirishnomalar bilan.",
+    subtitle: "Zumex — sotuv, ombor, kirim, inventarizatsiya, do'konlar va xodimlarni bitta zamonaviy platformada birlashtiradi. Shtrix-kod, hisobotlar va jonli bildirishnomalar bilan.",
     ctaTrial: "Bepul sinab ko'rish",
     ctaPricing: "Tariflarni ko'rish",
     note: 'Karta talab qilinmaydi · bir necha daqiqada ishga tushadi',
@@ -90,7 +90,7 @@ const cyrl: Dict = {
   nav: { home: 'Бош саҳифа', features: 'Имкониятлар', pricing: 'Тарифлар', how: 'Қандай ишлайди', faq: 'Саволлар', login: 'Кириш', start: 'Бошлаш' },
   hero: {
     badge: 'Савдо ва омбор учун ягона тизим', title1: 'Бизнесингизни', title2: 'битта тизимда бошқаринг',
-    subtitle: 'AutoCRM — сотув, омбор, кирим, инвентаризация, дўконлар ва ходимларни битта платформада бирлаштиради.',
+    subtitle: 'Zumex — сотув, омбор, кирим, инвентаризация, дўконлар ва ходимларни битта платформада бирлаштиради.',
     ctaTrial: 'Бепул синаб кўриш', ctaPricing: 'Тарифларни кўриш', note: 'Карта талаб қилинмайди',
   },
   stats: [
@@ -145,7 +145,7 @@ const ru: Dict = {
   nav: { home: 'Главная', features: 'Возможности', pricing: 'Тарифы', how: 'Как это работает', faq: 'Вопросы', login: 'Войти', start: 'Начать' },
   hero: {
     badge: 'Единая система для торговли и склада', title1: 'Управляйте бизнесом', title2: 'в одной системе',
-    subtitle: 'AutoCRM — продажи, склад, приёмка, инвентаризация, магазины и сотрудники на одной современной платформе.',
+    subtitle: 'Zumex — продажи, склад, приёмка, инвентаризация, магазины и сотрудники на одной современной платформе.',
     ctaTrial: 'Попробовать бесплатно', ctaPricing: 'Смотреть тарифы', note: 'Карта не требуется',
   },
   stats: [
@@ -200,7 +200,7 @@ const en: Dict = {
   nav: { home: 'Home', features: 'Features', pricing: 'Pricing', how: 'How it works', faq: 'FAQ', login: 'Log in', start: 'Get started' },
   hero: {
     badge: 'One system for sales & inventory', title1: 'Run your business', title2: 'in a single system',
-    subtitle: 'AutoCRM unifies sales, inventory, stock-in, audits, stores and staff in one modern platform — with barcodes, reports and live notifications.',
+    subtitle: 'Zumex unifies sales, inventory, stock-in, audits, stores and staff in one modern platform — with barcodes, reports and live notifications.',
     ctaTrial: 'Start free trial', ctaPricing: 'See pricing', note: 'No card required · set up in minutes',
   },
   stats: [

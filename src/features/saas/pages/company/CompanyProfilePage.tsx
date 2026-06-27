@@ -14,6 +14,8 @@ import {
 import { companiesApi, companyCategoriesApi, geoApi } from '../../services';
 import type { CompanyCategory, Country, Region, District } from '../../types';
 import { YandexMapPicker } from '../../components/YandexMapPicker';
+import { ContactSettingsForm } from '../../components/ContactSettingsForm';
+import { normalizeContact, EMPTY_CONTACT, type ContactInfo } from '../../contact.types';
 import { useAuthStore } from '../../../../app/store';
 
 const selectCls =
@@ -29,6 +31,9 @@ export function CompanyProfilePage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const [contact, setContact] = useState<ContactInfo>(EMPTY_CONTACT);
+  const [savingContact, setSavingContact] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -79,6 +84,7 @@ export function CompanyProfilePage() {
           latitude: me.latitude ?? '',
           longitude: me.longitude ?? '',
         });
+        setContact(normalizeContact(me.contact));
       } catch {
         if (!cancelled) toast.error(t('common.loadError', "Ma'lumotlarni yuklab bo'lmadi"));
       } finally {
@@ -137,6 +143,19 @@ export function CompanyProfilePage() {
       toast.error(data ? Object.values(data).flat().join(' ') : t('common.error', 'Xatolik'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const saveContact = async () => {
+    setSavingContact(true);
+    try {
+      const saved = await companiesApi.updateContact(contact);
+      setContact(normalizeContact(saved));
+      toast.success(t('company.profile.saved', 'Saqlandi'));
+    } catch {
+      toast.error(t('common.error', 'Xatolik'));
+    } finally {
+      setSavingContact(false);
     }
   };
 
@@ -311,6 +330,18 @@ export function CompanyProfilePage() {
           </Button>
         </div>
       </form>
+
+      {/* Aloqa ma'lumotlari + xarita + ijtimoiy tarmoqlar (alohida saqlanadi) */}
+      <div className="space-y-1 pt-2">
+        <h2 className="text-xl font-bold">{t('company.profile.contactSection', "Aloqa ma'lumotlari")}</h2>
+        <p className="text-sm text-muted-foreground">{t('company.profile.contactHint', "Mijozlarga ko'rinadigan aloqa va ijtimoiy tarmoqlar")}</p>
+      </div>
+      <ContactSettingsForm value={contact} onChange={setContact} />
+      <div className="flex justify-end">
+        <Button onClick={saveContact} className="h-11 px-6" disabled={savingContact}>
+          {savingContact ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-4 h-4 mr-2" />{t('common.save', 'Saqlash')}</>}
+        </Button>
+      </div>
     </div>
   );
 }

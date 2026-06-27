@@ -8,7 +8,7 @@ import { useSeo } from './useSeo'
 
 export function LandingFeaturesPage() {
   const { t } = useLanding()
-  useSeo(`${t.features.title} — AutoCRM`, t.features.subtitle)
+  useSeo(`${t.features.title} — Zumex`, t.features.subtitle)
   return (
     <LandingLayout>
       <PageHero badge={t.features.badge} title={t.features.title} subtitle={t.features.subtitle} />

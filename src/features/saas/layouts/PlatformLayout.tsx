@@ -8,7 +8,7 @@ export function PlatformLayout({ children }: { children: ReactNode }) {
   return (
     <NotificationProvider>
       <NotificationToast />
-      <AppShell menu={PLATFORM_MENU} brandTitle="AutoCRM" brandSubtitle="Super Admin">
+      <AppShell menu={PLATFORM_MENU} brandTitle="Zumex" brandSubtitle="Super Admin">
         {children}
       </AppShell>
     </NotificationProvider>
