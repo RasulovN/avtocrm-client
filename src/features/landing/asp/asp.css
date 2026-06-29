@@ -50,6 +50,24 @@
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* To'lov usullari marquee — chetlari yumshoq, markazdan suzib o'tadi */
+#asp-root .asp-pay-mask{
+  max-width:1240px;
+  margin:0 auto;
+  padding:0 24px;
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);
+}
+#asp-root .asp-pay-track{display:flex;width:max-content;animation:marquee 55s linear infinite;will-change:transform}
+#asp-root .asp-pay-track:hover{animation-play-state:paused}
+#asp-root .asp-pay-group{display:flex;align-items:center;gap:22px;padding-right:22px}
+@media (prefers-reduced-motion: reduce){
+  #asp-root .asp-pay-mask{-webkit-mask-image:none;mask-image:none}
+  #asp-root .asp-pay-track{animation:none;width:100%;justify-content:center;flex-wrap:wrap;gap:18px}
+  #asp-root .asp-pay-track > [aria-hidden="true"]{display:none}
+  #asp-root .asp-pay-group{flex-wrap:wrap;justify-content:center;padding-right:0}
+}
 #asp-root .asp-scroll::-webkit-scrollbar{height:6px;width:6px}
 #asp-root .asp-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px}
 @media(max-width:860px){#asp-root .hide-mob{display:none!important}}

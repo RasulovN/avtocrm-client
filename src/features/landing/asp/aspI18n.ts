@@ -33,7 +33,7 @@ export interface AspDict {
   story: { eyebrow: string; title: string; items: { quote: string; m: { l: string; v: string }[]; name: string; role: string; initials: string }[] }
   faq: { eyebrow: string; title: string; items: { q: string; a: string }[] }
   contact: { eyebrow: string; title: string; sub: string; phoneLabel: string; phone: string; emailLabel: string; email: string; emailPh: string; tgLabel: string; tg: string; mapLabel: string; formTitle: string; formNote: string; name: string; namePh: string; phoneL: string; phonePh: string; company: string; companyPh: string; storesL: string; storeOpts: string[]; sourceL: string; sourceOpts: { v: string; l: string }[]; submit: string; privacy: string; sending: string; success: string; error: string }
-  footer: { tagline: string; product: string; productLinks: string[]; industries: string; industryLinks: string[]; company: string; companyLinks: string[]; rights: string; privacy: string; terms: string }
+  footer: { tagline: string; product: string; productLinks: string[]; industries: string; industryLinks: string[]; company: string; companyLinks: string[]; payTitle: string; rights: string; privacy: string; terms: string }
 }
 
 export const RU: AspDict = {
@@ -276,6 +276,7 @@ export const RU: AspDict = {
     product: 'Продукт', productLinks: ['Возможности', 'Демо продукта', 'Тарифы', 'Документация'],
     industries: 'Отрасли', industryLinks: ['Магазины автозапчастей', 'Шинные центры', 'Дистрибьюторы', 'Франшизы'],
     company: 'Компания', companyLinks: ['Истории успеха', 'Контакты', 'Безопасность', 'Поддержка'],
+    payTitle: 'Способы оплаты',
     rights: '© 2026 Zumex. Все права защищены.', privacy: 'Политика конфиденциальности', terms: 'Условия использования',
   },
 }
@@ -520,6 +521,7 @@ export const UZ: AspDict = {
     product: 'Mahsulot', productLinks: ['Imkoniyatlar', 'Mahsulot demosi', 'Tariflar', 'Hujjatlar'],
     industries: 'Sohalar', industryLinks: ['Avtoehtiyot qismlar do\'konlari', 'Shina markazlari', 'Distribyutorlar', 'Franshizalar'],
     company: 'Kompaniya', companyLinks: ['Muvaffaqiyat tarixi', 'Kontaktlar', 'Xavfsizlik', 'Qo\'llab-quvvatlash'],
+    payTitle: 'To\'lov usullari',
     rights: '© 2026 Zumex. Barcha huquqlar himoyalangan.', privacy: 'Maxfiylik siyosati', terms: 'Foydalanish shartlari',
   },
 }
@@ -764,6 +766,7 @@ export const EN: AspDict = {
     product: 'Product', productLinks: ['Features', 'Product demo', 'Pricing', 'Documentation'],
     industries: 'Industries', industryLinks: ['Auto parts stores', 'Tire centers', 'Distributors', 'Franchises'],
     company: 'Company', companyLinks: ['Success Stories', 'Contacts', 'Security', 'Support'],
+    payTitle: 'Payment methods',
     rights: '© 2026 Zumex. All rights reserved.', privacy: 'Privacy Policy', terms: 'Terms of Use',
   },
 }

@@ -168,7 +168,20 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
     </div>`).join('')
 
   const navLink = (id: string, label: string) => `<a href="#${id}">${label}</a>`
-  const langBtn = (code: string, label: string) => `<button data-lang="${code}" style="border:0;background:transparent;color:var(--ink-3);padding:5px 9px;border-radius:6px;cursor:pointer;font-weight:700">${label}</button>`
+  const langOpt = (code: string, label: string) => `<option value="${code}">${label}</option>`
+  const langSelect = () => `<select data-lang-select aria-label="Til" style="appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--bg-soft2);color:var(--ink-2);padding:8px 30px 8px 12px;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2394a3b8%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center">${langOpt('uz', "O'zbekcha")}${langOpt('cyrl', 'Ўзбекча')}${langOpt('ru', 'Русский')}${langOpt('en', 'English')}</select>`
+
+  // To'lov usullari — oq kartochkalar (logo strip)
+  const payBadge = (inner: string) => `<span style="flex:0 0 auto;height:50px;min-width:118px;display:inline-flex;align-items:center;justify-content:center;padding:0 24px;background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow-sm);font-family:'Manrope';font-weight:800;font-size:17px;line-height:1;letter-spacing:.01em">${inner}</span>`
+  const mcLogo = `<span style="display:inline-flex;align-items:center"><span style="width:19px;height:19px;border-radius:50%;background:#eb001b"></span><span style="width:19px;height:19px;border-radius:50%;background:#ff9e0f;margin-left:-8px;mix-blend-mode:multiply"></span></span>`
+  const payments = [
+    payBadge('<span style="color:#00c2cb">Payme</span>'),
+    payBadge('<span style="color:#0098eb">Click</span>'),
+    payBadge('<span style="color:#1d4ed8">Uzcard</span>'),
+    payBadge('<span style="color:#0ea08a">Humo</span>'),
+    payBadge('<span style="color:#1a1f71;font-style:italic;font-size:18px;letter-spacing:.04em">VISA</span>'),
+    payBadge(mcLogo),
+  ].join('')
 
   return `
 <div aria-hidden="true" style="position:fixed;inset:0;z-index:-1;background:var(--bg);transition:background .45s ease"></div>
@@ -183,9 +196,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
       ${navLink('features', t.nav.features)}${navLink('product', t.nav.product)}${navLink('industries', t.nav.industries)}${navLink('pricing', t.nav.pricing)}${navLink('stories', t.nav.stories)}${navLink('faq', t.nav.faq)}
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-      <div class="hide-mob" style="display:flex;align-items:center;background:var(--bg-soft2);border:1px solid var(--line);border-radius:9px;padding:3px;font-size:12.5px;font-weight:600">
-        ${langBtn('uz', 'UZ')}${langBtn('cyrl', 'ЎЗ')}${langBtn('ru', 'RU')}${langBtn('en', 'EN')}
-      </div>
+      ${langSelect()}
       <button data-action="theme" aria-label="Theme" style="width:38px;height:38px;border:1px solid var(--line);background:var(--card);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink-2)">
         <svg id="ic-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" style="display:block"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.5 6.5 0 009.8 9.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
         <svg id="ic-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" style="display:none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
@@ -551,6 +562,16 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
   </div>
 </section>
 
+<section data-screen-label="Payments" style="padding:48px 0;background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden">
+  <div data-reveal style="max-width:1240px;margin:0 auto 26px;padding:0 24px;text-align:center"><span style="font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-4)">${t.footer.payTitle}</span></div>
+  <div class="asp-pay-mask">
+    <div class="asp-pay-track">
+      <div class="asp-pay-group">${payments}</div>
+      <div class="asp-pay-group" aria-hidden="true">${payments}</div>
+    </div>
+  </div>
+</section>
+
 <footer style="background:#070b16;color:#94a3b8;padding:64px 24px 34px">
   <div style="max-width:1240px;margin:0 auto">
     <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)">
@@ -565,7 +586,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding-top:24px;font-size:13px;flex-wrap:wrap;gap:12px">
       <span>${t.footer.rights}</span>
-      <div style="display:flex;gap:22px"><a href="#">${t.footer.privacy}</a><a href="#">${t.footer.terms}</a></div>
+      <div style="display:flex;gap:22px"><a href="#" data-legal="privacy" style="cursor:pointer">${t.footer.privacy}</a><a href="#" data-legal="terms" style="cursor:pointer">${t.footer.terms}</a></div>
     </div>
   </div>
 </footer>
