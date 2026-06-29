@@ -41,7 +41,7 @@ export function Navbar() {
     >
       <div className={`${CONTAINER} flex h-16 items-center justify-between`}>
         <Link to={`/${rawLang}`} className="flex items-center" aria-label="Zumex">
-          <Logo className="h-10 w-auto" />
+          <Logo className="h-12 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

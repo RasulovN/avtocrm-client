@@ -43,7 +43,7 @@ export function LoginPage() {
       <div className="relative z-10 w-full max-w-md mx-4 animate-fade-in-up">
         <Card className="shadow-xl border-border/40 backdrop-blur-sm bg-card/90">
           <CardHeader className="space-y-4 text-center pb-2">
-            <Logo className="mx-auto h-20 w-20 rounded-2xl shadow-lg shadow-primary/10" />
+            <Logo className="mx-auto h-24 w-24 rounded-2xl" />
             <div className="space-y-1">
               <CardDescription className="text-base">{t('auth.login')}</CardDescription>
             </div>

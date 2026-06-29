@@ -9,26 +9,33 @@ type LogoProps = {
    * 'dark'  — har doim qoramtir fon uchun logo (oq matn, shaffof fon)
    */
   variant?: 'auto' | 'light' | 'dark';
+  /** true bo'lsa faqat "Z" belgisi (wordmarksiz) — kichik/kvadrat joylar uchun */
+  mark?: boolean;
 };
 
-const LIGHT_SRC = '/images/logo-light.png'; // och fon uchun
-const DARK_SRC = '/images/logo-dark.png'; // qoramtir fon uchun (shaffof)
+// To'liq lockup (Z + ZUMEX) va faqat belgi (Z) variantlari.
+const SRC = {
+  full: { light: '/images/logo-light.png', dark: '/images/logo-dark.png' },
+  mark: { light: '/images/logo-mark-light.png', dark: '/images/logo-mark-dark.png' },
+};
 
 /**
  * Zumex logotipi — ikki rejim uchun. Mavzu (.dark klassi) bo'yicha mos rasm
  * CSS orqali almashadi, shuning uchun rejim o'zgarganda "miltillash" bo'lmaydi.
  */
-export function Logo({ className, variant = 'auto' }: LogoProps) {
+export function Logo({ className, variant = 'auto', mark = false }: LogoProps) {
+  const src = mark ? SRC.mark : SRC.full;
+  const base = 'object-contain select-none';
   if (variant === 'light') {
-    return <img src={LIGHT_SRC} alt="Zumex" loading="eager" decoding="async" className={cn('object-contain select-none', className)} />;
+    return <img src={src.light} alt="Zumex" loading="eager" decoding="async" className={cn(base, className)} />;
   }
   if (variant === 'dark') {
-    return <img src={DARK_SRC} alt="Zumex" loading="eager" decoding="async" className={cn('object-contain select-none', className)} />;
+    return <img src={src.dark} alt="Zumex" loading="eager" decoding="async" className={cn(base, className)} />;
   }
   return (
     <>
-      <img src={LIGHT_SRC} alt="Zumex" loading="eager" decoding="async" className={cn('object-contain select-none block dark:hidden', className)} />
-      <img src={DARK_SRC} alt="" aria-hidden="true" loading="eager" decoding="async" className={cn('object-contain select-none hidden dark:block', className)} />
+      <img src={src.light} alt="Zumex" loading="eager" decoding="async" className={cn(base, 'block dark:hidden', className)} />
+      <img src={src.dark} alt="" aria-hidden="true" loading="eager" decoding="async" className={cn(base, 'hidden dark:block', className)} />
     </>
   );
 }

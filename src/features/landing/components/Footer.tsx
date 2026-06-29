@@ -12,7 +12,7 @@ export function Footer() {
       <div className={`${CONTAINER} grid gap-8 sm:grid-cols-2 lg:grid-cols-4`}>
         <div className="lg:col-span-2">
           <div className="flex items-center">
-            <Logo className="h-10 w-auto" />
+            <Logo className="h-12 w-auto" />
           </div>
           <p className="mt-3 max-w-sm text-sm text-slate-500 dark:text-slate-400">{t.footer.tagline}</p>
         </div>

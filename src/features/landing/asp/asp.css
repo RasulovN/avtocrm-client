@@ -69,7 +69,9 @@
   #asp-root .asp-pay-track > [aria-hidden="true"]{display:none}
   #asp-root .asp-pay-group{flex-wrap:wrap;justify-content:center;padding-right:0}
 }
-/* Logotip — mavzuga qarab almashadi (light fon → logo-light, dark fon → logo-dark) */
+/* Logotip — mavzuga qarab almashadi (light fon → logo-light, dark fon → logo-dark).
+   Inline display ishlatmaymiz — aks holda u CSSdan kuchliroq bo'lib almashishni bloklaydi. */
+#asp-root .asp-logo-light{display:block}
 #asp-root .asp-logo-dark{display:none}
 #asp-root[data-theme="dark"] .asp-logo-light{display:none}
 #asp-root[data-theme="dark"] .asp-logo-dark{display:block}

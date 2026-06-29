@@ -85,7 +85,7 @@ export function OnboardingPage() {
     <main className="min-h-screen bg-muted/30 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-3">
-          <Logo className="h-10 w-10 rounded-xl" />
+          <Logo mark className="h-11 w-11" />
           <Button variant="ghost" size="sm" onClick={() => { logout(); navigate('/login'); }}>{t('auth.logout', 'Chiqish')}</Button>
         </div>
         <Card className="shadow-xl">

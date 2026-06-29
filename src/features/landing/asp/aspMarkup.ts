@@ -82,16 +82,16 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
     .join('')
   // Xarita: koordinata bo'lsa Yandex map-widget iframe; bo'lmasa — placeholder.
   const mapHtml = c.location
-    ? `<iframe data-asp-map data-lat="${c.location.lat}" data-lng="${c.location.lng}" src="https://yandex.uz/map-widget/v1/?ll=${c.location.lng}%2C${c.location.lat}&z=16&pt=${c.location.lng},${c.location.lat},pm2rdm" width="100%" height="100%" frameborder="0" allowfullscreen="true" style="border:0;position:absolute;inset:0" loading="lazy"></iframe>`
+    ? `<iframe data-asp-map data-lat="${c.location.lat}" data-lng="${c.location.lng}" src="https://yandex.uz/map-widget/v1/?ll=${c.location.lng}%2C${c.location.lat}&z=16&pt=${c.location.lng},${c.location.lat},pm2rdm" width="100%" height="100%" frameborder="0" allowfullscreen="true" title="${c.address || t.contact.title}" style="border:0;position:absolute;inset:0" loading="lazy"></iframe>`
     : `<div style="position:absolute;inset:0;opacity:.5;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px"></div><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);color:var(--primary)"><svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M12 22s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z" stroke="var(--primary)" stroke-width="1.8" fill="var(--primary-soft)"/><circle cx="12" cy="10" r="2.5" fill="var(--primary)"/></svg></div><span style="position:absolute;bottom:10px;left:12px;font-size:12px;color:var(--ink-3);background:var(--card);padding:3px 8px;border-radius:6px;border:1px solid var(--line)">${c.address}</span>`
 
   const challengeCards = t.ch.cards.map((c) => `
-    <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)"><div style="display:flex;align-items:center;gap:10px"><span style="width:9px;height:9px;border-radius:50%;background:var(--red)"></span><h4 style="font-size:16px;font-weight:700">${c.p}</h4></div><div style="display:flex;align-items:center;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--green);font-weight:600">${check()}${c.fix}</div></div>`).join('')
+    <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)"><div style="display:flex;align-items:center;gap:10px"><span style="width:9px;height:9px;border-radius:50%;background:var(--red)"></span><h3 style="font-size:16px;font-weight:700">${c.p}</h3></div><div style="display:flex;align-items:center;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--green);font-weight:600">${check()}${c.fix}</div></div>`).join('')
 
   const featCards = t.feat.items.map((f, i) => `
     <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow-sm);transition:transform .25s,box-shadow .25s,border-color .25s" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='var(--shadow)';this.style.borderColor='var(--primary)'" onmouseout="this.style.transform='none';this.style.boxShadow='var(--shadow-sm)';this.style.borderColor='var(--line)'">
       <span style="display:inline-flex;width:46px;height:46px;border-radius:12px;background:var(--primary-soft);align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="${FEAT_ICONS[i]}" stroke="var(--primary)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      <h4 style="font-size:18px;font-weight:700;margin:16px 0 7px">${f.title}</h4>
+      <h3 style="font-size:18px;font-weight:700;margin:16px 0 7px">${f.title}</h3>
       <p style="font-size:14.5px;color:var(--ink-3);line-height:1.5">${f.desc}</p>
     </div>`).join('')
 
@@ -143,7 +143,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
   const timeline = t.impl.steps.map((s, i) => `
     <div style="position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)">
       <div style="width:34px;height:34px;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Manrope';font-weight:800;font-size:14px">${i + 1}</div>
-      <h4 style="font-size:16.5px;font-weight:700;margin:13px 0 6px">${s.t}</h4>
+      <h3 style="font-size:16.5px;font-weight:700;margin:13px 0 6px">${s.t}</h3>
       <p style="font-size:13.5px;color:var(--ink-3);line-height:1.5">${s.d}</p>
     </div>`).join('')
 
@@ -175,10 +175,10 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
   const payBadge = (inner: string) => `<span style="flex:0 0 auto;height:50px;min-width:118px;display:inline-flex;align-items:center;justify-content:center;padding:0 24px;background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow-sm);font-family:'Manrope';font-weight:800;font-size:17px;line-height:1;letter-spacing:.01em">${inner}</span>`
   const mcLogo = `<span style="display:inline-flex;align-items:center"><span style="width:19px;height:19px;border-radius:50%;background:#eb001b"></span><span style="width:19px;height:19px;border-radius:50%;background:#ff9e0f;margin-left:-8px;mix-blend-mode:multiply"></span></span>`
   const payments = [
-    payBadge('<span style="color:#00c2cb">Payme</span>'),
-    payBadge('<span style="color:#0098eb">Click</span>'),
+    payBadge('<span style="color:#0e7490">Payme</span>'),
+    payBadge('<span style="color:#0369a1">Click</span>'),
     payBadge('<span style="color:#1d4ed8">Uzcard</span>'),
-    payBadge('<span style="color:#0ea08a">Humo</span>'),
+    payBadge('<span style="color:#0f766e">Humo</span>'),
     payBadge('<span style="color:#1a1f71;font-style:italic;font-size:18px;letter-spacing:.04em">VISA</span>'),
     payBadge(mcLogo),
   ].join('')
@@ -189,8 +189,8 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
 <header style="position:sticky;top:0;z-index:90;backdrop-filter:saturate(180%) blur(18px);background:var(--glass);border-bottom:1px solid var(--line)">
   <nav style="max-width:1240px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:28px">
     <a href="#top" aria-label="Zumex" style="display:flex;align-items:center">
-      <img class="asp-logo asp-logo-light" src="/images/logo-light.png" alt="Zumex" style="height:42px;width:auto;display:block">
-      <img class="asp-logo asp-logo-dark" src="/images/logo-dark.png" alt="Zumex" style="height:42px;width:auto;display:none">
+      <img class="asp-logo asp-logo-light" src="/images/logo-light.png" alt="Zumex" width="52" height="52" fetchpriority="high" decoding="async" style="height:52px;width:auto">
+      <img class="asp-logo asp-logo-dark" src="/images/logo-dark.png" alt="Zumex" width="52" height="52" decoding="async" style="height:52px;width:auto">
     </a>
     <div class="hide-mob" style="display:flex;align-items:center;gap:26px;font-size:15px;font-weight:500;color:var(--ink-2)">
       ${navLink('features', t.nav.features)}${navLink('product', t.nav.product)}${navLink('industries', t.nav.industries)}${navLink('pricing', t.nav.pricing)}${navLink('stories', t.nav.stories)}${navLink('faq', t.nav.faq)}
@@ -264,7 +264,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
   <div style="max-width:1240px;margin:0 auto">
     <p data-reveal style="text-align:center;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-4)">${t.trust.kicker}</p>
     <div data-reveal style="overflow:hidden;margin:26px 0 40px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)">
-      <div style="display:flex;gap:54px;width:max-content;animation:marquee 26s linear infinite;align-items:center;opacity:.62">
+      <div style="display:flex;gap:54px;width:max-content;animation:marquee 26s linear infinite;align-items:center;opacity:.85">
         ${['AutoMax', 'DETALI.uz', 'ProTyre', 'MotorHub', 'OilCity', 'AvtoSet', 'CarParts+', 'AutoMax', 'DETALI.uz', 'ProTyre', 'MotorHub', 'OilCity', 'AvtoSet', 'CarParts+'].map((n) => `<span style="font-family:'Manrope';font-weight:800;font-size:23px;color:var(--ink-3);letter-spacing:-.02em">${n}</span>`).join('')}
       </div>
     </div>
@@ -365,11 +365,11 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
       </div>
       <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px">
         <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h4 style="font-size:15px;font-weight:700">${t.ceo.profitByMonth}</h4><span style="font-size:12px;color:var(--ink-3)">${t.ceo.year}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="font-size:15px;font-weight:700">${t.ceo.profitByMonth}</h3><span style="font-size:12px;color:var(--ink-3)">${t.ceo.year}</span></div>
           <div style="display:flex;align-items:flex-end;gap:10px;height:170px">${bars}</div>
         </div>
         <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px">
-          <h4 style="font-size:15px;font-weight:700;margin-bottom:10px">${t.ceo.salesByStore}</h4>
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:10px">${t.ceo.salesByStore}</h3>
           <div style="display:flex;align-items:center;gap:16px">
             <svg width="118" height="118" viewBox="0 0 140 140" style="transform:rotate(-90deg)"><circle cx="70" cy="70" r="54" fill="none" stroke="var(--line)" stroke-width="18"/><circle cx="70" cy="70" r="54" fill="none" stroke="var(--primary)" stroke-width="18" stroke-dasharray="135.7 339.3" stroke-dashoffset="0"/><circle cx="70" cy="70" r="54" fill="none" stroke="#0ea5e9" stroke-width="18" stroke-dasharray="84.8 339.3" stroke-dashoffset="-135.7"/><circle cx="70" cy="70" r="54" fill="none" stroke="var(--green)" stroke-width="18" stroke-dasharray="67.9 339.3" stroke-dashoffset="-220.5"/><circle cx="70" cy="70" r="54" fill="none" stroke="#fbbf24" stroke-width="18" stroke-dasharray="50.9 339.3" stroke-dashoffset="-288.4"/></svg>
             <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">${storeLegend}</div>
@@ -377,8 +377,8 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
-        <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px"><h4 style="font-size:15px;font-weight:700;margin-bottom:12px">${t.ceo.topProducts}</h4><div style="display:flex;flex-direction:column;gap:11px">${topRows}</div></div>
-        <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px"><h4 style="font-size:15px;font-weight:700;margin-bottom:12px">${t.ceo.attention}</h4><div style="display:flex;flex-direction:column;gap:10px">${attRows}</div></div>
+        <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">${t.ceo.topProducts}</h3><div style="display:flex;flex-direction:column;gap:11px">${topRows}</div></div>
+        <div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:18px"><h3 style="font-size:15px;font-weight:700;margin-bottom:12px">${t.ceo.attention}</h3><div style="display:flex;flex-direction:column;gap:10px">${attRows}</div></div>
       </div>
     </div>
   </div>
@@ -454,8 +454,8 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
     </div>
     <div data-reveal style="margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:32px">
       <div style="display:flex;flex-direction:column;gap:30px;justify-content:center">
-        <div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:600;color:var(--ink)"><span>${t.roi.storesLabel}</span><span id="roi-stores-v" style="color:var(--primary);font-family:'Manrope';font-weight:800;font-size:22px">5</span></div><input data-roi type="range" id="roi-stores" min="1" max="30" value="5" style="width:100%;margin-top:12px;accent-color:var(--primary)"></div>
-        <div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:600;color:var(--ink)"><span>${t.roi.revLabel}</span><span id="roi-rev-v" style="color:var(--primary);font-family:'Manrope';font-weight:800;font-size:22px">120</span></div><input data-roi type="range" id="roi-rev" min="20" max="600" step="10" value="120" style="width:100%;margin-top:12px;accent-color:var(--primary)"></div>
+        <div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:600;color:var(--ink)"><span>${t.roi.storesLabel}</span><span id="roi-stores-v" style="color:var(--primary);font-family:'Manrope';font-weight:800;font-size:22px">5</span></div><input data-roi type="range" id="roi-stores" aria-label="${t.roi.storesLabel}" min="1" max="30" value="5" style="width:100%;margin-top:12px;accent-color:var(--primary)"></div>
+        <div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:600;color:var(--ink)"><span>${t.roi.revLabel}</span><span id="roi-rev-v" style="color:var(--primary);font-family:'Manrope';font-weight:800;font-size:22px">120</span></div><input data-roi type="range" id="roi-rev" aria-label="${t.roi.revLabel}" min="20" max="600" step="10" value="120" style="width:100%;margin-top:12px;accent-color:var(--primary)"></div>
       </div>
       <div style="background:linear-gradient(135deg,var(--primary),#0ea5e9);border-radius:18px;padding:28px;color:#fff;display:flex;flex-direction:column;justify-content:center">
         <div style="font-size:14px;opacity:.85">${t.roi.savings}</div>
@@ -545,14 +545,14 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
       <p style="font-size:14px;color:var(--ink-3);margin-bottom:20px">${t.contact.formNote}</p>
       <div style="display:flex;flex-direction:column;gap:14px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.name}</label><input data-lead="name" placeholder="${t.contact.namePh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
-          <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.phoneL}</label><input data-lead="phone" placeholder="${t.contact.phonePh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
+          <div><label for="lead-name" style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.name}</label><input id="lead-name" data-lead="name" placeholder="${t.contact.namePh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
+          <div><label for="lead-phone" style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.phoneL}</label><input id="lead-phone" data-lead="phone" placeholder="${t.contact.phonePh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
         </div>
-        <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.emailLabel}</label><input data-lead="email" type="email" placeholder="${t.contact.emailPh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
-        <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.company}</label><input data-lead="company" placeholder="${t.contact.companyPh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
+        <div><label for="lead-email" style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.emailLabel}</label><input id="lead-email" data-lead="email" type="email" placeholder="${t.contact.emailPh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
+        <div><label for="lead-company" style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.company}</label><input id="lead-company" data-lead="company" placeholder="${t.contact.companyPh}" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-          <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.storesL}</label><select data-lead="stores_range" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px">${t.contact.storeOpts.map((o) => `<option>${o}</option>`).join('')}</select></div>
-          <div><label style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.sourceL}</label><select data-lead="source" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"><option value="">—</option>${t.contact.sourceOpts.map((o, i) => `<option value="${LANDING_SOURCE_CODES[i] ?? ''}">${o.l}</option>`).join('')}</select></div>
+          <div><label for="lead-stores" style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.storesL}</label><select id="lead-stores" data-lead="stores_range" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px">${t.contact.storeOpts.map((o) => `<option>${o}</option>`).join('')}</select></div>
+          <div><label for="lead-source" style="font-size:13px;font-weight:600;color:var(--ink-2)">${t.contact.sourceL}</label><select id="lead-source" data-lead="source" style="width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft);color:var(--ink);font-family:inherit;font-size:14.5px"><option value="">—</option>${t.contact.sourceOpts.map((o, i) => `<option value="${LANDING_SOURCE_CODES[i] ?? ''}">${o.l}</option>`).join('')}</select></div>
         </div>
         <button data-asp-lead-submit style="margin-top:6px;background:var(--primary);color:#fff;border:0;padding:14px;border-radius:11px;font-weight:700;font-size:15.5px;cursor:pointer;font-family:inherit;box-shadow:0 14px 30px -10px var(--primary)">${t.contact.submit}</button>
         <p data-lead-status style="font-size:13px;text-align:center;min-height:18px;margin:0"></p>
@@ -576,7 +576,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
   <div style="max-width:1240px;margin:0 auto">
     <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)">
       <div>
-        <div style="display:flex;align-items:center"><img src="/images/logo-dark.png" alt="Zumex" style="height:46px;width:auto;display:block"></div>
+        <div style="display:flex;align-items:center"><img src="/images/logo-dark.png" alt="Zumex" width="56" height="56" decoding="async" style="height:56px;width:auto;display:block"></div>
         <p style="font-size:14px;margin-top:14px;max-width:300px;line-height:1.6">${t.footer.tagline}</p>
         ${socialLinks ? `<div style="display:flex;gap:10px;margin-top:18px">${socialLinks}</div>` : ''}
       </div>
