@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useLanding } from '../useLanding'
+import { Logo } from '../../../components/shared/Logo'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ThemeToggle } from './ThemeToggle'
 import { Icon } from './Icon'
@@ -39,9 +40,8 @@ export function Navbar() {
       }`}
     >
       <div className={`${CONTAINER} flex h-16 items-center justify-between`}>
-        <Link to={`/${rawLang}`} className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-400 font-bold text-white shadow-lg shadow-indigo-600/30">A</span>
-          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Zumex</span>
+        <Link to={`/${rawLang}`} className="flex items-center" aria-label="Zumex">
+          <Logo className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">

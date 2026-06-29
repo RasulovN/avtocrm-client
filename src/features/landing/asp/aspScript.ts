@@ -48,6 +48,13 @@ export function initAsp(root: HTMLElement, t: AspDict): AspController {
     const rev = +rEl.value
     const sv = $('roi-stores-v'); if (sv) sv.textContent = String(stores)
     const rv = $('roi-rev-v'); if (rv) rv.textContent = String(rev)
+    // Sliderning to'ldirilgan qismini (--fill) qiymatga moslab yangilash
+    const setFill = (el: HTMLInputElement) => {
+      const min = +el.min || 0, max = +el.max || 100
+      const pct = max > min ? ((+el.value - min) / (max - min)) * 100 : 0
+      el.style.setProperty('--fill', pct + '%')
+    }
+    setFill(sEl); setFill(rEl)
     const annualRev = stores * rev * 12
     const savings = annualRev * 0.03
     const extra = annualRev * 0.09

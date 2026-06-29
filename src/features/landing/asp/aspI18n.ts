@@ -191,7 +191,7 @@ export const RU: AspDict = {
     eyebrow: 'Калькулятор выгоды', title: 'Сколько вы экономите с Zumex',
     sub: 'Подвигайте ползунки под свой бизнес. Расчёт примерный — на основе среднего эффекта у клиентов.',
     storesLabel: 'Количество магазинов', revLabel: 'Выручка на магазин, млн сум/мес',
-    savings: 'Потенциальная экономия в год', extra: 'Доп. выручка от роста продаж', payback: 'Окупаемость подписки', cta: 'Запросить точный расчёт',
+    savings: 'Потенциальная экономия в год', extra: 'Доп. выручка от роста продаж', payback: 'Окупаемость подписки', cta: 'Начать сейчас',
     perYear: 'в год', mln: 'млн сум', mlrd: 'млрд сум', month: '≈ 1 месяц', months: 'мес',
   },
   price: {
@@ -436,7 +436,7 @@ export const UZ: AspDict = {
     eyebrow: 'Foyda kalkulyatori', title: 'Zumex bilan qancha tejaysiz',
     sub: 'Slayderlarni o\'z biznesingizga moslang. Hisob taxminiy — mijozlardagi o\'rtacha samaraga asoslangan.',
     storesLabel: 'Do\'konlar soni', revLabel: 'Bir do\'kondagi tushum, mln so\'m/oy',
-    savings: 'Yiliga potensial tejam', extra: 'Sotuv o\'sishidan qo\'shimcha tushum', payback: 'Obuna qoplanishi', cta: 'Aniq hisob so\'rash',
+    savings: 'Yiliga potensial tejam', extra: 'Sotuv o\'sishidan qo\'shimcha tushum', payback: 'Obuna qoplanishi', cta: 'Hoziroq boshlash',
     perYear: 'yiliga', mln: 'mln so\'m', mlrd: 'mlrd so\'m', month: '≈ 1 oy', months: 'oy',
   },
   price: {
@@ -681,7 +681,7 @@ export const EN: AspDict = {
     eyebrow: 'Savings calculator', title: 'How much you save with Zumex',
     sub: 'Move the sliders to match your business. The estimate is approximate — based on the average effect among our customers.',
     storesLabel: 'Number of stores', revLabel: 'Revenue per store, mln UZS/mo',
-    savings: 'Potential savings per year', extra: 'Extra revenue from sales growth', payback: 'Subscription payback', cta: 'Request an exact calculation',
+    savings: 'Potential savings per year', extra: 'Extra revenue from sales growth', payback: 'Subscription payback', cta: 'Start now',
     perYear: 'per year', mln: 'mln UZS', mlrd: 'bn UZS', month: '≈ 1 month', months: 'mo',
   },
   price: {

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useLanding } from '../useLanding'
+import { Logo } from '../../../components/shared/Logo'
 import { CONTAINER } from '../styles'
 
 export function Footer() {
@@ -10,9 +11,8 @@ export function Footer() {
     <footer className="border-t border-slate-200 bg-white py-12 dark:border-slate-800 dark:bg-slate-950">
       <div className={`${CONTAINER} grid gap-8 sm:grid-cols-2 lg:grid-cols-4`}>
         <div className="lg:col-span-2">
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-400 font-bold text-white">A</span>
-            <span className="text-lg font-bold text-slate-900 dark:text-white">Zumex</span>
+          <div className="flex items-center">
+            <Logo className="h-10 w-auto" />
           </div>
           <p className="mt-3 max-w-sm text-sm text-slate-500 dark:text-slate-400">{t.footer.tagline}</p>
         </div>

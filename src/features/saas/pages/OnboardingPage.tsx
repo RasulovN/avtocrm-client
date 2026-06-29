@@ -7,6 +7,7 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
+import { Logo } from '../../../components/shared/Logo';
 import { companiesApi, companyCategoriesApi, geoApi } from '../services';
 import type { CompanyCategory, Country, Region, District } from '../types';
 import { YandexMapPicker } from '../components/YandexMapPicker';
@@ -83,7 +84,8 @@ export function OnboardingPage() {
   return (
     <main className="min-h-screen bg-muted/30 py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="text-right mb-3">
+        <div className="flex items-center justify-between mb-3">
+          <Logo className="h-10 w-10 rounded-xl" />
           <Button variant="ghost" size="sm" onClick={() => { logout(); navigate('/login'); }}>{t('auth.logout', 'Chiqish')}</Button>
         </div>
         <Card className="shadow-xl">

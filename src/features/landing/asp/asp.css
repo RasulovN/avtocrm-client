@@ -1,13 +1,14 @@
-/* AvtoSpareParts landing — design styles (ported from the reference HTML). */
-@import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
-
+/* AvtoSpareParts landing — design styles (ported from the reference HTML).
+   Fonts (Golos Text + Manrope + Inter) are loaded once via <link> in index.html
+   to avoid a render-blocking @import waterfall inside the lazy landing CSS chunk. */
 #asp-root *{box-sizing:border-box;margin:0;padding:0}
 #asp-root{
   --bg:#ffffff;--bg-soft:#f8fafc;--bg-soft2:#f1f5f9;--card:#ffffff;
-  --ink:#0f172a;--ink-2:#334155;--ink-3:#64748b;--ink-4:#94a3b8;
+  /* ink-3/ink-4/green/amber darkened to clear WCAG AA (4.5:1) on white & --bg-soft */
+  --ink:#0f172a;--ink-2:#334155;--ink-3:#475569;--ink-4:#5d6b7e;
   --line:#e7ebf1;--line-2:#cbd5e1;
   --primary:#1d4ed8;--primary-2:#2563eb;--primary-soft:#eef4ff;--primary-ink:#1e3a8a;
-  --accent:#0ea5e9;--green:#059669;--green-soft:#ecfdf5;--amber:#d97706;--red:#e11d48;
+  --accent:#0ea5e9;--green:#047857;--green-soft:#ecfdf5;--amber:#b45309;--red:#e11d48;
   --shadow-sm:0 1px 2px rgba(15,23,42,.05),0 1px 1px rgba(15,23,42,.03);
   --shadow:0 18px 40px -22px rgba(15,23,42,.28);
   --shadow-lg:0 40px 80px -28px rgba(15,23,42,.32);
@@ -18,7 +19,7 @@
 }
 #asp-root[data-theme="dark"]{
   --bg:#0a0f1d;--bg-soft:#0d1424;--bg-soft2:#111a2e;--card:#101a2e;
-  --ink:#f1f5f9;--ink-2:#cbd5e1;--ink-3:#94a3b8;--ink-4:#64748b;
+  --ink:#f1f5f9;--ink-2:#cbd5e1;--ink-3:#94a3b8;--ink-4:#7c899c;
   --line:#1e293b;--line-2:#334155;
   --primary:#3b82f6;--primary-2:#60a5fa;--primary-soft:rgba(59,130,246,.13);--primary-ink:#bfdbfe;
   --accent:#38bdf8;--green:#34d399;--green-soft:rgba(16,185,129,.14);--amber:#fbbf24;--red:#fb7185;
@@ -68,8 +69,48 @@
   #asp-root .asp-pay-track > [aria-hidden="true"]{display:none}
   #asp-root .asp-pay-group{flex-wrap:wrap;justify-content:center;padding-right:0}
 }
+/* Logotip — mavzuga qarab almashadi (light fon → logo-light, dark fon → logo-dark) */
+#asp-root .asp-logo-dark{display:none}
+#asp-root[data-theme="dark"] .asp-logo-light{display:none}
+#asp-root[data-theme="dark"] .asp-logo-dark{display:block}
 #asp-root .asp-scroll::-webkit-scrollbar{height:6px;width:6px}
 #asp-root .asp-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:6px}
+
+/* ---- Interaktiv elementlar — hamma yerda pointer kursor ---- */
+#asp-root a[href],#asp-root button,#asp-root select,#asp-root summary,
+#asp-root [data-asp-register],#asp-root [role="button"],
+#asp-root input[type="range"],#asp-root input[type="checkbox"],#asp-root input[type="radio"]{cursor:pointer}
+#asp-root button:disabled,#asp-root a[aria-disabled="true"]{cursor:not-allowed}
+
+/* ---- ROI sliderlar — custom thumb + fill, silliq hover/focus ---- */
+#asp-root input[type="range"]{
+  -webkit-appearance:none;appearance:none;width:100%;height:8px;
+  border-radius:999px;background:transparent;outline:none;touch-action:none;
+}
+#asp-root input[type="range"]::-webkit-slider-runnable-track{
+  height:8px;border-radius:999px;
+  background:linear-gradient(90deg,var(--primary) var(--fill,30%),var(--line-2) var(--fill,30%));
+}
+#asp-root input[type="range"]::-moz-range-track{height:8px;border-radius:999px;background:var(--line-2)}
+#asp-root input[type="range"]::-moz-range-progress{height:8px;border-radius:999px;background:var(--primary)}
+#asp-root input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;margin-top:-7px;
+  width:22px;height:22px;border-radius:50%;background:var(--primary);
+  border:3px solid var(--card);box-shadow:0 2px 8px -1px rgba(29,78,216,.5);
+  cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+#asp-root input[type="range"]::-moz-range-thumb{
+  width:22px;height:22px;border-radius:50%;background:var(--primary);
+  border:3px solid var(--card);box-shadow:0 2px 8px -1px rgba(29,78,216,.5);cursor:pointer}
+#asp-root input[type="range"]:hover::-webkit-slider-thumb{transform:scale(1.14)}
+#asp-root input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.06);box-shadow:0 0 0 7px rgba(29,78,216,.16)}
+#asp-root input[type="range"]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 7px rgba(29,78,216,.22)}
+#asp-root input[type="range"]:focus-visible::-moz-range-thumb{box-shadow:0 0 0 7px rgba(29,78,216,.22)}
+
+/* ROI CTA tugmasi — silliq hover ko'tarilish */
+#asp-root .asp-roi-cta{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+#asp-root .asp-roi-cta:hover{transform:translateY(-2px);box-shadow:0 14px 28px -12px rgba(0,0,0,.45)}
+#asp-root .asp-roi-cta:active{transform:translateY(0)}
+
 @media(max-width:860px){#asp-root .hide-mob{display:none!important}}
 @media(min-width:861px){#asp-root .only-mob{display:none!important}}
 

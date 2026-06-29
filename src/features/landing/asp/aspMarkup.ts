@@ -188,9 +188,9 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
 
 <header style="position:sticky;top:0;z-index:90;backdrop-filter:saturate(180%) blur(18px);background:var(--glass);border-bottom:1px solid var(--line)">
   <nav style="max-width:1240px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:28px">
-    <a href="#top" style="display:flex;align-items:center;gap:11px;font-family:'Manrope';font-weight:800;font-size:19px;color:var(--ink);letter-spacing:-.03em">
-      <span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),#0ea5e9);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -6px var(--primary)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 13l2-5a3 3 0 012.8-2h8.4A3 3 0 0119 8l2 5M5 13h14M5 13v4a1 1 0 001 1h1a1 1 0 001-1v-1m11 1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.5" r="1" fill="#fff"/><circle cx="16.5" cy="16.5" r="1" fill="#fff"/></svg></span>
-      Zumex
+    <a href="#top" aria-label="Zumex" style="display:flex;align-items:center">
+      <img class="asp-logo asp-logo-light" src="/images/logo-light.png" alt="Zumex" style="height:42px;width:auto;display:block">
+      <img class="asp-logo asp-logo-dark" src="/images/logo-dark.png" alt="Zumex" style="height:42px;width:auto;display:none">
     </a>
     <div class="hide-mob" style="display:flex;align-items:center;gap:26px;font-size:15px;font-weight:500;color:var(--ink-2)">
       ${navLink('features', t.nav.features)}${navLink('product', t.nav.product)}${navLink('industries', t.nav.industries)}${navLink('pricing', t.nav.pricing)}${navLink('stories', t.nav.stories)}${navLink('faq', t.nav.faq)}
@@ -463,7 +463,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
         <div style="height:1px;background:rgba(255,255,255,.25);margin:18px 0"></div>
         <div style="display:flex;justify-content:space-between;font-size:14px;gap:12px"><span style="opacity:.9">${t.roi.extra}</span><b id="roi-extra">—</b></div>
         <div style="display:flex;justify-content:space-between;font-size:14px;margin-top:8px;gap:12px"><span style="opacity:.9">${t.roi.payback}</span><b id="roi-payback">—</b></div>
-        <a href="#" data-asp-register style="margin-top:22px;background:#fff;color:var(--primary);text-align:center;padding:13px;border-radius:11px;font-weight:700">${t.roi.cta}</a>
+        <a href="#" data-asp-register class="asp-roi-cta" style="margin-top:22px;background:#fff;color:var(--primary);text-align:center;padding:13px;border-radius:11px;font-weight:700">${t.roi.cta}</a>
       </div>
     </div>
   </div>
@@ -576,7 +576,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
   <div style="max-width:1240px;margin:0 auto">
     <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.08)">
       <div>
-        <div style="display:flex;align-items:center;gap:11px;font-family:'Manrope';font-weight:800;font-size:19px;color:#fff"><span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),#0ea5e9);display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 13l2-5a3 3 0 012.8-2h8.4A3 3 0 0119 8l2 5M5 13h14M5 13v4a1 1 0 001 1h1a1 1 0 001-1v-1m11 1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Zumex</div>
+        <div style="display:flex;align-items:center"><img src="/images/logo-dark.png" alt="Zumex" style="height:46px;width:auto;display:block"></div>
         <p style="font-size:14px;margin-top:14px;max-width:300px;line-height:1.6">${t.footer.tagline}</p>
         ${socialLinks ? `<div style="display:flex;gap:10px;margin-top:18px">${socialLinks}</div>` : ''}
       </div>

@@ -1278,5 +1278,71 @@
     "endAt": "End",
     "activate": "Activate",
     "cancel": "Cancel"
+  },
+  "leads": {
+    "title": "Leads",
+    "subtitle": "Drag a card to change its status — the customer is emailed automatically",
+    "newBadge": "{{count}} new",
+    "board": "Board",
+    "list": "List",
+    "sourceFilter": "Filter by source",
+    "allSources": "All sources",
+    "refresh": "Refresh",
+    "newLead": "New lead",
+    "source": "Source",
+    "empty": "Empty",
+    "noLeads": "No leads",
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "closed": "Closed"
+    },
+    "th": {
+      "customer": "Customer",
+      "contact": "Contact",
+      "company": "Company",
+      "source": "Source",
+      "date": "Date",
+      "status": "Status",
+      "action": "Action"
+    },
+    "toast": {
+      "approved": "Approved — email sent to the customer",
+      "contacted": "Contacted — email sent to the customer",
+      "rejected": "Rejected — email sent to the customer",
+      "statusUpdated": "Status updated",
+      "loadError": "Failed to load leads",
+      "statusError": "Failed to change status",
+      "deleted": "Lead deleted",
+      "deleteError": "Failed to delete",
+      "required": "Name, phone and email are required",
+      "updated": "Lead updated",
+      "created": "Lead added",
+      "updateError": "Failed to update",
+      "createError": "Failed to add"
+    },
+    "modal": {
+      "editTitle": "Edit lead",
+      "createTitle": "Add new lead",
+      "name": "Name",
+      "namePh": "Customer name",
+      "phone": "Phone",
+      "email": "Email",
+      "company": "Company",
+      "companyPh": "Company name",
+      "stores": "Stores",
+      "storesPh": "e.g. 2–5 stores",
+      "source": "Source",
+      "status": "Status",
+      "note": "Note (internal)",
+      "notePh": "Note visible to admins only",
+      "add": "Add"
+    },
+    "confirm": {
+      "title": "Delete lead",
+      "description": "This lead will be permanently deleted. Continue?"
+    }
   }
 }

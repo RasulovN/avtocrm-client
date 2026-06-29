@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Car, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Card, CardContent, CardDescription, CardHeader } from '../../../components/ui/Card';
+import { Logo } from '../../../components/shared/Logo';
 import { saasAuth } from '../services';
 
 export function RegisterPage() {
@@ -47,11 +48,8 @@ export function RegisterPage() {
       <div className="relative z-10 w-full max-w-md mx-4 animate-fade-in-up">
         <Card className="shadow-xl border-border/40 backdrop-blur-sm bg-card/90">
           <CardHeader className="space-y-4 text-center pb-2">
-            <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
-              <Car className="w-8 h-8 text-primary-foreground" />
-            </div>
+            <Logo className="mx-auto h-20 w-20 rounded-2xl shadow-lg shadow-primary/10" />
             <div className="space-y-1">
-              <h1 className="text-2xl font-bold tracking-tight">Zumex</h1>
               <CardDescription className="text-base">{t('auth.register', "Ro'yxatdan o'tish")}</CardDescription>
             </div>
           </CardHeader>

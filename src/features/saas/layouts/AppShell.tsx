@@ -7,6 +7,7 @@ import {
 import { cn } from '../../../utils';
 import { useThemeStore, useAuthStore } from '../../../app/store';
 import { Button } from '../../../components/ui';
+import { Logo } from '../../../components/shared/Logo';
 import { NotificationBell } from '../../../components/shared/NotificationBell';
 import type { MenuEntry } from '../menu.config';
 
@@ -103,14 +104,14 @@ export function AppShell({ menu, brandTitle, brandSubtitle, gated, headerExtra, 
         <div className={cn('h-16 flex items-center border-b border-border/60 shrink-0', isCollapsed ? 'justify-center px-2' : 'px-5 justify-between')}>
           {!isCollapsed ? (
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-sm">A</div>
+              <Logo className="h-9 w-9 shrink-0 rounded-xl" />
               <div>
                 <h1 className="text-base font-bold text-foreground tracking-tight truncate max-w-[150px]">{brandTitle}</h1>
                 <p className="text-[11px] text-muted-foreground leading-tight">{brandSubtitle}</p>
               </div>
             </div>
           ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-sm">A</div>
+            <Logo className="h-9 w-9 shrink-0 rounded-xl" />
           )}
           <button onClick={() => setIsCollapsed(!isCollapsed)} className={cn('p-1.5 rounded-lg hover:bg-muted hidden lg:flex items-center justify-center', isCollapsed && 'absolute -right-3 top-5 z-50 bg-card border shadow-sm')}>
             <ChevronLeft className={cn('h-3.5 w-3.5 text-muted-foreground transition-transform', isCollapsed && 'rotate-180')} />

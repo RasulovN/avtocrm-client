@@ -85,7 +85,7 @@ export const COMPANY_MENU: MenuEntry[] = [
 export const PLATFORM_MENU: MenuEntry[] = [
   { label: 'admin.dashboardNav', fallback: 'Bosh sahifa', path: '/admin', icon: LayoutDashboard, permission: 'platform.dashboard.view' },
   { label: 'admin.companies', fallback: 'Kompaniyalar', path: '/admin/companies', icon: Building2, permission: 'platform.companies.view' },
-  { label: 'admin.leads', fallback: 'Demo zayavkalar', path: '/admin/leads', icon: Inbox, permission: 'platform.leads.view' },
+  { label: 'admin.leads', fallback: 'Ledlar', path: '/admin/leads', icon: Inbox, permission: 'platform.leads.view' },
 
   // Ma'lumotnomalar — submenu (sohalar + manzillar)
   {

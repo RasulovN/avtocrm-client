@@ -1278,5 +1278,71 @@
     "endAt": "Tugash",
     "activate": "Faollashtirish",
     "cancel": "Bekor qilish"
+  },
+  "leads": {
+    "title": "Ledlar",
+    "subtitle": "Kartani sudrab statusni o'zgartiring — mijozga avtomatik email boradi",
+    "newBadge": "{{count}} yangi",
+    "board": "Doska",
+    "list": "Ro'yxat",
+    "sourceFilter": "Manba bo'yicha filtr",
+    "allSources": "Barcha manbalar",
+    "refresh": "Yangilash",
+    "newLead": "Yangi lead",
+    "source": "Manba",
+    "empty": "Bo'sh",
+    "noLeads": "Zayavkalar yo'q",
+    "status": {
+      "new": "Yangi",
+      "contacted": "Bog'lanildi",
+      "approved": "Tasdiqlangan",
+      "rejected": "Rad etilgan",
+      "closed": "Yopilgan"
+    },
+    "th": {
+      "customer": "Mijoz",
+      "contact": "Aloqa",
+      "company": "Kompaniya",
+      "source": "Manba",
+      "date": "Sana",
+      "status": "Status",
+      "action": "Amal"
+    },
+    "toast": {
+      "approved": "Tasdiqlandi — mijozga email yuborildi",
+      "contacted": "Bog'lanildi — mijozga email yuborildi",
+      "rejected": "Rad etildi — mijozga email yuborildi",
+      "statusUpdated": "Status yangilandi",
+      "loadError": "Zayavkalarni yuklab bo'lmadi",
+      "statusError": "Statusni o'zgartirib bo'lmadi",
+      "deleted": "Zayavka o'chirildi",
+      "deleteError": "O'chirib bo'lmadi",
+      "required": "Ism, telefon va email majburiy",
+      "updated": "Lead yangilandi",
+      "created": "Lead qo'shildi",
+      "updateError": "Yangilab bo'lmadi",
+      "createError": "Qo'shib bo'lmadi"
+    },
+    "modal": {
+      "editTitle": "Leadni tahrirlash",
+      "createTitle": "Yangi lead qo'shish",
+      "name": "Ism",
+      "namePh": "Mijoz ismi",
+      "phone": "Telefon",
+      "email": "Email",
+      "company": "Kompaniya",
+      "companyPh": "Kompaniya nomi",
+      "stores": "Do'konlar",
+      "storesPh": "masalan: 2–5 do'kon",
+      "source": "Manba",
+      "status": "Status",
+      "note": "Izoh (ichki)",
+      "notePh": "Faqat adminlar ko'radigan izoh",
+      "add": "Qo'shish"
+    },
+    "confirm": {
+      "title": "Zayavkani o'chirish",
+      "description": "Bu zayavka butunlay o'chiriladi. Davom etasizmi?"
+    }
   }
 }
