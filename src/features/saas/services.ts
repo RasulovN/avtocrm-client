@@ -150,6 +150,40 @@ export const subscriptionsApi = {
     apiClient.patch(`/subscriptions/${id}/`, { action, days }).then((r) => r.data),
 };
 
+// ===================== PAYME — Subscribe API (karta orqali to'lov) =====================
+export interface CardCreateResponse {
+  token: string;
+  need_verify: boolean;
+  number: string;
+  expire: string;
+  phone?: string;
+  wait?: number;
+}
+export const paymentsApi = {
+  config: () =>
+    apiClient
+      .get<{ merchant_id: string; test_mode: boolean; account_field: string }>('/payments/config')
+      .then((r) => r.data),
+  // 1) Karta tokenizatsiyasi (+ OTP yuborish, agar tasdiq kerak bo'lsa)
+  cardCreate: (number: string, expire: string, save = false) =>
+    apiClient
+      .post<CardCreateResponse>('/payments/card/create', { number, expire, save })
+      .then((r) => r.data),
+  // 2) OTP tasdiqlash -> tasdiqlangan token
+  cardVerify: (token: string, code: string) =>
+    apiClient
+      .post<{ token: string; verify: boolean }>('/payments/card/verify', { token, code })
+      .then((r) => r.data),
+  // 3) To'lash -> obunani faollashtirish
+  pay: (subscriptionId: number, token: string) =>
+    apiClient
+      .post<{ success: boolean; subscription: Subscription | null }>('/payments/pay', {
+        subscription_id: subscriptionId,
+        token,
+      })
+      .then((r) => r.data),
+};
+
 // ===================== LEADS (demo so'rovlar) =====================
 export interface Lead {
   id: number;

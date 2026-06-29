@@ -7,6 +7,7 @@ import { Button } from '../../../components/ui/Button';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { plansApi, subscriptionsApi } from '../services';
+import { PaymeCardModal } from '../components/PaymeCardModal';
 import type { Plan, Subscription } from '../types';
 import { useAuthStore } from '../../../app/store';
 import { formatDate } from '../../../utils/index';
@@ -53,6 +54,18 @@ export function SubscriptionPage() {
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState<number | null>(null);
   const [history, setHistory] = useState<PaymentRow[]>([]);
+  const [payModal, setPayModal] = useState<{ subscriptionId: number; planName: string; amountLabel: string } | null>(null);
+
+  const refreshState = () => {
+    void checkAuth();
+    Promise.all([subscriptionsApi.active(), subscriptionsApi.me()])
+      .then(([act, mine]) => {
+        setActive(act.active);
+        setDaysLeft(act.days_left);
+        setHistory((mine.history ?? []) as unknown as PaymentRow[]);
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
     Promise.all([plansApi.list(), subscriptionsApi.active(), subscriptionsApi.me()])
@@ -70,10 +83,7 @@ export function SubscriptionPage() {
     setSubscribing(planId);
     try {
       const res = await subscriptionsApi.subscribe(planId);
-      if (res.checkout_url) {
-        // PULLIK tarif → Payme checkout sahifasiga yo'naltirish
-        window.location.href = res.checkout_url;
-      } else {
+      if (res.free || !res.checkout_url) {
         // BEPUL tarif → so'rov adminga yuborildi, tasdiqlanishini kutadi
         void checkAuth();
         toast.success(
@@ -81,10 +91,17 @@ export function SubscriptionPage() {
           t('subscription.freeRequested', "Bepul tarif so'rovi yuborildi. Administrator tasdiqlashini kuting."),
           { duration: 5000 },
         );
-        // Joriy obuna holatini yangilash
         subscriptionsApi.active().then((act) => { setActive(act.active); setDaysLeft(act.days_left); }).catch(() => {});
-        setSubscribing(null);
+      } else {
+        // PULLIK tarif → o'z saytimizdagi karta to'lov oynasi (Payme Subscribe API)
+        const plan = plans.find((p) => p.id === planId);
+        setPayModal({
+          subscriptionId: res.subscription.id,
+          planName: plan?.name ?? res.subscription.plan?.name ?? '',
+          amountLabel: formatPrice(plan?.price ?? res.subscription.amount, t),
+        });
       }
+      setSubscribing(null);
     } catch {
       toast.error(t('common.error', 'Xatolik yuz berdi'));
       setSubscribing(null);
@@ -224,6 +241,17 @@ export function SubscriptionPage() {
           )}
         </CardContent>
       </Card>
+
+      {payModal && (
+        <PaymeCardModal
+          open
+          subscriptionId={payModal.subscriptionId}
+          planName={payModal.planName}
+          amountLabel={payModal.amountLabel}
+          onClose={() => setPayModal(null)}
+          onSuccess={refreshState}
+        />
+      )}
     </div>
   );
 }
