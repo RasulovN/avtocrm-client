@@ -39,6 +39,7 @@ const AuditLogsPage = lazy(() => import('./features/saas/pages/AuditLogsPage').t
 const LandingHomePage = lazy(() => import('./features/landing/LandingHomePage').then((m) => ({ default: m.LandingHomePage })));
 const LandingFeaturesPage = lazy(() => import('./features/landing/LandingFeaturesPage').then((m) => ({ default: m.LandingFeaturesPage })));
 const LandingPricingPage = lazy(() => import('./features/landing/LandingPricingPage').then((m) => ({ default: m.LandingPricingPage })));
+const LandingLegalPage = lazy(() => import('./features/landing/LandingLegalPage').then((m) => ({ default: m.LandingLegalPage })));
 
 // Ildiz: autentifikatsiya bo'lsa ilovaga yo'naltiradi, aks holda landing'ni ko'rsatadi.
 function PublicHome() {
@@ -162,6 +163,14 @@ function App() {
           {/* Ommaviy landing sahifalari (autentifikatsiyasiz ham ochiq) */}
           <Route path="/:lang/features" element={<LandingFeaturesPage />} />
           <Route path="/:lang/pricing" element={<LandingPricingPage />} />
+
+          {/* Huquqiy sahifalar — to'g'ridan-to'g'ri ochiladi (Paddle to'lov tekshiruvi uchun) */}
+          <Route path="/terms" element={<LandingLegalPage which="terms" />} />
+          <Route path="/privacy" element={<LandingLegalPage which="privacy" />} />
+          <Route path="/refunds" element={<LandingLegalPage which="refund" />} />
+          <Route path="/:lang/terms" element={<LandingLegalPage which="terms" />} />
+          <Route path="/:lang/privacy" element={<LandingLegalPage which="privacy" />} />
+          <Route path="/:lang/refunds" element={<LandingLegalPage which="refund" />} />
 
           {/* Onboarding (auth, no company yet) */}
           <Route path="/:lang/onboarding" element={<RequireAuth><OnboardingPage /></RequireAuth>} />

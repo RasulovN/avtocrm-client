@@ -6,7 +6,7 @@ import type { LandingLang } from '../types'
 export interface LegalSection { h: string; p: string[] }
 export interface LegalDoc { title: string; updated: string; intro: string; sections: LegalSection[] }
 export interface CookieText { title: string; text: string; accept: string; reject: string; more: string }
-export interface LegalDict { closeLabel: string; cookie: CookieText; privacy: LegalDoc; terms: LegalDoc }
+export interface LegalDict { closeLabel: string; cookie: CookieText; privacy: LegalDoc; terms: LegalDoc; refund: LegalDoc }
 
 const RU: LegalDict = {
   closeLabel: 'Закрыть',
@@ -16,6 +16,40 @@ const RU: LegalDict = {
     accept: 'Принять все',
     reject: 'Только необходимые',
     more: 'Подробнее',
+  },
+  refund: {
+    title: 'Политика возврата средств',
+    updated: 'Последнее обновление: 1 января 2026 г.',
+    intro:
+      'Настоящая Политика возврата средств описывает условия отмены подписки и возврата платежей за использование сервиса Zumex. Совершая оплату, вы соглашаетесь с условиями данной Политики.',
+    sections: [
+      { h: '1. Общие положения', p: [
+        'Zumex предоставляется по модели подписки (SaaS). Оплата производится за выбранный период доступа к сервису.',
+        'Платежи обрабатываются через провайдера Paddle и поддерживаемые платёжные системы.',
+      ] },
+      { h: '2. Бесплатный пробный период', p: [
+        'Перед оплатой вы можете воспользоваться бесплатным пробным периодом и оценить функционал сервиса.',
+        'В течение пробного периода плата не взимается, поэтому возврат не требуется.',
+      ] },
+      { h: '3. Возврат за подписку', p: [
+        'Запрос на возврат за текущий оплаченный период может быть рассмотрен в течение 14 дней с момента оплаты, если сервис фактически не использовался в значительном объёме.',
+        'Возврат за прошедшие (использованные) периоды подписки, как правило, не производится.',
+        'В случае технической ошибки или двойного списания средства возвращаются в полном объёме.',
+      ] },
+      { h: '4. Как запросить возврат', p: [
+        'Для запроса возврата свяжитесь с нами через контактную форму на сайте или по электронной почте, указав данные платежа (дата, сумма, email аккаунта).',
+        'Мы рассмотрим обращение и сообщим о решении в разумный срок.',
+      ] },
+      { h: '5. Сроки обработки', p: [
+        'После одобрения возврата средства возвращаются тем же способом оплаты в течение 5–10 рабочих дней (срок зависит от банка и платёжной системы).',
+      ] },
+      { h: '6. Отмена подписки', p: [
+        'Вы можете отменить подписку в любой момент. После отмены доступ сохраняется до конца оплаченного периода, далее продление не происходит.',
+      ] },
+      { h: '7. Контакты', p: [
+        'По вопросам оплаты и возврата обращайтесь через раздел «Контакты» на сайте.',
+      ] },
+    ],
   },
   privacy: {
     title: 'Политика конфиденциальности',
@@ -111,6 +145,40 @@ const UZ: LegalDict = {
     reject: 'Faqat zarurlari',
     more: 'Batafsil',
   },
+  refund: {
+    title: 'Pulni qaytarish siyosati',
+    updated: 'Oxirgi yangilanish: 2026-yil 1-yanvar',
+    intro:
+      'Ushbu Pulni qaytarish siyosati Zumex xizmatidan foydalanish uchun obunani bekor qilish va to‘lovlarni qaytarish shartlarini tavsiflaydi. To‘lovni amalga oshirish orqali siz ushbu siyosat shartlariga rozilik bildirasiz.',
+    sections: [
+      { h: '1. Umumiy qoidalar', p: [
+        'Zumex obuna (SaaS) modeli asosida taqdim etiladi. To‘lov xizmatga kirishning tanlangan davri uchun amalga oshiriladi.',
+        'To‘lovlar Paddle provayderi va qo‘llab-quvvatlanadigan to‘lov tizimlari orqali qayta ishlanadi.',
+      ] },
+      { h: '2. Bepul sinov muddati', p: [
+        'To‘lovdan oldin siz bepul sinov muddatidan foydalanib, xizmat imkoniyatlarini baholashingiz mumkin.',
+        'Sinov muddatida to‘lov olinmaydi, shuning uchun qaytarish talab etilmaydi.',
+      ] },
+      { h: '3. Obuna uchun qaytarish', p: [
+        'Joriy to‘langan davr uchun pulni qaytarish so‘rovi, agar xizmatdan sezilarli darajada foydalanilmagan bo‘lsa, to‘lovdan keyin 14 kun ichida ko‘rib chiqilishi mumkin.',
+        'O‘tib ketgan (foydalanilgan) obuna davrlari uchun pul, qoida tariqasida, qaytarilmaydi.',
+        'Texnik xatolik yoki ikki marta yechib olinganda mablag‘ to‘liq qaytariladi.',
+      ] },
+      { h: '4. Qaytarishni qanday so‘rash mumkin', p: [
+        'Pulni qaytarish uchun saytdagi aloqa shakli yoki elektron pochta orqali biz bilan bog‘laning va to‘lov ma’lumotlarini (sana, summa, akkaunt email) ko‘rsating.',
+        'Murojaatni ko‘rib chiqib, qaror haqida mantiqiy muddatda xabar beramiz.',
+      ] },
+      { h: '5. Qayta ishlash muddatlari', p: [
+        'Qaytarish tasdiqlangach, mablag‘ xuddi shu to‘lov usuli orqali 5–10 ish kuni ichida qaytariladi (muddat bank va to‘lov tizimiga bog‘liq).',
+      ] },
+      { h: '6. Obunani bekor qilish', p: [
+        'Siz obunani istalgan vaqtda bekor qilishingiz mumkin. Bekor qilingach, kirish to‘langan davr oxirigacha saqlanadi, keyin avtomatik uzaytirilmaydi.',
+      ] },
+      { h: '7. Aloqa', p: [
+        'To‘lov va qaytarish bo‘yicha savollar uchun saytdagi «Kontaktlar» bo‘limi orqali murojaat qiling.',
+      ] },
+    ],
+  },
   privacy: {
     title: 'Maxfiylik siyosati',
     updated: 'Oxirgi yangilanish: 2026-yil 1-yanvar',
@@ -204,6 +272,40 @@ const EN: LegalDict = {
     accept: 'Accept all',
     reject: 'Necessary only',
     more: 'Learn more',
+  },
+  refund: {
+    title: 'Refund Policy',
+    updated: 'Last updated: January 1, 2026',
+    intro:
+      'This Refund Policy describes the terms for cancelling a subscription and refunding payments for the use of the Zumex service. By making a payment, you agree to the terms of this Policy.',
+    sections: [
+      { h: '1. General provisions', p: [
+        'Zumex is provided on a subscription (SaaS) basis. Payment is made for the selected period of access to the service.',
+        'Payments are processed through the Paddle provider and supported payment systems.',
+      ] },
+      { h: '2. Free trial period', p: [
+        'Before paying, you can use a free trial period to evaluate the service.',
+        'No charge is made during the trial period, so no refund is required.',
+      ] },
+      { h: '3. Subscription refunds', p: [
+        'A refund request for the current paid period may be considered within 14 days of payment, provided the service has not been used to a significant extent.',
+        'Refunds for past (used) subscription periods are generally not provided.',
+        'In the event of a technical error or double charge, funds are refunded in full.',
+      ] },
+      { h: '4. How to request a refund', p: [
+        'To request a refund, contact us via the contact form on the website or by email, providing your payment details (date, amount, account email).',
+        'We will review your request and inform you of the decision within a reasonable time.',
+      ] },
+      { h: '5. Processing time', p: [
+        'Once a refund is approved, funds are returned via the same payment method within 5–10 business days (the exact time depends on your bank and payment system).',
+      ] },
+      { h: '6. Cancelling a subscription', p: [
+        'You may cancel your subscription at any time. After cancellation, access remains until the end of the paid period and is not renewed afterwards.',
+      ] },
+      { h: '7. Contact', p: [
+        'For payment and refund matters, please reach out via the “Contacts” section on the website.',
+      ] },
+    ],
   },
   privacy: {
     title: 'Privacy Policy',

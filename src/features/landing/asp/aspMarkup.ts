@@ -586,7 +586,7 @@ export function buildAspMarkup(t: AspDict, plansHtml: string, cfg: LandingCfg, l
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;padding-top:24px;font-size:13px;flex-wrap:wrap;gap:12px">
       <span>${t.footer.rights}</span>
-      <div style="display:flex;gap:22px"><a href="#" data-legal="privacy" style="cursor:pointer">${t.footer.privacy}</a><a href="#" data-legal="terms" style="cursor:pointer">${t.footer.terms}</a></div>
+      <div style="display:flex;gap:22px;flex-wrap:wrap"><a href="/privacy">${t.footer.privacy}</a><a href="/terms">${t.footer.terms}</a><a href="/refunds">${t.footer.refund}</a></div>
     </div>
   </div>
 </footer>
