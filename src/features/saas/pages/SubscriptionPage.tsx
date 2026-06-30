@@ -297,6 +297,7 @@ export function SubscriptionPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs text-muted-foreground border-b border-border/60">
+                      <th className="py-2 pr-4 font-medium">{t('subscription.orderId', 'Order ID')}</th>
                       <th className="py-2 pr-4 font-medium">{t('subscription.plan', 'Tarif')}</th>
                       <th className="py-2 pr-4 font-medium">{t('subscription.amount', 'Summa')}</th>
                       <th className="py-2 pr-4 font-medium">{t('subscription.period', 'Muddat')}</th>
@@ -310,6 +311,7 @@ export function SubscriptionPage() {
                       const sb = statusBadge(row.status);
                       return (
                         <tr key={row.id} className="border-b border-border/40 last:border-0">
+                          <td className="py-2.5 pr-4 font-mono text-xs text-muted-foreground">#{row.id}</td>
                           <td className="py-2.5 pr-4 font-medium">
                             {row.plan_name ?? '-'}
                             {row.period_months && row.period_months > 1 ? (

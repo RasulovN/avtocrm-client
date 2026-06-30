@@ -174,6 +174,7 @@ export function SubscriptionsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>{t('sub.orderId', 'Order ID')}</TableHead>
                   <TableHead>{t('sub.company', 'Kompaniya')}</TableHead>
                   <TableHead>{t('sub.plan', 'Tarif')}</TableHead>
                   <TableHead>{t('sub.statusCol', 'Holat')}</TableHead>
@@ -186,19 +187,20 @@ export function SubscriptionsPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center">
+                    <TableCell colSpan={8} className="h-32 text-center">
                       <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
+                    <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
                       {t('common.noData', 'Ma\'lumot yo\'q')}
                     </TableCell>
                   </TableRow>
                 ) : (
                   items.map((s) => (
                     <TableRow key={s.id}>
+                      <TableCell className="font-mono text-xs text-muted-foreground">#{s.id}</TableCell>
                       <TableCell className="font-medium">{s.company?.name ?? '-'}</TableCell>
                       <TableCell>{s.plan?.name ?? '-'}</TableCell>
                       <TableCell>{statusBadge(s.status, t)}</TableCell>
