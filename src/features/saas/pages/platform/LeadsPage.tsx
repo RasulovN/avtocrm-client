@@ -12,6 +12,7 @@ import { Badge } from '../../../../components/ui/Badge';
 import { ConfirmDialog } from '../../../../components/shared/ConfirmDialog';
 import { leadsApi, type Lead, type LeadAdminPayload } from '../../services';
 import { SourceBadge, SourceIcon, SELECTABLE_SOURCES } from '../../leadSources';
+import { getSocket } from '../../../../services/socket';
 
 // Ustunlar (pipeline tartibi). dot — ustun rangi, badge — List ko'rinishi uchun.
 // label — tarjima bo'lmaganida ishlatiladigan zaxira (fallback) matn.
@@ -72,6 +73,20 @@ export function LeadsPage() {
   }, [t]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Jonli yangilanish: yangi zayavka kelganda ro'yxatni avtomatik qayta yuklaymiz.
+  useEffect(() => {
+    const socket = getSocket();
+    const onNewLead = (lead: { name?: string }) => {
+      toast.success(
+        t('leads.toast.newLead', 'Yangi zayavka: {{name}}', { name: lead?.name ?? '' }),
+        { icon: '📩' },
+      );
+      load();
+    };
+    socket.on('lead:new', onNewLead);
+    return () => { socket.off('lead:new', onNewLead); };
+  }, [load, t]);
 
   // Statusni o'zgartirish (drag-drop yoki select). Optimistik + xatoda qaytarish.
   const moveLead = async (id: number, status: string) => {

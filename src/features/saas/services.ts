@@ -138,10 +138,17 @@ export const plansApi = {
 
 // ===================== SUBSCRIPTIONS =====================
 export const subscriptionsApi = {
-  subscribe: (planId: number) =>
-    apiClient.post<SubscribeResponse>('/subscriptions/', { plan_id: planId }).then((r) => r.data),
+  // months: 1 | 3 | 6 | 12 (oldindan to'lash). Bepul tarif uchun e'tiborga olinmaydi.
+  subscribe: (planId: number, months = 1) =>
+    apiClient.post<SubscribeResponse>('/subscriptions/', { plan_id: planId, months }).then((r) => r.data),
   me: () => apiClient.get<{ active: Subscription | null; history: Subscription[] }>('/subscriptions/me/').then((r) => r.data),
   active: () => apiClient.get<{ active: Subscription | null; days_left: number | null }>('/subscriptions/me/active/').then((r) => r.data),
+  // To'lovlar/obuna tarixi — pagination bilan
+  history: (params?: { page?: number; limit?: number }) =>
+    apiClient.get<Paginated<Subscription>>('/subscriptions/me/history/', { params }).then((r) => r.data),
+  // Kompaniya admini: o'z kutilayotgan (pending) to'lovini bekor qiladi
+  cancelMine: (id: number) =>
+    apiClient.post<Subscription>(`/subscriptions/me/${id}/cancel/`).then((r) => r.data),
 
   // super admin
   list: (params?: Record<string, unknown>) =>
@@ -202,8 +209,9 @@ export interface Lead {
 }
 export interface LeadCreatePayload {
   name: string;
-  phone: string;
-  email: string;
+  // Email yoki telefon — kamida bittasi (frontend validatsiya qiladi).
+  phone?: string;
+  email?: string;
   company?: string;
   stores_range?: string;
   message?: string;

@@ -131,13 +131,16 @@ export function AspLanding() {
       const status = form.querySelector<HTMLElement>('[data-lead-status]')
       const setStatus = (msg: string, color: string) => { if (status) { status.textContent = msg; status.style.color = color } }
       const name = val('name'), phone = val('phone'), email = val('email')
-      if (!name || !phone || !email) { setStatus(t.contact.error, 'var(--red)'); return }
+      // Email yoki telefon — ikkalasidan kamida bittasi majburiy.
+      if (!name || (!phone && !email)) { setStatus(t.contact.error, 'var(--red)'); return }
       const button = btn as HTMLButtonElement
       button.disabled = true
       setStatus(t.contact.sending, 'var(--ink-3)')
       try {
         await leadsApi.create({
-          name, phone, email,
+          name,
+          phone: phone || undefined,
+          email: email || undefined,
           company: val('company') || undefined,
           stores_range: val('stores_range') || undefined,
           source: val('source') || undefined, // tanlangan kanal; bo'sh bo'lsa backend "sayt" qiladi

@@ -33,6 +33,7 @@ const SiteSettingsPage = lazy(() => import('./features/saas/pages/platform/SiteS
 const PlatformRolesPage = lazy(() => import('./features/saas/pages/platform/PlatformRolesPage').then((m) => ({ default: m.PlatformRolesPage })));
 const PlatformUsersPage = lazy(() => import('./features/saas/pages/platform/PlatformUsersPage').then((m) => ({ default: m.PlatformUsersPage })));
 const PlatformNotificationsPage = lazy(() => import('./features/saas/pages/platform/NotificationsPage').then((m) => ({ default: m.NotificationsPage })));
+const SupportPage = lazy(() => import('./features/saas/pages/platform/SupportPage').then((m) => ({ default: m.SupportPage })));
 const AuditLogsPage = lazy(() => import('./features/saas/pages/AuditLogsPage').then((m) => ({ default: m.AuditLogsPage })));
 
 // ───── Landing (ommaviy marketing sahifa) ─────
@@ -187,6 +188,7 @@ function App() {
           <Route path="/:lang/admin/roles" element={platformRoute(<PlatformRolesPage />)} />
           <Route path="/:lang/admin/users" element={platformRoute(<PlatformUsersPage />)} />
           <Route path="/:lang/admin/notifications" element={platformRoute(<PlatformNotificationsPage />)} />
+          <Route path="/:lang/admin/support" element={platformRoute(<SupportPage />)} />
           <Route path="/:lang/admin/logs" element={platformRoute(<AuditLogsPage />)} />
 
           {/* ───── Subscription (always available) ───── */}

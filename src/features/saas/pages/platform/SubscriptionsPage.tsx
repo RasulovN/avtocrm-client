@@ -63,7 +63,10 @@ export function SubscriptionsPage() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<number | null>(null);
+
+  // Tasdiqlash dialogi (faollashtirish / bekor qilish)
+  const [confirmTarget, setConfirmTarget] = useState<{ sub: Subscription; action: 'activate' | 'cancel' } | null>(null);
+  const [confirming, setConfirming] = useState(false);
 
   // Uzaytirish (extend) dialogi
   const [extendTarget, setExtendTarget] = useState<Subscription | null>(null);
@@ -88,20 +91,24 @@ export function SubscriptionsPage() {
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
 
-  const manage = async (s: Subscription, action: 'activate' | 'cancel') => {
-    setBusy(s.id);
+  // Tasdiqlash dialogidan keyin faollashtirish/bekor qilishni bajaradi.
+  const runConfirm = async () => {
+    if (!confirmTarget) return;
+    const { sub, action } = confirmTarget;
+    setConfirming(true);
     try {
-      await subscriptionsApi.manage(s.id, action);
+      await subscriptionsApi.manage(sub.id, action);
       toast.success(
         action === 'activate'
           ? t('sub.activated', 'Obuna faollashtirildi')
           : t('sub.cancelled', 'Obuna bekor qilindi'),
       );
+      setConfirmTarget(null);
       load();
     } catch (err) {
       toast.error(apiError(err, t('common.error', 'Xatolik yuz berdi')));
     } finally {
-      setBusy(null);
+      setConfirming(false);
     }
   };
 
@@ -204,15 +211,12 @@ export function SubscriptionsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              disabled={busy === s.id}
-                              onClick={() => manage(s, 'activate')}
+                              onClick={() => setConfirmTarget({ sub: s, action: 'activate' })}
                               title={s.status === 'pending'
                                 ? t('sub.approve', 'Tasdiqlash')
                                 : t('sub.activate', 'Faollashtirish')}
                             >
-                              {busy === s.id ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : s.status === 'pending' ? (
+                              {s.status === 'pending' ? (
                                 <Check className="h-4 w-4 text-green-600" />
                               ) : (
                                 <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -223,7 +227,6 @@ export function SubscriptionsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              disabled={busy === s.id}
                               onClick={() => openExtend(s)}
                               title={t('sub.extend', 'Uzaytirish')}
                             >
@@ -234,11 +237,10 @@ export function SubscriptionsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              disabled={busy === s.id}
-                              onClick={() => manage(s, 'cancel')}
+                              onClick={() => setConfirmTarget({ sub: s, action: 'cancel' })}
                               title={t('sub.cancel', 'Bekor qilish')}
                             >
-                              {busy === s.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Ban className="h-4 w-4 text-red-500" />}
+                              <Ban className="h-4 w-4 text-red-500" />
                             </Button>
                           )}
                         </div>
@@ -268,6 +270,51 @@ export function SubscriptionsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Faollashtirish / bekor qilish tasdig'i */}
+      <Dialog open={!!confirmTarget} onOpenChange={(o) => !o && !confirming && setConfirmTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {confirmTarget?.action === 'activate'
+                ? (confirmTarget.sub.status === 'pending'
+                    ? t('sub.confirmApproveTitle', 'Obunani tasdiqlash')
+                    : t('sub.confirmActivateTitle', 'Obunani faollashtirish'))
+                : t('sub.confirmCancelTitle', 'Obunani bekor qilish')}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmTarget && (
+                <>
+                  <span className="font-medium text-foreground">{confirmTarget.sub.company?.name ?? '-'}</span>
+                  {' — '}
+                  {confirmTarget.sub.plan?.name ?? '-'}
+                  {'. '}
+                  {confirmTarget.action === 'activate'
+                    ? t('sub.confirmActivateDesc', 'Ushbu obunani faollashtirmoqchimisiz? Kompaniya tizimdan to\'liq foydalana boshlaydi.')
+                    : t('sub.confirmCancelDesc', 'Ushbu obunani bekor qilmoqchimisiz? Bu amalni qaytarib bo\'lmaydi.')}
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmTarget(null)} disabled={confirming}>
+              {t('common.cancel', 'Bekor qilish')}
+            </Button>
+            <Button
+              variant={confirmTarget?.action === 'cancel' ? 'destructive' : 'default'}
+              onClick={runConfirm}
+              disabled={confirming}
+            >
+              {confirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {confirmTarget?.action === 'activate'
+                ? (confirmTarget.sub.status === 'pending'
+                    ? t('sub.approve', 'Tasdiqlash')
+                    : t('sub.activate', 'Faollashtirish'))
+                : t('sub.cancel', 'Bekor qilish')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!extendTarget} onOpenChange={(o) => !o && setExtendTarget(null)}>
         <DialogContent>

@@ -111,7 +111,7 @@ export interface Company {
   country: { id: number; name: string } | null;
   region: { id: number; name: string } | null;
   district: { id: number; name: string } | null;
-  owner?: { id: number; full_name: string | null; phone_number: string | null };
+  owner?: { id: number; full_name: string | null; phone_number: string | null; email?: string | null };
   users_count?: number;
   subscription_active?: boolean;
   contact?: import('./contact.types').ContactInfo;
@@ -143,10 +143,13 @@ export interface Subscription {
   id: number;
   status: string;
   amount: string;
+  period_months?: number;
   start_at: string | null;
   end_at: string | null;
   plan: { id: number; name: string; duration_days: number } | null;
   company?: { id: number; name: string };
+  plan_name?: string | null;
+  plan_duration_days?: number | null;
   created_at?: string;
 }
 export interface SubscribeResponse {
