@@ -105,6 +105,13 @@ export function generateBarcodeDataUrl(value: string, options: any = {}): string
  * Generates a safe barcode print HTML by escaping the barcode value for both
  * HTML display and JavaScript string contexts
  */
+// ══════════════════════════════════════════════════════════════
+//  BARCODE (SHTRIX-KOD) YORLIG'I PRINTER FORMATI — INFO
+//  ──────────────────────────────────────────────────────────────
+//    Width :  224 px
+//    Height:  128 px
+//  Bu o'lchamlar barcode printeri yorlig'iga mos (@page + img shu formatda).
+// ══════════════════════════════════════════════════════════════
 export function generateBarcodePrintHtml(
   barcodeValue: string,
   title: string = 'Print Barcode'
@@ -116,6 +123,7 @@ export function generateBarcodePrintHtml(
   <head>
     <title>${escapeHtml(title)}</title>
     <style>
+      /* Barcode yorlig'i formati: 224px × 128px */
       @page {
         size: 224px 128px;
         margin: 0;
@@ -156,6 +164,9 @@ export function generateBarcodePrintHtml(
 
 /**
  * Generates safe HTML for printing multiple barcodes
+ *
+ * BARCODE YORLIG'I PRINTER FORMATI — INFO (faqat ma'lumot):
+ *   Width: 224 px, Height: 128 px  (printerni sozlashda shu formatni tanlang).
  */
 export function generateMultipleBarcodesPrintHtml(barcodeValues: Array<{ value: string; productName?: string }>): string {
   const barcodeCards = barcodeValues

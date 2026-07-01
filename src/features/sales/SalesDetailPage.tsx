@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, User, ShoppingCart, CreditCard, Calendar, Tag, DollarSign, Wallet, Printer, Eye, Package, Barcode, MapPin, Image as ImageIcon, Loader2, Undo2 } from 'lucide-react';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { PrinterFormatInfo } from '../../components/shared/PrinterFormatInfo';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { salesService } from '../../services/salesService';
@@ -209,27 +210,37 @@ export function SalesDetailPage() {
 
   return (
     <div className="space-y-6">
+      {/*
+        ══════════════════════════════════════════════════════════════
+         CHEK (SOTUV CHEKI) PRINTER FORMATI — INFO (faqat ma'lumot)
+         ──────────────────────────────────────────────────────────────
+         Printerni sozlashda ishlatiladigan chek yorlig'i o'lchamlari:
+           Width :  2.15 inch  (≈ 54.6 mm)
+           Height:  3.15 inch  (≈ 80 mm)   — muqobil: 2.95 inch (≈ 75 mm)
+         DIQQAT: bu faqat ma'lumot. Chek chiqishi (@page/CSS) o'zgartirilmagan —
+         printer drayveri/sozlamasida shu formatni tanlang.
+        ══════════════════════════════════════════════════════════════
+      */}
       <style>{`
         @media print {
           @page { size: 75mm auto; margin: 0; }
           body * { visibility: hidden; }
           .receipt-print, .receipt-content, .receipt-print *, .receipt-content * { visibility: visible; }
-          .receipt-print, .receipt-content { 
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            width: 75mm; 
+          .receipt-print, .receipt-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 75mm;
             min-height: 100vh;
             height: 100vh;
-            background: white;  
+            background: white;
             font-size: 8px;
             line-height: 1.3;
             overflow: visible;
             color: black;
             print-color-adjust: black;
           }
-          .print-hidden { display: none !important; } 
-        }
+          .print-hidden { display: none !important; }
         }
       `}</style>
       <PageHeader 
@@ -695,9 +706,15 @@ export function SalesDetailPage() {
               {sale.debt && Number(sale.debt) > 0 && <div className="flex justify-between text-red-500 print:text-black"><span>{t('sales.debt')}:</span><span>{formatCurrency(Number(sale.debt))}</span></div>}
             </div>
             <div className="text-center text-xs mt-2 dark:text-gray-400 print:text-black">{t('sales.thanks')}</div>
-            <div className="flex gap-2 mt-4 print-hidden print:text-black">
+            <div className="flex items-center gap-2 mt-4 print-hidden print:text-black">
               <Button className="flex-1" onClick={(e) => { e.stopPropagation(); window.print(); }}>{t('sales.print')}</Button>
               <Button variant="outline" className="flex-1" onClick={handleCloseReceipt}>{t('common.close')}</Button>
+              <PrinterFormatInfo
+                align="right"
+                title={t('sales.printerFormat', 'Chek printer formati')}
+                lines={['Width: 2.15 inch (≈ 54.6 mm)', 'Height: 3.15 inch (≈ 80 mm)', 'Muqobil: 2.95 inch (≈ 75 mm)']}
+                note={t('sales.printerFormatNote', 'Printer sozlamalaridan shu formatni tanlang.')}
+              />
             </div>
           </div>
         </div>

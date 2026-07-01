@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Printer, ArrowLeft, Image as ImageIcon } from 'lucide-react';
-import { PageHeader } from '../../components/shared/PageHeader'; 
+import { PageHeader } from '../../components/shared/PageHeader';
+import { PrinterFormatInfo } from '../../components/shared/PrinterFormatInfo';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Label } from '../../components/ui/Label';
@@ -222,7 +223,13 @@ export function ProductBarcodePage() {
           { label: t('products.barcode') },
         ]}
         actions={
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <PrinterFormatInfo
+              align="right"
+              title={t('products.barcodeFormat', 'Barcode yorlig\'i formati')}
+              lines={['Width: 224 px', 'Height: 128 px']}
+              note={t('products.barcodeFormatNote', 'Printer sozlamalaridan shu formatni tanlang.')}
+            />
             {displayBatches.length > 1 && (
               <Button variant="outline" onClick={handlePrintAll}>
                 <Printer className="h-4 w-4 mr-2" />
