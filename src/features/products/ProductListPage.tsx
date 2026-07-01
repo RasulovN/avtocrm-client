@@ -6,6 +6,7 @@ import type { TFunction } from 'i18next';
 import toast from 'react-hot-toast';
 import { Plus, Edit, Barcode, Search, Printer, Power, Eye, Package, Loader2, ChevronLeft, ChevronRight, X, Warehouse, Store as StoreIcon, Calendar, Tag, Hash, Layers, Upload, Download, MapPin, Ruler, ImageIcon, ScanLine } from 'lucide-react';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { PrinterFormatInfo } from '../../components/shared/PrinterFormatInfo';
 import { ConfirmDialog } from '../../components/shared/ConfirmDialog';
 import { ScannerModal } from '../../components/ScannerModal';
 import { Button } from '../../components/ui/Button';
@@ -1294,10 +1295,18 @@ function ProductDetailModal({ product, onClose, onEdit, stores, t }: ProductDeta
                   <Barcode className="h-4 w-4 text-muted-foreground" />
                   {t('products.barcode', 'Shtrix kod')}
                 </h3>
-                <Button size="sm" variant="outline" onClick={handlePrint}>
-                  <Printer className="h-3.5 w-3.5 mr-1.5" />
-                  {t('common.print', 'Chop etish')}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <PrinterFormatInfo
+                    align="right"
+                    title={t('products.barcodeFormat', 'Barcode yorlig\'i formati')}
+                    lines={['Width: 224 px', 'Height: 128 px']}
+                    note={t('products.barcodeFormatNote', 'Printer sozlamalaridan shu formatni tanlang.')}
+                  />
+                  <Button size="sm" variant="outline" onClick={handlePrint}>
+                    <Printer className="h-3.5 w-3.5 mr-1.5" />
+                    {t('common.print', 'Chop etish')}
+                  </Button>
+                </div>
               </div>
               <div className="flex justify-center bg-white rounded-xl p-4">
                 {showServerImage ? (
