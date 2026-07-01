@@ -287,7 +287,7 @@ export function ProductBarcodePage() {
               </Label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {imageUrls.map((img, idx) => (
-                  <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden bg-muted">
+                  <div key={img} className="relative group aspect-square rounded-lg overflow-hidden bg-muted">
                     <img 
                       src={img} 
                       alt={`Product image ${idx + 1}`}

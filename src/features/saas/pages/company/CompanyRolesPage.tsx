@@ -8,8 +8,6 @@ import {
   Label,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Table,
   TableBody,
   TableCell,

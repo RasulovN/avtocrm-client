@@ -1,8 +1,21 @@
 import { create } from 'zustand';
 import { saasAuth } from '../features/saas/services';
 import { apiClient } from '../services/api';
+import { logger } from '../utils/logger';
 import type { MeCompany, MenuItem } from '../features/saas/types';
 import type { User } from '../types';
+
+// Logout paytida joriy qurilmadagi barcha savat (cart) kalitlarini tozalaymiz —
+// umumiy kompyuterda boshqa foydalanuvchi oldingi savatni ko'rmasligi uchun.
+function clearCartStorage(): void {
+  if (typeof window === 'undefined') return;
+  const keys: string[] = [];
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('crm_cart_')) keys.push(key);
+  }
+  keys.forEach((key) => localStorage.removeItem(key));
+}
 
 interface ThemeStore {
   theme: 'light' | 'dark';
@@ -70,7 +83,8 @@ async function loadStores(): Promise<UserStoreLite[]> {
       localStorage.setItem('active_store_id', String(list[0].id));
     }
     return list.map((s) => ({ id: s.id, name: s.name }));
-  } catch {
+  } catch (err) {
+    logger.error("Do'konlar ro'yxatini yuklab bo'lmadi", { error: err instanceof Error ? err.message : String(err) });
     return [];
   }
 }
@@ -102,6 +116,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     void saasAuth.logout();
     localStorage.removeItem('crm_auth_time');
     localStorage.removeItem('active_store_id');
+    clearCartStorage();
     set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, stores: [] });
   },
 

@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 import { CategoryProvider } from './context/CategoryContext.tsx'
 import { ProductProvider } from './context/ProductContext.tsx'
+import { ErrorBoundary } from './components/shared/ErrorBoundary.tsx'
 
 // Suppress console logging in development for network requests 2
 if (import.meta.env.DEV) {
@@ -56,10 +57,12 @@ initTheme();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CategoryProvider>
-      <ProductProvider>
-        <App />
-      </ProductProvider>
-    </CategoryProvider>
+    <ErrorBoundary>
+      <CategoryProvider>
+        <ProductProvider>
+          <App />
+        </ProductProvider>
+      </CategoryProvider>
+    </ErrorBoundary>
   </StrictMode>,
 )

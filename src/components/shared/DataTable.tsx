@@ -444,9 +444,9 @@ export function DataTable<T extends { id: string }>({
               <p className="text-muted-foreground text-center py-4">{t("common.noData")}</p>
             ) : (
               <div className="space-y-3">
-                {selectedInventory.map((inv, idx) => (
-                  <div 
-                    key={idx} 
+                {selectedInventory.map((inv) => (
+                  <div
+                    key={inv.store_name}
                     className="flex items-center justify-between p-3 bg-muted/20 rounded-xl"
                   >
                     <div className="flex items-center gap-2">

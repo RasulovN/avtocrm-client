@@ -18,7 +18,7 @@ declare module 'axios' {
 
 // API manzili .env fayllardan olinadi (.env.development / .env.production).
 // Dev: Vite proxy orqali lokal backend (default `/api`). Prod: to'liq API URL. https://api.zumex.uz 
-const BaSE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://api.zumex.uz/api');
+const BASE_URL = import.meta.env.VITE_API_URL || (isDev ? '/api' : 'https://api.zumex.uz/api');
 
 // Media/rasm origin'i. Dev'da bo'sh — Vite proxy `/media`'ni lokal backendga uzatadi.
 const MEDIA_ORIGIN =
@@ -26,7 +26,7 @@ const MEDIA_ORIGIN =
 
 export const URL = MEDIA_ORIGIN || '/';
 export const MEDIA_URL = `${MEDIA_ORIGIN}/`;
-export const API_BASE_URL = BaSE_URL;
+export const API_BASE_URL = BASE_URL;
 export const API_ORIGIN = MEDIA_ORIGIN;
 
 export interface ApiRequestConfig extends AxiosRequestConfig {
@@ -64,20 +64,21 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
-// Disable axios XHR debug logging
-// if (typeof window !== 'undefined' && window.XMLHttpRequest) {
-//   const originalOpen = window.XMLHttpRequest.prototype.open;
-//   window.XMLHttpRequest.prototype.open = function(...args) {
-//     if (args[1] && typeof args[1] === 'string' && !args[1].includes('localhost:5173')) {
-//       // Suppress logs for production URLs
-//     }
-//     return originalOpen.apply(this, args);
-//   };
-// }
+// Auth endpointlari — 401 kelganda refresh URINISHISIZ darhol logout qilinadi
+// (login/refresh/logout o'zi 401 qaytarsa, qayta refresh rekursiyasidan qochamiz).
+const AUTH_ENDPOINTS = [
+  '/auth/login/', '/auth/refresh/', '/auth/logout/',
+  '/users/login/', '/users/auth/refresh/', '/users/logout/',
+];
+// Bu endpointlarda 401/404 loglanmaydi va rekursiv logout qilinmaydi (kutilgan holat).
+const SILENT_401_404_ENDPOINTS = ['/users/logout/', '/products/categories', '/debts/'];
+
+const matchesAny = (url: string, list: string[]): boolean =>
+  list.some((endpoint) => url.includes(endpoint));
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
-  baseURL: BaSE_URL,
+  baseURL: BASE_URL,
 
   headers: {
     'Content-Type': 'application/json',
@@ -157,19 +158,18 @@ api.interceptors.response.use(
     const url = error.config?.url || '';
 
     // Prevent logout recursion and suppress logging for these endpoints
-    if (url.includes('/users/logout/') || url.includes('/products/categories') || url.includes('/debts/')) {
+    if (matchesAny(url, SILENT_401_404_ENDPOINTS)) {
       if (status === 401 || status === 404) {
         return Promise.reject(error);
       }
     }
-    
+
     if (config.skipGlobalErrorHandler || isExpectedStatus) {
       return Promise.reject(error);
     }
-    
+
     if (status === 401) {
-      if (url.includes('/auth/login/') || url.includes('/auth/refresh/') || url.includes('/auth/logout/') ||
-          url.includes('/users/login/') || url.includes('/users/auth/refresh/') || url.includes('/users/logout/')) {
+      if (matchesAny(url, AUTH_ENDPOINTS)) {
         void removeAuth();
         return Promise.reject(error);
       }

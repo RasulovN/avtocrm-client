@@ -749,8 +749,8 @@ const globalProductCache = new Map<string, { name: string; sku: string; barcode:
                     </div>
                   </div>
                   <div className="space-y-3 md:hidden">
-                    {selectedInventory.items.map((item, idx) => (
-                      <Card key={idx}>
+                    {selectedInventory.items.map((item) => (
+                      <Card key={item.id}>
                         <CardContent className="space-y-3 p-4">
                           <div className="flex items-start justify-between">
                             <div className="flex items-center gap-2">
@@ -825,8 +825,8 @@ const globalProductCache = new Map<string, { name: string; sku: string; barcode:
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {selectedInventory.items.map((item, idx) => (
-                          <TableRow key={idx}>
+                        {selectedInventory.items.map((item) => (
+                          <TableRow key={item.id}>
                             <TableCell>
                               <input
                                 type="checkbox"

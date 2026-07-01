@@ -1778,7 +1778,7 @@ function AddProductModal({ open, onClose, onSuccess, categories, refreshCategori
                 {imagePreviews.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {imagePreviews.map((src, idx) => (
-                      <div key={idx} className="relative group">
+                      <div key={src} className="relative group">
                         <img
                           src={src}
                           alt={`Preview ${idx + 1}`}

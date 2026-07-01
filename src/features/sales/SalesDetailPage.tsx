@@ -671,7 +671,7 @@ export function SalesDetailPage() {
             </div>
             <div className="space-y-1 text-sm dark:text-gray-300">
               {sale.items?.map((item, idx) => (
-                <div key={idx} className="flex justify-between print:text-black">
+                <div key={item.id ?? `${item.product}-${idx}`} className="flex justify-between print:text-black">
                   <span>{item.product_name || `#${item.product}`} x{item.quantity}</span>
                   <span>{formatCurrency(parseFloat(item.total_price))}</span>
                 </div>

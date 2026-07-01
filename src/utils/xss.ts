@@ -1,9 +1,24 @@
 import JsBarcode from 'jsbarcode';
+import { logger } from './logger';
 
 /**
  * XSS Prevention Utilities
  * Provides escaping for HTML and JavaScript contexts to prevent injection attacks
  */
+
+/**
+ * Escapes a string for a double-quoted HTML ATTRIBUTE context (e.g. src="...").
+ * `escapeHtml` dan farqi: `/` va `'` belgilarini o'zgartirmaydi — shu tufayli
+ * base64 data-URL yoki media URL buzilmaydi, lekin `"`/`<`/`>`/`&` neytrallanadi.
+ */
+export function escapeHtmlAttr(value: string | null | undefined): string {
+  if (!value) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 /**
  * Escapes a string for safe insertion into HTML content (textContent context)
@@ -81,7 +96,7 @@ export function generateBarcodeDataUrl(value: string, options: any = {}): string
     });
     return canvas.toDataURL('image/png');
   } catch (e) {
-    console.error('Failed to generate barcode data URL:', e);
+    logger.error('Barcode data URL yaratib bo\'lmadi', { error: e instanceof Error ? e.message : String(e) });
     return '';
   }
 }
@@ -129,7 +144,7 @@ export function generateBarcodePrintHtml(
     </style>
   </head>
   <body>
-    <img src="${dataUrl}" alt="Barcode" />
+    <img src="${escapeHtmlAttr(dataUrl)}" alt="Barcode" />
     <script>
       window.onload = function() {
         setTimeout(function() { window.print(); }, 300);
@@ -148,7 +163,7 @@ export function generateMultipleBarcodesPrintHtml(barcodeValues: Array<{ value: 
     .map((item) => {
       const dataUrl = generateBarcodeDataUrl(item.value, { height: 90, width: 2, displayValue: true, fontSize: 18, textMargin: 2 });
       return `<div class="barcode-card">
-  <img src="${dataUrl}" alt="Barcode" />
+  <img src="${escapeHtmlAttr(dataUrl)}" alt="Barcode" />
 </div>`;
     })
     .join('\n');

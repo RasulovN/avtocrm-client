@@ -1,5 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
 import { geoApi } from '../services';
+import { logger } from '../../../utils/logger';
+
+// Yandex Maps (2.1) — faqat shu komponentda ishlatiladigan minimal tip ta'riflari.
+interface YmapsGeometry {
+  setCoordinates(coords: number[]): void;
+  getCoordinates(): number[];
+}
+interface YmapsPlacemark {
+  geometry: YmapsGeometry;
+  events: { add(event: string, cb: () => void): void };
+}
+interface YmapsMap {
+  geoObjects: { add(obj: YmapsPlacemark): void };
+  events: { add(event: string, cb: (e: { get(key: string): number[] }) => void): void };
+}
+interface Ymaps {
+  ready(cb: () => void): void;
+  Map: new (
+    el: HTMLElement,
+    opts: { center: number[]; zoom: number; controls: string[] },
+  ) => YmapsMap;
+  Placemark: new (
+    coords: number[],
+    properties: object,
+    opts: { draggable: boolean },
+  ) => YmapsPlacemark;
+}
 
 // Yandex Maps skriptini bir marta yuklaydi
 let scriptPromise: Promise<void> | null = null;
@@ -30,8 +57,8 @@ interface Props {
 
 export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<unknown>(null);
-  const placemarkRef = useRef<unknown>(null);
+  const mapRef = useRef<YmapsMap | null>(null);
+  const placemarkRef = useRef<YmapsPlacemark | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,20 +67,24 @@ export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
       try {
         let apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY as string | undefined;
         if (!apiKey) {
-          try { apiKey = (await geoApi.yandexKey()).api_key; } catch { /* ignore */ }
+          try {
+            apiKey = (await geoApi.yandexKey()).api_key;
+          } catch (err) {
+            logger.debug('Yandex kalitini backenddan olib bo\'lmadi', { error: err instanceof Error ? err.message : String(err) });
+          }
         }
         if (!apiKey) { setError("Yandex Maps API kaliti topilmadi"); return; }
         await loadYmaps(apiKey);
         if (cancelled || !ref.current) return;
 
-        const yw = window as unknown as { ymaps: any };
+        const yw = window as unknown as { ymaps: Ymaps };
         const center = [Number(latitude) || 41.311081, Number(longitude) || 69.240562];
         const map = new yw.ymaps.Map(ref.current, { center, zoom: 11, controls: ['zoomControl', 'searchControl'] });
         mapRef.current = map;
 
         const setMark = (coords: number[]) => {
           if (placemarkRef.current) {
-            (placemarkRef.current as any).geometry.setCoordinates(coords);
+            placemarkRef.current.geometry.setCoordinates(coords);
           } else {
             const pm = new yw.ymaps.Placemark(coords, {}, { draggable: true });
             pm.events.add('dragend', () => {
@@ -68,8 +99,9 @@ export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
 
         if (latitude && longitude) setMark([Number(latitude), Number(longitude)]);
 
-        map.events.add('click', (e: any) => setMark(e.get('coords')));
-      } catch {
+        map.events.add('click', (e) => setMark(e.get('coords')));
+      } catch (err) {
+        logger.error('Yandex xaritasini yuklab bo\'lmadi', { error: err instanceof Error ? err.message : String(err) });
         if (!cancelled) setError("Xaritani yuklab bo'lmadi");
       }
     })();

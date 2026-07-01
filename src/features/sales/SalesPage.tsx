@@ -129,9 +129,14 @@ export function SalesPage() {
   const activeStoreId = storeId || userStoreId;
   // const [categoryFilter, setCategoryFilter] = useState('');
 
+  // Savat kaliti faqat autentifikatsiyalangan foydalanuvchi uchun (guest saqlanmaydi —
+  // umumiy qurilmada savat aralashib ketmasligi uchun).
+  const cartKey = user?.id ? `crm_cart_${user.id}` : null;
+
   const [items, setItems] = useState<CartItem[]>(() => {
+    if (!cartKey) return [];
     try {
-      const saved = localStorage.getItem(`crm_cart_${user?.id || 'guest'}`);
+      const saved = localStorage.getItem(cartKey);
       if (!saved) return [];
       const parsed = JSON.parse(saved);
       if (!Array.isArray(parsed)) return [];
@@ -152,10 +157,11 @@ export function SalesPage() {
     }
   });
 
-  // Persist cart whenever items change
+  // Persist cart whenever items change (faqat login qilingan foydalanuvchi uchun)
   useEffect(() => {
-    localStorage.setItem(`crm_cart_${user?.id || 'guest'}`, JSON.stringify(items));
-  }, [items, user?.id]);
+    if (!cartKey) return;
+    localStorage.setItem(cartKey, JSON.stringify(items));
+  }, [items, cartKey]);
 
   const [cashAmount, setCashAmount] = useState(0);
   const [cardAmount, setCardAmount] = useState(0);
@@ -1329,7 +1335,7 @@ export function SalesPage() {
               <div className="space-y-2 text-sm">
                 <div className="font-semibold dark:text-white print:text-black">{t('sales.items')}</div>
                 {items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between dark:text-gray-300 print:text-black">
+                  <div key={item.product_id || idx} className="flex justify-between dark:text-gray-300 print:text-black">
                     <div className="flex-1 print:text-black ">
                       <span>{item.product_name}</span>
                       <span className="text-muted-foreground dark:text-gray-400 print:text-black"> x{item.quantity}</span>
