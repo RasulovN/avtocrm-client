@@ -416,7 +416,7 @@ const getStoreName = (id: number | string, defaultName: string) => {
             {isLoading ? (
               <Skeleton className="h-7 sm:h-8 w-28 sm:w-36 mb-1" />
             ) : (
-              <h3 className="text-base sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-0.5 sm:mb-1 whitespace-nowrap">
+              <h3 className="text-base sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-0.5 sm:mb-1">
                 {formatCurrency(summary.totalRevenue)}
               </h3>
             )}
@@ -439,7 +439,7 @@ const getStoreName = (id: number | string, defaultName: string) => {
             {isLoading ? (
               <Skeleton className="h-7 sm:h-8 w-28 sm:w-36 mb-1" />
             ) : (
-              <h3 className={`text-base sm:text-xl md:text-2xl font-bold mb-0.5 sm:mb-1 whitespace-nowrap ${summary.totalProfit >= 0 ? 'text-emerald-600 dark:text-emerald-500' : 'text-rose-600 dark:text-rose-500'}`}>
+              <h3 className={`text-base sm:text-xl md:text-2xl font-bold mb-0.5 sm:mb-1 ${summary.totalProfit >= 0 ? 'text-emerald-600 dark:text-emerald-500' : 'text-rose-600 dark:text-rose-500'}`}>
                 {formatCurrency(summary.totalProfit)}
               </h3>
             )}
@@ -483,7 +483,7 @@ const getStoreName = (id: number | string, defaultName: string) => {
             {isLoading ? (
               <Skeleton className="h-7 sm:h-8 w-28 sm:w-36 mb-1" />
             ) : (
-              <h3 className="text-base sm:text-xl md:text-2xl font-bold text-[#ff6b00] dark:text-amber-500 mb-0.5 sm:mb-1 whitespace-nowrap">
+              <h3 className="text-base sm:text-xl md:text-2xl font-bold text-[#ff6b00] dark:text-amber-500 mb-0.5 sm:mb-1">
                 {formatCurrency(totalCustomerDebt)}
               </h3>
             )}

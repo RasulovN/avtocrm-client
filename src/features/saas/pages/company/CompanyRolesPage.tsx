@@ -186,36 +186,21 @@ export function CompanyRolesPage() {
               {t('company.roles.empty', 'Hozircha rollar yoq')}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('company.roles.name', 'Nomi')}</TableHead>
-                  <TableHead>{t('company.roles.description', 'Tavsif')}</TableHead>
-                  <TableHead className="text-center">{t('company.roles.permsCount', 'Ruxsatlar')}</TableHead>
-                  <TableHead className="text-center">{t('company.roles.usersCount', 'Foydalanuvchilar')}</TableHead>
-                  <TableHead className="text-right">{t('common.actions', 'Amallar')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              {/* Mobil karta ko'rinishi */}
+              <div className="divide-y divide-border/60 md:hidden">
                 {roles.map((role) => (
-                  <TableRow key={role.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        {role.name}
+                  <div key={role.id} className="space-y-2 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-2 font-medium">
+                        <span className="truncate">{role.name}</span>
                         {role.is_system && (
-                          <Badge variant="warning" className="gap-1">
+                          <Badge variant="warning" className="shrink-0 gap-1">
                             <Crown className="w-3 h-3" /> Owner
                           </Badge>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground max-w-xs truncate">
-                      {role.description || '-'}
-                    </TableCell>
-                    <TableCell className="text-center">{role.permissions.length}</TableCell>
-                    <TableCell className="text-center">{role.users_count ?? 0}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
+                      <div className="flex shrink-0 gap-1">
                         <Button variant="ghost" size="sm" onClick={() => openEdit(role)} title={t('common.edit', 'Tahrirlash')}>
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -231,11 +216,72 @@ export function CompanyRolesPage() {
                           </Button>
                         )}
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                    {role.description && (
+                      <p className="text-sm text-muted-foreground">{role.description}</p>
+                    )}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span>{t('company.roles.permsCount', 'Ruxsatlar')}: <b className="text-foreground">{role.permissions.length}</b></span>
+                      <span>{t('company.roles.usersCount', 'Foydalanuvchilar')}: <b className="text-foreground">{role.users_count ?? 0}</b></span>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+
+              {/* Desktop jadval ko'rinishi */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('company.roles.name', 'Nomi')}</TableHead>
+                      <TableHead>{t('company.roles.description', 'Tavsif')}</TableHead>
+                      <TableHead className="text-center">{t('company.roles.permsCount', 'Ruxsatlar')}</TableHead>
+                      <TableHead className="text-center">{t('company.roles.usersCount', 'Foydalanuvchilar')}</TableHead>
+                      <TableHead className="text-right">{t('common.actions', 'Amallar')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {roles.map((role) => (
+                      <TableRow key={role.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            {role.name}
+                            {role.is_system && (
+                              <Badge variant="warning" className="gap-1">
+                                <Crown className="w-3 h-3" /> Owner
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground max-w-xs truncate">
+                          {role.description || '-'}
+                        </TableCell>
+                        <TableCell className="text-center">{role.permissions.length}</TableCell>
+                        <TableCell className="text-center">{role.users_count ?? 0}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => openEdit(role)} title={t('common.edit', 'Tahrirlash')}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            {!role.is_system && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                                onClick={() => setToDelete(role)}
+                                title={t('common.delete', "O'chirish")}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

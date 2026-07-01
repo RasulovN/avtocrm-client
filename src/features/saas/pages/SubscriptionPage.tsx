@@ -293,7 +293,53 @@ export function SubscriptionPage() {
             </p>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* Mobil karta ko'rinishi */}
+              <div className="divide-y divide-border/60 md:hidden">
+                {history.map((row) => {
+                  const sb = statusBadge(row.status);
+                  return (
+                    <div key={row.id} className="space-y-2 py-3 first:pt-0">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-medium">
+                            {row.plan_name ?? '-'}
+                            {row.period_months && row.period_months > 1 ? (
+                              <span className="ml-1 text-xs text-muted-foreground">· {row.period_months} {t('subscription.monthShort', 'oy')}</span>
+                            ) : null}
+                          </p>
+                          <p className="font-mono text-xs text-muted-foreground">#{row.id}</p>
+                        </div>
+                        <Badge className={sb.cls}>{sb.key ? t(sb.key, sb.fb) : sb.fb}</Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <span>{t('subscription.amount', 'Summa')}: <b className="text-foreground">{formatPrice(row.amount, t)}</b></span>
+                        <span>{row.created_at ? formatDate(row.created_at) : '-'}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {row.start_at && row.end_at
+                          ? `${formatDate(row.start_at)} — ${formatDate(row.end_at)}`
+                          : row.plan_duration_days
+                            ? `${row.plan_duration_days * (row.period_months ?? 1)} ${t('subscription.days', 'kun')}`
+                            : '-'}
+                      </p>
+                      {row.status === 'pending' && (
+                        <button
+                          type="button"
+                          onClick={() => cancelPending(row.id)}
+                          disabled={cancelling === row.id}
+                          className="inline-flex items-center gap-1 rounded-md border border-red-500/40 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
+                        >
+                          {cancelling === row.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
+                          {t('subscription.cancel', 'Bekor qilish')}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop jadval ko'rinishi */}
+              <div className="hidden overflow-x-auto md:block">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs text-muted-foreground border-b border-border/60">

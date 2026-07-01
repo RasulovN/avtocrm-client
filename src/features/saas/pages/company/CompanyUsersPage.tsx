@@ -215,59 +215,108 @@ export function CompanyUsersPage() {
               {t('company.users.empty', 'Hozircha xodimlar yoq')}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('company.users.fullName', 'F.I.SH')}</TableHead>
-                  <TableHead>{t('company.users.phone', 'Telefon')}</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>{t('company.users.role', 'Rol')}</TableHead>
-                  <TableHead className="text-center">{t('company.users.status', 'Holat')}</TableHead>
-                  <TableHead className="text-right">{t('common.actions', 'Amallar')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              {/* Mobil karta ko'rinishi */}
+              <div className="divide-y divide-border/60 md:hidden">
                 {users.map((u) => {
                   const owner = isOwner(u);
                   return (
-                    <TableRow key={u.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center gap-2">
-                          {u.full_name || '-'}
-                          {owner && <Crown className="w-3.5 h-3.5 text-amber-500" />}
+                    <div key={u.id} className="space-y-3 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 font-medium">
+                            <span className="truncate">{u.full_name || '-'}</span>
+                            {owner && <Crown className="w-3.5 h-3.5 shrink-0 text-amber-500" />}
+                          </div>
+                          <p className="truncate text-sm text-muted-foreground">{u.role || '-'}</p>
                         </div>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{u.phone_number || '-'}</TableCell>
-                      <TableCell className="text-muted-foreground">{u.email || '-'}</TableCell>
-                      <TableCell>{u.role || '-'}</TableCell>
-                      <TableCell className="text-center">
                         <Badge variant={u.is_active ? 'success' : 'danger'}>
                           {u.is_active ? t('company.users.active', 'Faol') : t('company.users.inactive', 'Nofaol')}
                         </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="sm" onClick={() => openEdit(u)} title={t('common.edit', 'Tahrirlash')}>
-                            <Pencil className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-0.5 text-sm text-muted-foreground">
+                        {u.phone_number && <a href={`tel:${u.phone_number}`} className="block truncate">{u.phone_number}</a>}
+                        {u.email && <a href={`mailto:${u.email}`} className="block truncate">{u.email}</a>}
+                        {!u.phone_number && !u.email && <span>-</span>}
+                      </div>
+                      <div className="flex justify-end gap-1">
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(u)} title={t('common.edit', 'Tahrirlash')}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        {!owner && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => setToDelete(u)}
+                            title={t('common.delete', "O'chirish")}
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </Button>
-                          {!owner && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => setToDelete(u)}
-                              title={t('common.delete', "O'chirish")}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
-              </TableBody>
-            </Table>
+              </div>
+
+              {/* Desktop jadval ko'rinishi */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('company.users.fullName', 'F.I.SH')}</TableHead>
+                      <TableHead>{t('company.users.phone', 'Telefon')}</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>{t('company.users.role', 'Rol')}</TableHead>
+                      <TableHead className="text-center">{t('company.users.status', 'Holat')}</TableHead>
+                      <TableHead className="text-right">{t('common.actions', 'Amallar')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((u) => {
+                      const owner = isOwner(u);
+                      return (
+                        <TableRow key={u.id}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              {u.full_name || '-'}
+                              {owner && <Crown className="w-3.5 h-3.5 text-amber-500" />}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">{u.phone_number || '-'}</TableCell>
+                          <TableCell className="text-muted-foreground">{u.email || '-'}</TableCell>
+                          <TableCell>{u.role || '-'}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={u.is_active ? 'success' : 'danger'}>
+                              {u.is_active ? t('company.users.active', 'Faol') : t('company.users.inactive', 'Nofaol')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <Button variant="ghost" size="sm" onClick={() => openEdit(u)} title={t('common.edit', 'Tahrirlash')}>
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              {!owner && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-destructive hover:text-destructive"
+                                  onClick={() => setToDelete(u)}
+                                  title={t('common.delete', "O'chirish")}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

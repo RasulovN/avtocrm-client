@@ -469,12 +469,12 @@ const globalProductCache = new Map<string, { name: string; sku: string; barcode:
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
           title={t('inventory.title')}
           description={t('inventory.listDescription')}
         />
-        <Button className="w-full sm:w-auto mt-4 sm:mt-0" onClick={() => setShowCreateDialog(true)}>
+        <Button className="w-full sm:w-auto sm:mt-0" onClick={() => setShowCreateDialog(true)}>
           <Plus className="h-4 w-4 mr-2" />
           {t('inventory.createIncomingStock')}
         </Button>

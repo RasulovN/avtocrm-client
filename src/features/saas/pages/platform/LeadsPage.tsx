@@ -208,15 +208,19 @@ export function LeadsPage() {
             {newCount > 0 && <span className="ml-2 rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white">{t('leads.newBadge', '{{count}} yangi', { count: newCount })}</span>}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex shrink-0 rounded-lg border border-slate-200 p-0.5 dark:border-slate-700">
-            <button onClick={() => setView('board')} className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium ${view === 'board' ? 'bg-indigo-600 text-white' : 'text-slate-500'}`}><LayoutGrid className="h-4 w-4" /> <span className="hidden sm:inline">{t('leads.board', 'Board')}</span></button>
-            <button onClick={() => setView('list')} className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium ${view === 'list' ? 'bg-indigo-600 text-white' : 'text-slate-500'}`}><ListIcon className="h-4 w-4" /> <span className="hidden sm:inline">{t('leads.list', "Ro'yxat")}</span></button>
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex items-center gap-2">
+            <div className="flex shrink-0 rounded-lg border border-slate-200 p-0.5 dark:border-slate-700">
+              <button onClick={() => setView('board')} className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium ${view === 'board' ? 'bg-indigo-600 text-white' : 'text-slate-500'}`}><LayoutGrid className="h-4 w-4" /> <span className="hidden sm:inline">{t('leads.board', 'Board')}</span></button>
+              <button onClick={() => setView('list')} className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium ${view === 'list' ? 'bg-indigo-600 text-white' : 'text-slate-500'}`}><ListIcon className="h-4 w-4" /> <span className="hidden sm:inline">{t('leads.list', "Ro'yxat")}</span></button>
+            </div>
+            <Button variant="outline" className="shrink-0" onClick={load} title={t('leads.refresh', 'Yangilash')}><RefreshCw className="h-4 w-4" /></Button>
+            <Button className="ml-auto shrink-0 sm:ml-0" onClick={openCreate}><Plus className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">{t('leads.newLead', 'Yangi lead')}</span></Button>
           </div>
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="min-w-[130px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 sm:flex-none"
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 sm:w-auto"
             title={t('leads.sourceFilter', "Manba bo'yicha filtr")}
           >
             <option value="all">{t('leads.allSources', 'Barcha manbalar')}</option>
@@ -226,17 +230,15 @@ export function LeadsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('common.search', 'Qidirish') + '...'}
-            className="min-w-[150px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 sm:w-52 sm:flex-none"
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 sm:w-52"
           />
-          <Button variant="outline" className="shrink-0" onClick={load} title={t('leads.refresh', 'Yangilash')}><RefreshCw className="h-4 w-4" /></Button>
-          <Button className="shrink-0" onClick={openCreate}><Plus className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">{t('leads.newLead', 'Yangi lead')}</span></Button>
         </div>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-24 text-slate-400"><Loader2 className="h-6 w-6 animate-spin" /></div>
       ) : view === 'board' ? (
-        <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-3 sm:gap-4">
+        <div className="flex flex-col gap-3 pb-3 sm:-mx-1 sm:snap-x sm:snap-mandatory sm:flex-row sm:overflow-x-auto sm:px-1 sm:gap-4">
           {COLUMNS.map((col) => {
             const colItems = filtered.filter((l) => l.status === col.value);
             const isOver = overCol === col.value;
@@ -245,7 +247,7 @@ export function LeadsPage() {
                 key={col.value}
                 onDragOver={(e) => { e.preventDefault(); if (overCol !== col.value) setOverCol(col.value); }}
                 onDrop={(e) => { e.preventDefault(); if (dragId != null) moveLead(dragId, col.value); setOverCol(null); }}
-                className={`flex w-[82vw] max-w-[20rem] shrink-0 snap-start flex-col rounded-2xl border p-2 transition sm:w-72 ${isOver ? 'border-indigo-400 bg-indigo-50/60 dark:border-indigo-500 dark:bg-indigo-500/10' : 'border-slate-200 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-900/40'}`}
+                className={`flex w-full shrink-0 snap-start flex-col rounded-2xl border p-2 transition sm:w-72 sm:max-w-[20rem] ${isOver ? 'border-indigo-400 bg-indigo-50/60 dark:border-indigo-500 dark:bg-indigo-500/10' : 'border-slate-200 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-900/40'}`}
               >
                 <div className="flex items-center gap-2 px-2 py-2">
                   <span className={`h-2.5 w-2.5 rounded-full ${col.dot}`} />

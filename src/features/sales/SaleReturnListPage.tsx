@@ -119,7 +119,7 @@ export function SaleReturnListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader
           title={t('saleReturns.title')}
           description={t('saleReturns.listDescription')}
