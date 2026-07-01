@@ -81,6 +81,20 @@ export function SubscriptionPage() {
     payment: row.payment ?? null,
   });
 
+  // Kutilmoqda (to'lanmagan/osilib qolgan) to'lovni qayta to'lash — mavjud karta
+  // to'lov oynasini (Payme Subscribe API) o'sha obuna id bilan ochamiz.
+  const rePay = (row: PaymentRow) => {
+    if (Number(row.amount) <= 0) {
+      toast.error(t('subscription.freeNoPay', "Bepul tarif uchun to'lov shart emas"));
+      return;
+    }
+    setPayModal({
+      subscriptionId: row.id,
+      planName: (row.plan_name ?? '') + (row.period_months && row.period_months > 1 ? ` · ${row.period_months} ${t('subscription.months', 'oy')}` : ''),
+      amountLabel: formatPrice(row.amount, t),
+    });
+  };
+
   const getMonths = (planId: number) => monthsByPlan[planId] ?? 1;
 
   const loadHistory = useCallback((page: number) => {
@@ -360,14 +374,25 @@ export function SubscriptionPage() {
                             : '-'}
                       </p>
                       <div className="flex flex-wrap gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => openReceipt(row)}
-                          className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium hover:bg-muted"
-                        >
-                          <FileText className="w-3 h-3" />
-                          {t('subscription.viewReceipt', 'Chek')}
-                        </button>
+                        {row.status === 'pending' ? (
+                          <button
+                            type="button"
+                            onClick={() => rePay(row)}
+                            className="inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:opacity-90"
+                          >
+                            <CreditCard className="w-3 h-3" />
+                            {t('subscription.rePay', "Qayta to'lash")}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => openReceipt(row)}
+                            className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium hover:bg-muted"
+                          >
+                            <FileText className="w-3 h-3" />
+                            {t('subscription.viewReceipt', 'Chek')}
+                          </button>
+                        )}
                         {row.status === 'pending' && (
                           <button
                             type="button"
@@ -427,14 +452,25 @@ export function SubscriptionPage() {
                           </td>
                           <td className="py-2.5 pr-2 text-right">
                             <div className="flex items-center justify-end gap-2">
-                              <button
-                                type="button"
-                                onClick={() => openReceipt(row)}
-                                className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium hover:bg-muted"
-                              >
-                                <FileText className="w-3 h-3" />
-                                {t('subscription.viewReceipt', 'Chek')}
-                              </button>
+                              {row.status === 'pending' ? (
+                                <button
+                                  type="button"
+                                  onClick={() => rePay(row)}
+                                  className="inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground hover:opacity-90"
+                                >
+                                  <CreditCard className="w-3 h-3" />
+                                  {t('subscription.rePay', "Qayta to'lash")}
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => openReceipt(row)}
+                                  className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium hover:bg-muted"
+                                >
+                                  <FileText className="w-3 h-3" />
+                                  {t('subscription.viewReceipt', 'Chek')}
+                                </button>
+                              )}
                               {row.status === 'pending' && (
                                 <button
                                   type="button"
