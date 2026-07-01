@@ -2,12 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import toast from 'react-hot-toast';
-import { Check, Crown, Loader2, CreditCard, Receipt, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Check, Crown, Loader2, CreditCard, Receipt, ChevronLeft, ChevronRight, X, FileText } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { plansApi, subscriptionsApi } from '../services';
 import { PaymeCardModal } from '../components/PaymeCardModal';
+import { PaymentReceiptModal, type ReceiptData, type ReceiptPayment } from '../components/PaymentReceiptModal';
 import type { Plan, Subscription } from '../types';
 import { useAuthStore } from '../../../app/store';
 import { formatDate } from '../../../utils/index';
@@ -33,6 +34,7 @@ interface PaymentRow {
   start_at: string | null;
   end_at: string | null;
   created_at?: string;
+  payment?: ReceiptPayment | null;
 }
 
 function statusBadge(status: string): { cls: string; key: string; fb: string } {
@@ -67,6 +69,17 @@ export function SubscriptionPage() {
   const [histCount, setHistCount] = useState(0);
   const [cancelling, setCancelling] = useState<number | null>(null);
   const [payModal, setPayModal] = useState<{ subscriptionId: number; planName: string; amountLabel: string } | null>(null);
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+
+  const openReceipt = (row: PaymentRow) => setReceipt({
+    subscription_id: row.id,
+    plan_name: row.plan_name,
+    amount: row.amount,
+    status: row.status,
+    period_months: row.period_months,
+    created_at: row.created_at ?? null,
+    payment: row.payment ?? null,
+  });
 
   const getMonths = (planId: number) => monthsByPlan[planId] ?? 1;
 
@@ -346,17 +359,27 @@ export function SubscriptionPage() {
                             ? `${row.plan_duration_days * (row.period_months ?? 1)} ${t('subscription.days', 'kun')}`
                             : '-'}
                       </p>
-                      {row.status === 'pending' && (
+                      <div className="flex flex-wrap gap-2 pt-1">
                         <button
                           type="button"
-                          onClick={() => cancelPending(row.id)}
-                          disabled={cancelling === row.id}
-                          className="inline-flex items-center gap-1 rounded-md border border-red-500/40 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
+                          onClick={() => openReceipt(row)}
+                          className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium hover:bg-muted"
                         >
-                          {cancelling === row.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
-                          {t('subscription.cancel', 'Bekor qilish')}
+                          <FileText className="w-3 h-3" />
+                          {t('subscription.viewReceipt', 'Chek')}
                         </button>
-                      )}
+                        {row.status === 'pending' && (
+                          <button
+                            type="button"
+                            onClick={() => cancelPending(row.id)}
+                            disabled={cancelling === row.id}
+                            className="inline-flex items-center gap-1 rounded-md border border-red-500/40 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
+                          >
+                            {cancelling === row.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
+                            {t('subscription.cancel', 'Bekor qilish')}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -403,19 +426,27 @@ export function SubscriptionPage() {
                             {row.created_at ? formatDate(row.created_at) : '-'}
                           </td>
                           <td className="py-2.5 pr-2 text-right">
-                            {row.status === 'pending' ? (
+                            <div className="flex items-center justify-end gap-2">
                               <button
                                 type="button"
-                                onClick={() => cancelPending(row.id)}
-                                disabled={cancelling === row.id}
-                                className="inline-flex items-center gap-1 rounded-md border border-red-500/40 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
+                                onClick={() => openReceipt(row)}
+                                className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs font-medium hover:bg-muted"
                               >
-                                {cancelling === row.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
-                                {t('subscription.cancel', 'Bekor qilish')}
+                                <FileText className="w-3 h-3" />
+                                {t('subscription.viewReceipt', 'Chek')}
                               </button>
-                            ) : (
-                              <span className="text-muted-foreground">—</span>
-                            )}
+                              {row.status === 'pending' && (
+                                <button
+                                  type="button"
+                                  onClick={() => cancelPending(row.id)}
+                                  disabled={cancelling === row.id}
+                                  className="inline-flex items-center gap-1 rounded-md border border-red-500/40 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-500/10 disabled:opacity-50"
+                                >
+                                  {cancelling === row.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
+                                  {t('subscription.cancel', 'Bekor qilish')}
+                                </button>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -467,6 +498,8 @@ export function SubscriptionPage() {
           onSuccess={refreshAll}
         />
       )}
+
+      <PaymentReceiptModal open={!!receipt} onOpenChange={(o) => !o && setReceipt(null)} data={receipt} />
     </div>
   );
 }

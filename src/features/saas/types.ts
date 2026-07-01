@@ -153,6 +153,15 @@ export interface PlanPricingOption {
   total: string; // chegirma bilan
   monthly: string; // oylik ekvivalent
 }
+export interface SubscriptionPayment {
+  payme_id: string;
+  state: number;
+  amount_tiyin: string;
+  create_time: number | null;
+  perform_time: number | null;
+  cancel_time: number | null;
+}
+
 export interface Subscription {
   id: number;
   status: string;
@@ -165,6 +174,7 @@ export interface Subscription {
   plan_name?: string | null;
   plan_duration_days?: number | null;
   created_at?: string;
+  payment?: SubscriptionPayment | null;
 }
 export interface SubscribeResponse {
   subscription: Subscription;

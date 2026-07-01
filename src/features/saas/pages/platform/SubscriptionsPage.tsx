@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { Ban, CalendarPlus, Check, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Ban, CalendarPlus, Check, CheckCircle2, ChevronLeft, ChevronRight, Loader2, FileText } from 'lucide-react';
 import {
   Button, Card, CardContent, Input, Label,
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -11,6 +11,7 @@ import {
 import { Badge } from '../../../../components/ui/Badge';
 import { subscriptionsApi } from '../../services';
 import type { Subscription } from '../../types';
+import { PaymentReceiptModal, type ReceiptData } from '../../components/PaymentReceiptModal';
 
 const PAGE_SIZE = 10;
 
@@ -72,6 +73,19 @@ export function SubscriptionsPage() {
   const [extendTarget, setExtendTarget] = useState<Subscription | null>(null);
   const [extendDays, setExtendDays] = useState('');
   const [extending, setExtending] = useState(false);
+
+  // To'lov cheki (receipt) modali
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+  const openReceipt = (s: Subscription) => setReceipt({
+    subscription_id: s.id,
+    plan_name: s.plan?.name ?? s.plan_name ?? null,
+    amount: s.amount,
+    status: s.status,
+    period_months: s.period_months,
+    created_at: s.created_at ?? null,
+    company_name: s.company?.name ?? null,
+    payment: s.payment ?? null,
+  });
 
   const load = useCallback(() => {
     setLoading(true);
@@ -209,6 +223,14 @@ export function SubscriptionsPage() {
                       <TableCell>{formatDate(s.end_at)}</TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openReceipt(s)}
+                            title={t('sub.viewReceipt', 'Chek / tafsilot')}
+                          >
+                            <FileText className="h-4 w-4 text-muted-foreground" />
+                          </Button>
                           {s.status !== 'active' && (
                             <Button
                               variant="ghost"
@@ -349,6 +371,8 @@ export function SubscriptionsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <PaymentReceiptModal open={!!receipt} onOpenChange={(o) => !o && setReceipt(null)} data={receipt} />
     </div>
   );
 }
