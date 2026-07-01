@@ -178,6 +178,29 @@ export const subscriptionsApi = {
     apiClient.put<Subscription>(`/subscriptions/${id}/fiscal/`, { fiscal_url: fiscalUrl }).then((r) => r.data),
 };
 
+// ===================== BILLING (invoice fiskal chek) =====================
+export interface InvoiceFiscalReceipt {
+  receiptNumber: string | null;
+  receiptUrl: string | null;
+  qrCode: string | null;
+  fiscalId: string | null;
+  date: string | null;
+}
+export interface InvoiceReceiptResponse {
+  success: boolean;
+  invoiceId: number;
+  fiscalReceipt: InvoiceFiscalReceipt | null;
+  message?: string;
+}
+
+export const billingApi = {
+  // Payme `SetFiscalData` orqali avtomatik kelgan fiskal chek (invoiceId = obuna id).
+  invoiceReceipt: (invoiceId: number) =>
+    apiClient
+      .get<InvoiceReceiptResponse>(`/billing/invoices/${invoiceId}/receipt/`, { skipGlobalErrorHandler: true })
+      .then((r) => r.data),
+};
+
 // ===================== PAYME — Subscribe API (karta orqali to'lov) =====================
 export interface CardCreateResponse {
   token: string;

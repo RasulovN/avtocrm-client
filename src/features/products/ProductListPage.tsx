@@ -1560,7 +1560,14 @@ function AddProductModal({ open, onClose, onSuccess, categories, refreshCategori
   return (
     <>
       <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-        <DialogContent size="lg" className="max-h-[90vh] overflow-y-auto p-0">
+        <DialogContent
+          size="lg"
+          className="max-h-[90vh] overflow-y-auto p-0"
+          // Forma to'ldirilayotganda tasodifan yon tomonni bosib yopilib qolmasligi uchun:
+          // faqat X (yoki Bekor) tugmasi bilan yopiladi.
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
           {/* Header */}
           <div className="sticky top-0 z-10 border-b border-border/60 bg-card px-6 py-5">
             <DialogHeader className="p-0">
