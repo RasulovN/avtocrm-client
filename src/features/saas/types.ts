@@ -133,11 +133,25 @@ export interface Plan {
   description_uz_cyrl?: string | null;
   price: string;
   duration_days: number;
+  // Uzoq muddat chegirmalari (%)
+  discount_3?: number;
+  discount_6?: number;
+  discount_12?: number;
+  // Har bir muddat bo'yicha hisoblangan narx (backend yuboradi)
+  pricing?: PlanPricingOption[];
   features: unknown;
   max_stores: number | null;
   max_users: number | null;
   is_active?: boolean;
   sort_order?: number;
+}
+
+export interface PlanPricingOption {
+  months: number;
+  discount_percent: number;
+  gross: string; // chegirmasiz (price * months)
+  total: string; // chegirma bilan
+  monthly: string; // oylik ekvivalent
 }
 export interface Subscription {
   id: number;

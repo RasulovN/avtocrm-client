@@ -38,6 +38,9 @@ interface FormState {
   description: MultiLangValues;
   price: string;
   duration_days: string;
+  discount_3: string;
+  discount_6: string;
+  discount_12: string;
   max_stores: string;
   max_users: string;
   sort_order: string;
@@ -48,6 +51,7 @@ const emptyForm: FormState = {
   name: { ...emptyMultiLang },
   description: { ...emptyMultiLang },
   price: '0', duration_days: '30',
+  discount_3: '0', discount_6: '0', discount_12: '0',
   max_stores: '', max_users: '', sort_order: '0', is_active: true,
 };
 
@@ -98,6 +102,9 @@ export function PlansPage() {
       },
       price: p.price,
       duration_days: String(p.duration_days),
+      discount_3: String(p.discount_3 ?? 0),
+      discount_6: String(p.discount_6 ?? 0),
+      discount_12: String(p.discount_12 ?? 0),
       max_stores: p.max_stores != null ? String(p.max_stores) : '',
       max_users: p.max_users != null ? String(p.max_users) : '',
       sort_order: String(p.sort_order ?? 0),
@@ -123,6 +130,9 @@ export function PlansPage() {
       description_uz_cyrl: form.description.cyrl.trim() || null,
       price: form.price || '0',
       duration_days: Number(form.duration_days) || 0,
+      discount_3: Number(form.discount_3) || 0,
+      discount_6: Number(form.discount_6) || 0,
+      discount_12: Number(form.discount_12) || 0,
       max_stores: form.max_stores === '' ? null : Number(form.max_stores),
       max_users: form.max_users === '' ? null : Number(form.max_users),
       sort_order: Number(form.sort_order) || 0,
@@ -177,6 +187,7 @@ export function PlansPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-16">ID</TableHead>
                   <TableHead>{t('plan.name', 'Nomi')}</TableHead>
                   <TableHead>{t('plan.price', 'Narx')}</TableHead>
                   <TableHead className="text-center">{t('plan.duration', 'Muddat (kun)')}</TableHead>
@@ -189,19 +200,20 @@ export function PlansPage() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center">
+                    <TableCell colSpan={8} className="h-32 text-center">
                       <Loader2 className="mx-auto h-6 w-6 animate-spin text-muted-foreground" />
                     </TableCell>
                   </TableRow>
                 ) : items.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
+                    <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
                       {t('common.noData', 'Ma\'lumot yo\'q')}
                     </TableCell>
                   </TableRow>
                 ) : (
                   items.map((p) => (
                     <TableRow key={p.id}>
+                      <TableCell className="font-mono text-xs text-muted-foreground">#{p.id}</TableCell>
                       <TableCell className="font-medium">{p.name}</TableCell>
                       <TableCell>{formatPrice(p.price)}</TableCell>
                       <TableCell className="text-center">{p.duration_days}</TableCell>
@@ -264,6 +276,31 @@ export function PlansPage() {
               <Label>{t('plan.duration', 'Muddat (kun)')}</Label>
               <Input type="number" min="0" value={form.duration_days} onChange={(e) => setForm({ ...form, duration_days: e.target.value })} />
             </div>
+
+            {/* Uzoq muddat chegirmalari (%) — oldindan to'lovda */}
+            <div className="sm:col-span-2 rounded-xl border border-border/60 bg-muted/20 p-3 space-y-2">
+              <Label className="text-xs text-muted-foreground">
+                {t('plan.longTermDiscounts', 'Uzoq muddat chegirmasi (%) — oldindan to\'lovda')}
+              </Label>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-1">
+                  <span className="text-xs text-muted-foreground">3 {t('subscription.monthShort', 'oy')}</span>
+                  <Input type="number" min="0" max="90" value={form.discount_3} onChange={(e) => setForm({ ...form, discount_3: e.target.value })} />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs text-muted-foreground">6 {t('subscription.monthShort', 'oy')}</span>
+                  <Input type="number" min="0" max="90" value={form.discount_6} onChange={(e) => setForm({ ...form, discount_6: e.target.value })} />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-xs text-muted-foreground">12 {t('subscription.monthShort', 'oy')}</span>
+                  <Input type="number" min="0" max="90" value={form.discount_12} onChange={(e) => setForm({ ...form, discount_12: e.target.value })} />
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                {t('plan.discountHint', 'Masalan 12 oy uchun 20 — mijoz 12 oyga to\'laganda 20% chegirma oladi. 1 oy uchun chegirma yo\'q.')}
+              </p>
+            </div>
+
             <div className="space-y-1.5">
               <Label>{t('plan.maxStores', 'Maks. do\'kon')}</Label>
               <Input type="number" min="0" placeholder="∞" value={form.max_stores} onChange={(e) => setForm({ ...form, max_stores: e.target.value })} />

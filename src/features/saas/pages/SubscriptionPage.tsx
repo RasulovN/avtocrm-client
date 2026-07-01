@@ -201,7 +201,11 @@ export function SubscriptionPage() {
           const features = Array.isArray(plan.features) ? (plan.features as string[]) : [];
           const isFree = Number(plan.price) === 0;
           const months = getMonths(plan.id);
-          const total = Number(plan.price) * months;
+          // Backend hisoblagan narx variantidan foydalanamiz (chegirma bilan).
+          const opt = plan.pricing?.find((o) => o.months === months);
+          const discountPct = opt?.discount_percent ?? 0;
+          const gross = Number(opt?.gross ?? Number(plan.price) * months);
+          const total = Number(opt?.total ?? Number(plan.price) * months);
           return (
             <Card key={plan.id} className="relative flex flex-col">
               <CardContent className="p-6 flex flex-col flex-1">
@@ -219,25 +223,45 @@ export function SubscriptionPage() {
                       {t('subscription.payPeriod', "To'lov muddati")}
                     </label>
                     <div className="mt-1.5 grid grid-cols-4 gap-1.5">
-                      {MONTH_OPTIONS.map((m) => (
-                        <button
-                          key={m}
-                          type="button"
-                          onClick={() => setMonthsByPlan((prev) => ({ ...prev, [plan.id]: m }))}
-                          className={`rounded-lg border px-2 py-1.5 text-xs font-medium transition ${
-                            months === m
-                              ? 'border-primary bg-primary text-primary-foreground'
-                              : 'border-border bg-background hover:border-primary/50'
-                          }`}
-                        >
-                          {m} {t('subscription.monthShort', 'oy')}
-                        </button>
-                      ))}
+                      {MONTH_OPTIONS.map((m) => {
+                        const mPct = plan.pricing?.find((o) => o.months === m)?.discount_percent ?? 0;
+                        return (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => setMonthsByPlan((prev) => ({ ...prev, [plan.id]: m }))}
+                            className={`relative rounded-lg border px-2 py-1.5 text-xs font-medium transition ${
+                              months === m
+                                ? 'border-primary bg-primary text-primary-foreground'
+                                : 'border-border bg-background hover:border-primary/50'
+                            }`}
+                          >
+                            {m} {t('subscription.monthShort', 'oy')}
+                            {mPct > 0 && (
+                              <span className="absolute -top-2 -right-1 rounded-full bg-green-600 px-1 text-[9px] font-bold text-white shadow">
+                                -{mPct}%
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                     {months > 1 && (
-                      <p className="mt-1.5 text-xs text-muted-foreground">
-                        {t('subscription.totalForMonths', 'Jami')}: <span className="font-semibold text-foreground">{formatPrice(total, t)}</span>
-                      </p>
+                      <div className="mt-1.5 text-xs">
+                        {discountPct > 0 ? (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-muted-foreground line-through">{formatPrice(gross, t)}</span>
+                            <span className="font-semibold text-foreground">{formatPrice(total, t)}</span>
+                            <span className="rounded-full bg-green-600/10 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:text-green-400">
+                              {t('subscription.youSave', 'Tejaysiz')} {formatPrice(gross - total, t)} (-{discountPct}%)
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="text-muted-foreground">
+                            {t('subscription.totalForMonths', 'Jami')}: <span className="font-semibold text-foreground">{formatPrice(total, t)}</span>
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
