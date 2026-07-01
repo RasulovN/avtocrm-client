@@ -35,6 +35,7 @@ const PlatformUsersPage = lazy(() => import('./features/saas/pages/platform/Plat
 const PlatformNotificationsPage = lazy(() => import('./features/saas/pages/platform/NotificationsPage').then((m) => ({ default: m.NotificationsPage })));
 const SupportPage = lazy(() => import('./features/saas/pages/platform/SupportPage').then((m) => ({ default: m.SupportPage })));
 const AdminProfilePage = lazy(() => import('./features/saas/pages/platform/AdminProfilePage').then((m) => ({ default: m.AdminProfilePage })));
+const PaymentsPage = lazy(() => import('./features/saas/pages/platform/PaymentsPage').then((m) => ({ default: m.PaymentsPage })));
 const AuditLogsPage = lazy(() => import('./features/saas/pages/AuditLogsPage').then((m) => ({ default: m.AuditLogsPage })));
 
 // ───── Landing (ommaviy marketing sahifa) ─────
@@ -182,6 +183,7 @@ function App() {
           <Route path="/:lang/admin/companies" element={platformRoute(<CompaniesPage />)} />
           <Route path="/:lang/admin/plans" element={platformRoute(<PlansPage />)} />
           <Route path="/:lang/admin/subscriptions" element={platformRoute(<AdminSubscriptionsPage />)} />
+          <Route path="/:lang/admin/payments" element={platformRoute(<PaymentsPage />)} />
           <Route path="/:lang/admin/company-categories" element={platformRoute(<CompanyCategoriesPage />)} />
           <Route path="/:lang/admin/geo" element={platformRoute(<GeoPage />)} />
           <Route path="/:lang/admin/leads" element={platformRoute(<LeadsPage />)} />

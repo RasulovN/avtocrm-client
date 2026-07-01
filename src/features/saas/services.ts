@@ -168,8 +168,14 @@ export const subscriptionsApi = {
   // super admin
   list: (params?: Record<string, unknown>) =>
     apiClient.get<Paginated<Subscription>>('/subscriptions/', { params }).then((r) => r.data),
+  // super admin — faqat to'lov qilingan obunalar (chek bilan)
+  payments: (params?: Record<string, unknown>) =>
+    apiClient.get<Paginated<Subscription>>('/subscriptions/payments/', { params }).then((r) => r.data),
   manage: (id: number, action: 'activate' | 'cancel' | 'extend', days?: number) =>
     apiClient.patch(`/subscriptions/${id}/`, { action, days }).then((r) => r.data),
+  // super admin — soliq (OFD) fiskal chek havolasini biriktirish/tozalash
+  setFiscal: (id: number, fiscalUrl: string | null) =>
+    apiClient.put<Subscription>(`/subscriptions/${id}/fiscal/`, { fiscal_url: fiscalUrl }).then((r) => r.data),
 };
 
 // ===================== PAYME — Subscribe API (karta orqali to'lov) =====================
