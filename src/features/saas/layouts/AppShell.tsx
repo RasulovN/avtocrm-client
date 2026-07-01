@@ -202,6 +202,11 @@ export function AppShell({ menu, brandTitle, brandSubtitle, gated, headerExtra, 
             </div>
             {showProfile && (
               <div className="absolute bottom-full left-0 right-0 mb-2 bg-card border border-border/60 rounded-xl shadow-xl p-3 space-y-1.5 z-50">
+                {user?.is_superuser && (
+                  <Button variant="ghost" className="w-full justify-start rounded-lg h-9 text-sm" onClick={() => { setShowProfile(false); navigate(`/${lang}/admin/profile`); }}>
+                    <User className="h-4 w-4 mr-2" />{t('auth.profile', 'Profil')}
+                  </Button>
+                )}
                 {hasPermission('company.settings.update') && (
                   <Button variant="ghost" className="w-full justify-start rounded-lg h-9 text-sm" onClick={() => navigate(`/${lang}/settings`)}>
                     <Settings className="h-4 w-4 mr-2" />{t('nav.settings', 'Sozlamalar')}
