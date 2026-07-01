@@ -110,11 +110,26 @@ export const companyCategoriesApi = {
 };
 
 // ===================== GEO (manzil) =====================
+export interface GeoSeedResult {
+  countriesCreated: number;
+  countriesUpdated: number;
+  regionsCreated: number;
+  regionsUpdated: number;
+  districtsCreated: number;
+}
+
 export const geoApi = {
   countries: (all = false) => apiClient.get<Country[]>('/geo/countries/', { params: all ? { all: true } : {} }).then((r) => r.data),
   regions: (countryId: number) => apiClient.get<Region[]>('/geo/regions/', { params: { country_id: countryId } }).then((r) => r.data),
   districts: (regionId: number) => apiClient.get<District[]>('/geo/districts/', { params: { region_id: regionId } }).then((r) => r.data),
   yandexKey: () => apiClient.get<{ api_key: string }>('/geo/yandex-key/').then((r) => r.data),
+
+  // Standart davlatlar (O'zbekiston + qo'shnilar + Rossiya) ni viloyat/tuman bilan
+  // idempotent qo'shish. Bor bo'lsa kamchiliklarni to'ldiradi.
+  seedDefaults: () =>
+    apiClient
+      .post<GeoSeedResult>('/geo/seed-defaults/')
+      .then((r) => r.data),
 
   createCountry: (data: Record<string, unknown>) => apiClient.post('/geo/countries/', data).then((r) => r.data),
   updateCountry: (id: number, data: Record<string, unknown>) => apiClient.put(`/geo/countries/${id}/`, data).then((r) => r.data),

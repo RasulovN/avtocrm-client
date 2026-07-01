@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { ChevronRight, Loader2, Pencil, Plus, Trash2, Languages } from 'lucide-react';
+import { ChevronRight, Loader2, Pencil, Plus, Trash2, Languages, Globe2 } from 'lucide-react';
 import {
   Button, Card, CardContent, Input, Label,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
@@ -149,6 +149,9 @@ export function GeoPage() {
   const [toDelete, setToDelete] = useState<{ level: Level; item: GeoItem } | null>(null);
   const [deleting, setDeleting] = useState(false);
 
+  // standart davlatlarni singdirish (seed)
+  const [seeding, setSeeding] = useState(false);
+
   const err = (e: unknown) => toast.error(apiError(e, t('common.error', 'Xatolik yuz berdi')));
 
   // Joriy tilga mos nomni tanlash (bo'sh bo'lsa uz lotinga qaytadi)
@@ -193,6 +196,35 @@ export function GeoPage() {
     setSelectedRegion(id);
     setDistricts([]);
     loadDistricts(id);
+  };
+
+  // Standart davlatlar (O'zbekiston + qo'shnilar + Rossiya) ni viloyat/tuman bilan
+  // idempotent qo'shadi. Bor bo'lsa kamchiliklarni to'ldiradi, dublikat yaratmaydi.
+  const seedDefaults = async () => {
+    setSeeding(true);
+    try {
+      const res = await geoApi.seedDefaults();
+      const created = res.countriesCreated + res.regionsCreated + res.districtsCreated;
+      const updated = res.countriesUpdated + res.regionsUpdated;
+      if (created === 0 && updated === 0) {
+        toast.success(t('geo.seedNoChange', 'Standart davlatlar allaqachon mavjud — o\'zgarish yo\'q'));
+      } else {
+        toast.success(
+          t('geo.seedDone', 'Qo\'shildi: {{c}} davlat, {{r}} viloyat, {{d}} tuman', {
+            c: res.countriesCreated,
+            r: res.regionsCreated,
+            d: res.districtsCreated,
+          }),
+        );
+      }
+      loadCountries();
+      if (selectedCountry) loadRegions(selectedCountry);
+      if (selectedRegion) loadDistricts(selectedRegion);
+    } catch (e) {
+      err(e);
+    } finally {
+      setSeeding(false);
+    }
   };
 
   const openAdd = (level: Level) => {
@@ -319,11 +351,23 @@ export function GeoPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('geo.title', 'Manzillar')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('geo.subtitle', 'Davlat, viloyat va tumanlar ierarxiyasini boshqaring')}
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t('geo.title', 'Manzillar')}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t('geo.subtitle', 'Davlat, viloyat va tumanlar ierarxiyasini boshqaring')}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={seedDefaults}
+          disabled={seeding}
+          className="shrink-0"
+          title={t('geo.seedHint', "O'zbekiston (to'liq), qo'shni davlatlar va Rossiyani viloyat/tumanlari bilan qo'shadi")}
+        >
+          {seeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Globe2 className="mr-2 h-4 w-4" />}
+          {t('geo.seedDefaults', "Standart davlatlarni qo'shish")}
+        </Button>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
