@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import { Receipt, Copy, Check as CheckIcon, FileText } from 'lucide-react';
+import { Receipt, Copy, Check as CheckIcon, FileText, ExternalLink, QrCode, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import QRCode from 'react-qr-code';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/ui/Dialog';
 import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 
 // Fiskal konstantalar — backend PAYME_FISCAL_* bilan bir xil (dasturiy taʼminot obunasi, QQS 0).
 const FISCAL = {
@@ -20,6 +23,30 @@ export interface ReceiptPayment {
   create_time: number | null;
   perform_time: number | null;
   cancel_time: number | null;
+  fiscal_url?: string | null;
+}
+
+// OFD havolasidan (https://ofd.soliq.uz/epi?t=..&r=..&c=..&s=..) maydonlarni ajratadi.
+function parseFiscal(url?: string | null): { r?: string; s?: string; c?: string; t?: string } {
+  if (!url) return {};
+  try {
+    const u = new URL(url);
+    return {
+      r: u.searchParams.get('r') ?? undefined,
+      s: u.searchParams.get('s') ?? undefined,
+      c: u.searchParams.get('c') ?? undefined,
+      t: u.searchParams.get('t') ?? undefined,
+    };
+  } catch {
+    return {};
+  }
+}
+
+// c=20260701174733 -> "01.07.2026 17:47"
+function fmtFiscalDate(c?: string): string {
+  if (!c || c.length < 12) return '';
+  const y = c.slice(0, 4), mo = c.slice(4, 6), d = c.slice(6, 8), h = c.slice(8, 10), mi = c.slice(10, 12);
+  return `${d}.${mo}.${y} ${h}:${mi}`;
 }
 
 export interface ReceiptData {
@@ -85,18 +112,27 @@ export function PaymentReceiptModal({
   open,
   onOpenChange,
   data,
+  canEditFiscal = false,
+  onSaveFiscal,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   data: ReceiptData | null;
+  // Super admin uchun: soliq (OFD) fiskal havolasini biriktirish.
+  canEditFiscal?: boolean;
+  onSaveFiscal?: (url: string | null) => Promise<void> | void;
 }) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
+  const [editUrl, setEditUrl] = useState('');
+  const [savingFiscal, setSavingFiscal] = useState(false);
 
   if (!data) return null;
 
   const st = statusInfo(data.status, t);
   const paid = data.payment?.state === 2;
+  const fiscalUrl = data.payment?.fiscal_url || null;
+  const fiscal = parseFiscal(fiscalUrl);
   const productTitle = `${t('receipt.subscription', 'Obuna')} — ${data.plan_name ?? t('receipt.software', "dasturiy taʼminot")}`;
   const payDate = data.payment?.perform_time ?? data.payment?.create_time;
 
@@ -108,6 +144,17 @@ export function PaymentReceiptModal({
       setTimeout(() => setCopied(false), 1500);
       toast.success(t('receipt.copied', 'Nusxalandi'));
     } catch { /* ignore */ }
+  };
+
+  const saveFiscal = async (url: string | null) => {
+    if (!onSaveFiscal) return;
+    setSavingFiscal(true);
+    try {
+      await onSaveFiscal(url);
+      setEditUrl('');
+    } finally {
+      setSavingFiscal(false);
+    }
   };
 
   return (
@@ -157,7 +204,7 @@ export function PaymentReceiptModal({
             {data.company_name && <Row label={t('receipt.company', 'Kompaniya')} value={data.company_name} />}
           </div>
 
-          {/* Fiskal chek */}
+          {/* Fiskal chek (MXIK) */}
           <div className="rounded-xl border border-border/60 p-4">
             <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               <FileText className="h-3.5 w-3.5" />
@@ -167,11 +214,72 @@ export function PaymentReceiptModal({
             <Row label={t('receipt.packageCode', "O'lchov birligi kodi")} mono value={FISCAL.packageCode} />
             <Row label={t('receipt.vat', 'QQS')} value={`${FISCAL.vatPercent}%`} />
             <Row label={t('receipt.fiscalProduct', 'Xizmat')} value={productTitle} />
-            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-              {paid
-                ? t('receipt.fiscalNote', "Rasmiy fiskal chek (RRN, fiskal belgi, chek raqami) Payme ilovasi/kabinetida saqlanadi. Ushbu chek to'lov tafsilotlari va MXIK ma'lumotini ko'rsatadi.")
-                : t('receipt.notPaidNote', "Bu buyurtma hali to'lanmagan — fiskal chek to'lovdan so'ng shakllanadi.")}
+          </div>
+
+          {/* Soliq (OFD) fiskal cheki — QR + havola */}
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+            <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+              <QrCode className="h-3.5 w-3.5" />
+              {t('receipt.soliqReceipt', 'Soliq cheki (OFD)')}
             </p>
+
+            {fiscalUrl ? (
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
+                <div className="rounded-lg bg-white p-2 shrink-0">
+                  <QRCode value={fiscalUrl} size={112} />
+                </div>
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  {fiscal.s && <Row label={t('receipt.fiscalSign', 'Fiskal belgi')} mono value={fiscal.s} />}
+                  {fiscal.r && <Row label={t('receipt.fiscalNumber', 'Chek raqami')} mono value={fiscal.r} />}
+                  {fiscal.c && <Row label={t('receipt.fiscalDate', 'Sana')} value={fmtFiscalDate(fiscal.c)} />}
+                  <a
+                    href={fiscalUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    {t('receipt.openSoliq', 'Soliq chekini ochish')}
+                  </a>
+                  {canEditFiscal && (
+                    <button
+                      type="button"
+                      onClick={() => saveFiscal(null)}
+                      disabled={savingFiscal}
+                      className="ml-2 text-xs text-red-600 hover:underline disabled:opacity-50"
+                    >
+                      {t('receipt.removeFiscal', 'Havolani olib tashlash')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  {paid
+                    ? t('receipt.fiscalPending', "Soliq (OFD) cheki havolasi hali biriktirilmagan. Rasmiy fiskal chek (fiskal belgi, chek raqami) Payme kabinetida mavjud.")
+                    : t('receipt.notPaidNote', "Bu buyurtma hali to'lanmagan — fiskal chek to'lovdan so'ng shakllanadi.")}
+                </p>
+                {canEditFiscal && (
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Input
+                      value={editUrl}
+                      onChange={(e) => setEditUrl(e.target.value)}
+                      placeholder="https://ofd.soliq.uz/epi?t=..&r=..&c=..&s=.."
+                      className="text-xs"
+                    />
+                    <Button
+                      size="sm"
+                      className="shrink-0"
+                      disabled={!editUrl.trim() || savingFiscal}
+                      onClick={() => saveFiscal(editUrl.trim())}
+                    >
+                      {savingFiscal ? <Loader2 className="h-4 w-4 animate-spin" /> : t('receipt.saveFiscal', 'Biriktirish')}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

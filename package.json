@@ -35,6 +35,7 @@
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^17.0.2",
     "react-qr-barcode-scanner": "^2.1.25",
+    "react-qr-code": "^2.2.0",
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
     "socket.io-client": "^4.8.3",

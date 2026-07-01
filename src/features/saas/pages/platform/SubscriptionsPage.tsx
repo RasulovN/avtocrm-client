@@ -372,7 +372,23 @@ export function SubscriptionsPage() {
         </DialogContent>
       </Dialog>
 
-      <PaymentReceiptModal open={!!receipt} onOpenChange={(o) => !o && setReceipt(null)} data={receipt} />
+      <PaymentReceiptModal
+        open={!!receipt}
+        onOpenChange={(o) => !o && setReceipt(null)}
+        data={receipt}
+        canEditFiscal
+        onSaveFiscal={async (url) => {
+          if (!receipt) return;
+          try {
+            const updated = await subscriptionsApi.setFiscal(receipt.subscription_id, url);
+            setReceipt((r) => (r ? { ...r, payment: updated.payment ?? null } : r));
+            toast.success(url ? t('sub.fiscalSaved', 'Fiskal havola biriktirildi') : t('sub.fiscalRemoved', 'Fiskal havola olib tashlandi'));
+            load();
+          } catch (err) {
+            toast.error(apiError(err, t('common.error', 'Xatolik yuz berdi')));
+          }
+        }}
+      />
     </div>
   );
 }

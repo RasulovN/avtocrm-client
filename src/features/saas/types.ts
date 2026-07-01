@@ -160,6 +160,7 @@ export interface SubscriptionPayment {
   create_time: number | null;
   perform_time: number | null;
   cancel_time: number | null;
+  fiscal_url?: string | null;
 }
 
 export interface Subscription {
