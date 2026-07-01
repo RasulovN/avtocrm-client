@@ -37,7 +37,7 @@ describe('LoginPage', () => {
   it('renders login form correctly', () => {
     render(<LoginPage />);
 
-    expect(screen.getByText('AvtoCRM')).toBeInTheDocument();
+    expect(screen.getByText('Zumex')).toBeInTheDocument();
     expect(screen.getByLabelText(/telefon/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/parol/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /kirish/i })).toBeInTheDocument();

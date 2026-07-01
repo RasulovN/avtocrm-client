@@ -125,7 +125,7 @@ export function Sidebar({ className }: SidebarProps) {
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b">
-            <h1 className="text-xl font-bold">AvtoCRM</h1>
+            <h1 className="text-xl font-bold">Zumex</h1>
             <p className="text-sm text-muted-foreground">{t('sales.autoSpareParts', 'Авто эҳтиёт қисмлар')}</p>
           </div>
 

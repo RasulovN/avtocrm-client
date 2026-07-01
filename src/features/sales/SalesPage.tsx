@@ -1309,7 +1309,7 @@ export function SalesPage() {
             </div>
             <div className="p-4 space-y-3">
               <div className="text-center border-b dark:border-gray-600 pb-3">
-                <h4 className="text-xl font-bold dark:text-white print:text-black">AvtoCRM</h4>
+                <h4 className="text-xl font-bold dark:text-white print:text-black">Zumex</h4>
                 <p className="text-sm text-muted-foreground dark:text-gray-400 print:text-black">{t('sales.receipt')}</p>
                 <p className="text-xs text-muted-foreground dark:text-gray-400 print:text-black">{new Date().toLocaleString('uz-UZ', { hour12: false })}</p>
               </div>

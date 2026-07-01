@@ -1,6 +1,6 @@
-# AvtoCRM
+# Zumex
 
-AvtoCRM avtomobil ehtiyot qismlari savdosi va ichki operatsiyalarini boshqarish uchun yaratilgan frontend CRM tizimi. Loyiha do'konlar, ombor, kirim, sotuv, o'tkazma, ta'minotchi, foydalanuvchi va hisobot modullarini yagona interfeysda boshqaradi.
+Zumex avtomobil ehtiyot qismlari savdosi va ichki operatsiyalarini boshqarish uchun yaratilgan frontend CRM tizimi. Loyiha do'konlar, ombor, kirim, sotuv, o'tkazma, ta'minotchi, foydalanuvchi va hisobot modullarini yagona interfeysda boshqaradi.
 
 Frontend `React + TypeScript + Vite` asosida yozilgan. UI qismi `Tailwind CSS`, `Radix UI`, `Lucide Icons` va `Zustand` bilan qurilgan. Ilova backend bilan `axios` orqali ishlaydi va autentifikatsiya cookie-session asosida yuritiladi.
 
@@ -306,4 +306,4 @@ Ichki CRM loyiha sifatida ishlab chiqilgan. Agar loyiha keyinroq kengaytirilsa, 
 - role-based access nazoratini kengaytirish
 - test coverage'ni oshirish
 - service layer uchun yagona response normalizer qo'shish
-# avtocrm-client
+# Zumex-client

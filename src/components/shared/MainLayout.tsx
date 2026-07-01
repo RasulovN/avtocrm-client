@@ -286,7 +286,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
                 A
               </div>
               <div>
-                <h1 className="text-base font-bold text-foreground tracking-tight">AvtoCRM</h1>
+                <h1 className="text-base font-bold text-foreground tracking-tight">Zumex</h1>
                 <p className="text-[11px] text-muted-foreground leading-tight">Auto Spare Parts</p>
               </div>
             </div>

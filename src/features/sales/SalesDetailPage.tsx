@@ -115,14 +115,14 @@ export function SalesDetailPage() {
     if (!sale?.payments) return 0;
     return sale.payments
       .filter(p => p.type === 'cash')
-      .reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      .reduce((sum, p) => sum + Number(p.amount), 0);
   }, [sale]);
 
   const cardAmount = useMemo(() => {
     if (!sale?.payments) return 0;
     return sale.payments
       .filter(p => p.type === 'card')
-      .reduce((sum, p) => sum + parseFloat(p.amount), 0);
+      .reduce((sum, p) => sum + Number(p.amount), 0);
   }, [sale]);
 
   if (loading) {
@@ -660,7 +660,7 @@ export function SalesDetailPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 " onClick={handleCloseReceipt}>
           <div className="receipt-content receipt-print bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto p-4" onClick={e => e.stopPropagation()}>
             <div className="text-center border-b dark:border-gray-600 pb-3 mb-3 ">
-              <h4 className="text-xl font-bold dark:text-white print:text-black">AvtoCRM</h4>
+              <h4 className="text-xl font-bold dark:text-white print:text-black">ZUMEX</h4>
               <p className="text-sm dark:text-gray-300 print:text-black">{t('sales.receipt')} #{sale.id}</p>
               <p className="text-xs dark:text-gray-400 print:text-black">{formatDate(sale.created_at)}</p>
             </div>
