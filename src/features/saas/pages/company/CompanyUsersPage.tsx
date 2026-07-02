@@ -23,7 +23,6 @@ import {
 } from '../../../../components/ui';
 import { Badge } from '../../../../components/ui/Badge';
 import { rbacApi } from '../../services';
-import { apiClient } from '../../../../services/api';
 import { usePlanLimits } from '../../usePlanLimits';
 import type { CompanyUser } from '../../types';
 
@@ -52,6 +51,8 @@ interface UserForm {
   password: string;
   role_id: string;
   is_active: boolean;
+  store_id: string; // '' = biriktirilmagan
+  store_role: 'm' | 's';
 }
 
 const emptyForm: UserForm = {
@@ -61,6 +62,8 @@ const emptyForm: UserForm = {
   password: '',
   role_id: '',
   is_active: true,
+  store_id: '',
+  store_role: 's',
 };
 
 export function CompanyUsersPage() {
@@ -68,6 +71,7 @@ export function CompanyUsersPage() {
 
   const [users, setUsers] = useState<CompanyUser[]>([]);
   const [roles, setRoles] = useState<AssignableRole[]>([]);
+  const [stores, setStores] = useState<StoreLite[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(1);
@@ -104,6 +108,11 @@ export function CompanyUsersPage() {
       .assignableRoles()
       .then(setRoles)
       .catch(() => toast.error(t('company.users.rolesLoadError', "Rollarni yuklab bo'lmadi")));
+    // Kompaniya do'konlari (xodimni biriktirish uchun) — company.users.view bilan ochiq.
+    rbacApi
+      .assignableStores()
+      .then((list) => setStores(list.map((s) => ({ id: s.id, name: s.name }))))
+      .catch(() => setStores([]));
     loadUsers(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -128,6 +137,8 @@ export function CompanyUsersPage() {
       password: '',
       role_id: u.role_id ? String(u.role_id) : '',
       is_active: u.is_active,
+      store_id: u.store_id ? String(u.store_id) : '',
+      store_role: (u.store_role as 'm' | 's') ?? 's',
     });
     setOpen(true);
   };
@@ -154,6 +165,9 @@ export function CompanyUsersPage() {
           full_name: form.full_name.trim(),
           role_id: Number(form.role_id),
           is_active: form.is_active,
+          // '' => null (do'kondan chiqarish), aks holda tanlangan do'kon.
+          store_id: form.store_id ? Number(form.store_id) : null,
+          store_role: form.store_role,
         });
         toast.success(t('company.users.updated', 'Xodim yangilandi'));
       } else {
@@ -163,6 +177,8 @@ export function CompanyUsersPage() {
           email: form.email.trim() || undefined,
           password: form.password || undefined,
           role_id: Number(form.role_id),
+          store_id: form.store_id ? Number(form.store_id) : undefined,
+          store_role: form.store_role,
         });
         toast.success(t('company.users.created', 'Xodim qoshildi'));
       }
@@ -259,7 +275,9 @@ export function CompanyUsersPage() {
                             <span className="truncate">{u.full_name || '-'}</span>
                             {owner && <Crown className="w-3.5 h-3.5 shrink-0 text-amber-500" />}
                           </div>
-                          <p className="truncate text-sm text-muted-foreground">{u.role || '-'}</p>
+                          <p className="truncate text-sm text-muted-foreground">
+                            {u.role || '-'}{u.store_name ? ` · ${u.store_name}` : ''}
+                          </p>
                         </div>
                         <Badge variant={u.is_active ? 'success' : 'danger'}>
                           {u.is_active ? t('company.users.active', 'Faol') : t('company.users.inactive', 'Nofaol')}
@@ -300,6 +318,7 @@ export function CompanyUsersPage() {
                       <TableHead>{t('company.users.phone', 'Telefon')}</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>{t('company.users.role', 'Rol')}</TableHead>
+                      <TableHead>{t('company.users.store', "Do'kon")}</TableHead>
                       <TableHead className="text-center">{t('company.users.status', 'Holat')}</TableHead>
                       <TableHead className="text-right">{t('common.actions', 'Amallar')}</TableHead>
                     </TableRow>
@@ -318,6 +337,7 @@ export function CompanyUsersPage() {
                           <TableCell className="text-muted-foreground">{u.phone_number || '-'}</TableCell>
                           <TableCell className="text-muted-foreground">{u.email || '-'}</TableCell>
                           <TableCell>{u.role || '-'}</TableCell>
+                          <TableCell className="text-muted-foreground">{u.store_name || '-'}</TableCell>
                           <TableCell className="text-center">
                             <Badge variant={u.is_active ? 'success' : 'danger'}>
                               {u.is_active ? t('company.users.active', 'Faol') : t('company.users.inactive', 'Nofaol')}
@@ -450,6 +470,37 @@ export function CompanyUsersPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Do'kon biriktirish — xodim login qilganda shu do'kon konteksti faol bo'ladi */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label className="font-semibold">{t('company.users.store', "Do'kon")}</Label>
+                  <select
+                    className={selectCls}
+                    value={form.store_id}
+                    onChange={(e) => setForm((f) => ({ ...f, store_id: e.target.value }))}
+                  >
+                    <option value="">{t('company.users.noStore', 'Biriktirilmagan')}</option>
+                    {stores.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="font-semibold">{t('company.users.storeRole', "Do'kondagi rol")}</Label>
+                  <select
+                    className={selectCls}
+                    value={form.store_role}
+                    onChange={(e) => setForm((f) => ({ ...f, store_role: e.target.value as 'm' | 's' }))}
+                    disabled={!form.store_id}
+                  >
+                    <option value="s">{t('company.users.seller', 'Sotuvchi')}</option>
+                    <option value="m">{t('company.users.manager', 'Menejer')}</option>
+                  </select>
+                </div>
               </div>
 
               {editing && (

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef, useMemo, type ChangeEvent, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, LocateFixed } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { DataTable, type Column } from '../../components/shared/DataTable';
 import { ConfirmDialog } from '../../components/shared/ConfirmDialog';
@@ -57,13 +58,22 @@ export function StoreListPage() {
   const mapRef = useRef<any>(null);
   const placemarkRef = useRef<any>(null);
 
+  // Kril maydonlari qo'lda tahrirlanganmi? Tahrirlanmagan bo'lsa — lotin yozilganda
+  // avtomatik transliteratsiya qilinadi; qo'lda kiritilgan qiymat esa ustidan yozilmaydi.
+  const cyrlDirtyRef = useRef({ name: false, address: false });
+
   const handleNameChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       name: value,
       name_uz: value,
-      name_uz_cyrl: latinToCyrillic(value),
+      name_uz_cyrl: cyrlDirtyRef.current.name ? prev.name_uz_cyrl : latinToCyrillic(value),
     }));
+  };
+
+  const handleNameCyrlChange = (value: string) => {
+    cyrlDirtyRef.current.name = value.trim() !== '';
+    setFormData((prev) => ({ ...prev, name_uz_cyrl: value }));
   };
 
   const handleAddressChange = (value: string) => {
@@ -71,8 +81,13 @@ export function StoreListPage() {
       ...prev,
       address: value,
       address_uz: value,
-      address_uz_cyrl: latinToCyrillic(value),
+      address_uz_cyrl: cyrlDirtyRef.current.address ? prev.address_uz_cyrl : latinToCyrillic(value),
     }));
+  };
+
+  const handleAddressCyrlChange = (value: string) => {
+    cyrlDirtyRef.current.address = value.trim() !== '';
+    setFormData((prev) => ({ ...prev, address_uz_cyrl: value }));
   };
 
   const loadStores = useCallback(async () => {
@@ -135,13 +150,22 @@ export function StoreListPage() {
   const handleOpenDialog = (store?: Store) => {
     if (store) {
       setEditingStore(store);
+      // Mavjud kril qiymatlari avtomatik translitdan farq qilsa — qo'lda kiritilgan
+      // deb hisoblaymiz (lotin o'zgarganda ustidan yozmaslik uchun).
+      const nameUz = store.name_uz || store.name;
+      const addressUz = store.address_uz || store.address || '';
+      cyrlDirtyRef.current = {
+        name: Boolean(store.name_uz_cyrl) && store.name_uz_cyrl !== latinToCyrillic(nameUz),
+        address: Boolean(store.address_uz_cyrl) && store.address_uz_cyrl !== latinToCyrillic(addressUz),
+      };
       setFormData({
         name: store.name,
         name_uz: store.name_uz || store.name,
-        name_uz_cyrl: store.name_uz_cyrl || '',
+        // Kril bo'sh bo'lsa (eski yozuvlar) — lotin nomdan avtomatik to'ldiramiz.
+        name_uz_cyrl: store.name_uz_cyrl || latinToCyrillic(nameUz),
         address: store.address || '',
         address_uz: store.address_uz || store.address || '',
-        address_uz_cyrl: store.address_uz_cyrl || '',
+        address_uz_cyrl: store.address_uz_cyrl || latinToCyrillic(addressUz),
         phone: store.phone_number || store.phone || '',
         phone_number: store.phone_number || store.phone || '',
         type: store.type || (store.is_warehouse ? 'w' : 's'),
@@ -151,6 +175,7 @@ export function StoreListPage() {
       });
     } else {
       setEditingStore(null);
+      cyrlDirtyRef.current = { name: false, address: false };
       setFormData({
         name: '',
         name_uz: '',
@@ -286,13 +311,51 @@ export function StoreListPage() {
     mapRef.current.setCenter([lat, lng], mapRef.current.getZoom(), { duration: 200 });
   }, [formData.latitude, formData.longitude]);
 
+  // "Mening joylashuvim" — brauzer geolokatsiyasi orqali joriy koordinatalarni oladi.
+  // formData yangilanishi mavjud effekt orqali placemark'ni ko'chiradi va xaritani markazlaydi.
+  const [locating, setLocating] = useState(false);
+  const handleUseMyLocation = () => {
+    if (!('geolocation' in navigator)) {
+      toast.error(t('stores.geoUnsupported', 'Brauzeringiz joylashuvni aniqlashni qo‘llab-quvvatlamaydi'));
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude.toFixed(6),
+          longitude: position.coords.longitude.toFixed(6),
+        }));
+        setLocating(false);
+      },
+      (err) => {
+        setLocating(false);
+        toast.error(
+          err.code === err.PERMISSION_DENIED
+            ? t('stores.geoDenied', 'Joylashuvga ruxsat berilmadi. Brauzer sozlamalaridan ruxsat bering.')
+            : t('stores.geoFailed', 'Joylashuvni aniqlab bo‘lmadi. Qayta urinib ko‘ring.'),
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
+
   const handleSave = async () => {
     try {
       setSaving(true);
+      // Kril maydonlari bo'sh qoldirilsa — lotin qiymatdan avtomatik tarjima (translit)
+      // bilan to'ldiramiz: bazadagi kril hech qachon bo'sh qiymat bilan o'chirilmaydi.
+      const payload: StoreFormData = {
+        ...formData,
+        name_uz_cyrl: formData.name_uz_cyrl?.trim() || latinToCyrillic(formData.name_uz || formData.name),
+        address_uz_cyrl:
+          formData.address_uz_cyrl?.trim() || latinToCyrillic(formData.address_uz || formData.address || ''),
+      };
       if (editingStore) {
-        await storeService.update(editingStore.id, formData);
+        await storeService.update(editingStore.id, payload);
       } else {
-        await storeService.create(formData);
+        await storeService.create(payload);
       }
       setDialogOpen(false);
       loadStores();
@@ -511,12 +574,10 @@ export function StoreListPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('stores.storeName')}</Label>
+              <Label>{t('stores.storeName')} (Кирилл)</Label>
               <Input
                 value={formData.name_uz_cyrl ?? ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, name_uz_cyrl: e.target.value })
-                }
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleNameCyrlChange(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -552,13 +613,25 @@ export function StoreListPage() {
               <Label>{t('stores.address')} (Кирилл)</Label>
               <Input
                 value={formData.address_uz_cyrl ?? ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, address_uz_cyrl: e.target.value })
-                }
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleAddressCyrlChange(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('stores.map')}</Label>
+              <div className="flex items-center justify-between">
+                <Label>{t('stores.map')}</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleUseMyLocation}
+                  disabled={locating}
+                >
+                  <LocateFixed className={`h-4 w-4 mr-2 ${locating ? 'animate-spin' : ''}`} />
+                  {locating
+                    ? t('stores.locating', 'Aniqlanmoqda…')
+                    : t('stores.myLocation', 'Mening joylashuvim')}
+                </Button>
+              </div>
               <div ref={mapContainerRef} className="h-60 w-full rounded-md border" />
             </div>
           </div>

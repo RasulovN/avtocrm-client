@@ -84,18 +84,57 @@ function mapMeToUser(me: Awaited<ReturnType<typeof saasAuth.me>>): User {
   } as User;
 }
 
-async function loadStores(): Promise<UserStoreLite[]> {
-  try {
-    const res = await apiClient.get<{ id: number; name: string }[]>('/store/', { skipGlobalErrorHandler: true });
-    const list = Array.isArray(res.data) ? res.data : [];
-    if (list.length && !localStorage.getItem('active_store_id')) {
-      localStorage.setItem('active_store_id', String(list[0].id));
-    }
-    return list.map((s) => ({ id: s.id, name: s.name }));
-  } catch (err) {
-    logger.error("Do'konlar ro'yxatini yuklab bo'lmadi", { error: err instanceof Error ? err.message : String(err) });
-    return [];
+// Faol do'konni resolve qiladi: joriy active_store_id ro'yxatda bo'lmasa (yoki yo'q bo'lsa),
+// birinchi do'konni tanlaydi. Shu orqali do'konga biriktirilgan xodim login qilganda
+// o'z do'koni konteksti (X-Store-ID) avtomatik faollashadi.
+function resolveActiveStore(list: { id: number; name: string }[]): UserStoreLite[] {
+  const mapped = list.map((s) => ({ id: s.id, name: s.name }));
+  if (mapped.length) {
+    const cur = localStorage.getItem('active_store_id');
+    const has = cur && mapped.some((s) => String(s.id) === cur);
+    if (!has) localStorage.setItem('active_store_id', String(mapped[0].id));
   }
+  return mapped;
+}
+
+async function loadStores(canManageStores: boolean): Promise<UserStoreLite[]> {
+  // 1) Foydalanuvchining O'ZIGA biriktirilgan do'kon(lar)i (StoreUser links) — profil orqali.
+  //    Kim do'konga biriktirilgan bo'lsa (menejer/sotuvchi/xodim), u FAQAT shu do'kon(lar)
+  //    doirasida ishlaydi — ruxsatlari keng bo'lsa ham markaziy omborga o'tib ketmaydi.
+  let own: UserStoreLite[] = [];
+  try {
+    const res = await apiClient.get<{ stores?: { id: number; name: string; is_active?: boolean }[] }>(
+      '/users/profile/',
+      { skipGlobalErrorHandler: true },
+    );
+    own = (res.data?.stores ?? [])
+      .filter((s) => s.is_active !== false)
+      .map((s) => ({ id: s.id, name: s.name }));
+  } catch {
+    /* profil xatosi — pastda /store/ orqali urinib ko'ramiz */
+  }
+
+  // Biriktirilgan do'koni bor foydalanuvchi — faol do'kon DOIM o'z do'koni bo'ladi
+  // va ro'yxat ham faqat o'z do'kon(lar)i bilan cheklanadi.
+  if (own.length) {
+    const cur = localStorage.getItem('active_store_id');
+    const valid = cur && own.some((s) => String(s.id) === cur);
+    if (!valid) localStorage.setItem('active_store_id', String(own[0].id));
+    return own;
+  }
+
+  // 2) Shaxsan biriktirilmagan (markaziy admin/ega) — kompaniyaning barcha do'konlari.
+  if (canManageStores) {
+    try {
+      const res = await apiClient.get<{ id: number; name: string }[]>('/store/', { skipGlobalErrorHandler: true });
+      const list = Array.isArray(res.data) ? res.data : [];
+      return resolveActiveStore(list);
+    } catch (err) {
+      logger.error("Do'konlar ro'yxatini yuklab bo'lmadi", { error: err instanceof Error ? err.message : String(err) });
+    }
+  }
+  localStorage.removeItem('active_store_id');
+  return [];
 }
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
@@ -140,7 +179,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const me = await saasAuth.me();
-      const stores = me.company ? await loadStores() : [];
+      // Do'kon boshqaruvchisi (barcha do'konlarni ko'ra oladi) vs do'kon xodimi (bitta do'kon).
+      const canManageStores =
+        me.is_superuser || (me.permissions ?? []).includes('company.stores.view');
+      const stores = me.company ? await loadStores(canManageStores) : [];
       // Platform (super admin panel) foydalanuvchisi — mustahkam aniqlash:
       // backend `is_platform` yuborsa o'shani, aks holda super admin YOKI biror
       // `platform.*` ruxsatdan hisoblaymiz (eski/stale backend bilan ham to'g'ri ishlaydi).

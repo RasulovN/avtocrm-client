@@ -49,6 +49,11 @@ export const rbacApi = {
     apiClient
       .get<{ id: number; name: string; is_system: boolean }[]>('/rbac/company/assignable-roles/')
       .then((r) => r.data),
+  // Xodimni biriktirish uchun kompaniya do'konlari (company.users.view bilan ochiq)
+  assignableStores: () =>
+    apiClient
+      .get<{ id: number; name: string }[]>('/rbac/company/assignable-stores/')
+      .then((r) => r.data),
   createRole: (scope: 'platform' | 'company', data: { name: string; description?: string; permissions: string[] }) =>
     apiClient.post<Role>(`/rbac/${scope}/roles/`, data).then((r) => r.data),
   getRole: (scope: 'platform' | 'company', id: number) =>

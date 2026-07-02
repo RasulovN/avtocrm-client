@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Menu, ChevronLeft, X, User, ChevronDown, Settings, LogOut, Sun, Moon, Globe, Lock,
+  Menu, ChevronLeft, X, User, ChevronDown, Settings, LogOut, Sun, Moon, Globe, Lock, Store,
 } from 'lucide-react';
 import { cn } from '../../../utils';
 import { useThemeStore, useAuthStore } from '../../../app/store';
@@ -34,7 +34,10 @@ export function AppShell({ menu, brandTitle, brandSubtitle, gated, headerExtra, 
   const lang = i18n.language || 'uz';
   const currentLang = LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[0];
   const { theme, toggleTheme } = useThemeStore();
-  const { user, company, subscriptionActive, hasPermission, logout } = useAuthStore();
+  const { user, company, subscriptionActive, hasPermission, logout, stores } = useAuthStore();
+  // Faol do'kon (X-Store-ID) — foydalanuvchi qaysi do'kon panelida ekanini ko'rsatish uchun.
+  const activeStoreId = typeof window !== 'undefined' ? localStorage.getItem('active_store_id') : null;
+  const activeStore = stores.find((s) => String(s.id) === activeStoreId) ?? null;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -229,7 +232,16 @@ export function AppShell({ menu, brandTitle, brandSubtitle, gated, headerExtra, 
               <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-muted"><Menu className="h-5 w-5" /></button>
               {company && (
                 <div className="flex items-center gap-2 bg-primary/5 px-3.5 py-2 rounded-xl border border-primary/10">
-                  <span className="font-semibold text-xs sm:text-sm text-primary truncate max-w-[150px] sm:max-w-[250px]">{company.name}</span>
+                  <span className="font-semibold text-xs sm:text-sm text-primary truncate max-w-[130px] sm:max-w-[220px]">{company.name}</span>
+                </div>
+              )}
+              {activeStore && (
+                <div
+                  className="flex items-center gap-1.5 bg-emerald-500/10 px-3 py-2 rounded-xl border border-emerald-500/20"
+                  title={t('stores.activeStore', "Faol do'kon")}
+                >
+                  <Store className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span className="font-semibold text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 truncate max-w-[110px] sm:max-w-[180px]">{activeStore.name}</span>
                 </div>
               )}
             </div>

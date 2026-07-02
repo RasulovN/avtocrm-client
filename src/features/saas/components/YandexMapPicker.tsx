@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
+import { LocateFixed } from 'lucide-react';
 import { geoApi } from '../services';
 import { logger } from '../../../utils/logger';
 
@@ -14,6 +17,7 @@ interface YmapsPlacemark {
 interface YmapsMap {
   geoObjects: { add(obj: YmapsPlacemark): void };
   events: { add(event: string, cb: (e: { get(key: string): number[] }) => void): void };
+  setCenter(coords: number[], zoom?: number, opts?: object): void;
 }
 interface Ymaps {
   ready(cb: () => void): void;
@@ -56,10 +60,14 @@ interface Props {
 }
 
 export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<YmapsMap | null>(null);
   const placemarkRef = useRef<YmapsPlacemark | null>(null);
+  // Effekt ichida yaratiladigan setMark'ni tashqaridan ("Mening joylashuvim") chaqirish uchun.
+  const setMarkRef = useRef<((coords: number[]) => void) | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [locating, setLocating] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,6 +104,7 @@ export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
           }
           onChange(coords[0].toFixed(6), coords[1].toFixed(6));
         };
+        setMarkRef.current = setMark;
 
         if (latitude && longitude) setMark([Number(latitude), Number(longitude)]);
 
@@ -109,6 +118,32 @@ export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // "Mening joylashuvim" — joriy geolokatsiyani aniqlab, belgini qo'yadi va markazlaydi.
+  const handleUseMyLocation = () => {
+    if (!('geolocation' in navigator)) {
+      toast.error(t('stores.geoUnsupported', 'Brauzeringiz joylashuvni aniqlashni qo‘llab-quvvatlamaydi'));
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocating(false);
+        const coords = [position.coords.latitude, position.coords.longitude];
+        setMarkRef.current?.(coords);
+        mapRef.current?.setCenter(coords, 16, { duration: 300 });
+      },
+      (err) => {
+        setLocating(false);
+        toast.error(
+          err.code === err.PERMISSION_DENIED
+            ? t('stores.geoDenied', 'Joylashuvga ruxsat berilmadi. Brauzer sozlamalaridan ruxsat bering.')
+            : t('stores.geoFailed', 'Joylashuvni aniqlab bo‘lmadi. Qayta urinib ko‘ring.'),
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
+
   if (error) {
     return (
       <div className="rounded-xl border border-dashed p-4 text-center text-sm text-muted-foreground">
@@ -117,5 +152,19 @@ export function YandexMapPicker({ latitude, longitude, onChange }: Props) {
     );
   }
 
-  return <div ref={ref} className="w-full h-[320px] rounded-xl overflow-hidden border border-border/60" />;
+  return (
+    <div className="relative">
+      <div ref={ref} className="w-full h-[320px] rounded-xl overflow-hidden border border-border/60" />
+      {/* Joriy joylashuvni tanlash — xarita ustida (Yandex boshqaruvlarini to'sib qo'ymaslik uchun pastda) */}
+      <button
+        type="button"
+        onClick={handleUseMyLocation}
+        disabled={locating}
+        className="absolute bottom-3 right-3 z-10 flex items-center gap-2 rounded-lg border border-border bg-background/95 px-3 py-2 text-sm font-medium shadow-md hover:bg-muted disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <LocateFixed className={`h-4 w-4 ${locating ? 'animate-spin' : ''}`} />
+        {locating ? t('stores.locating', 'Aniqlanmoqda…') : t('stores.myLocation', 'Mening joylashuvim')}
+      </button>
+    </div>
+  );
 }
