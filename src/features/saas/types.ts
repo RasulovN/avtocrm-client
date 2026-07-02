@@ -32,6 +32,10 @@ export interface MeResponse {
   company: MeCompany | null;
   subscription_active: boolean;
   is_superuser: boolean;
+  // Platform (super admin panel) foydalanuvchisi — super admin YOKI platform roli/ruxsati bor.
+  // true bo'lsa: onboarding emas, super admin paneliga yo'naltiriladi.
+  // Optional — eski backend javobida bo'lmasa, frontend permissions'dan hisoblaydi.
+  is_platform?: boolean;
   permissions: string[];
   menus: MenuItem[];
 }

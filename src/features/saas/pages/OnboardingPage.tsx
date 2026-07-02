@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { Building2, Loader2, MapPin } from 'lucide-react';
@@ -16,7 +16,7 @@ import { useAuthStore } from '../../../app/store';
 export function OnboardingPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { checkAuth, logout } = useAuthStore();
+  const { checkAuth, logout, isPlatform, company } = useAuthStore();
   const lang = i18n.language || 'uz';
 
   const [categories, setCategories] = useState<CompanyCategory[]>([]);
@@ -80,6 +80,11 @@ export function OnboardingPage() {
   };
 
   const selectCls = 'flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
+
+  // Platform (super admin panel) foydalanuvchisi onboarding qilmaydi — super admin paneliga.
+  // Allaqachon kompaniyasi bor foydalanuvchi ham qayta onboarding qilmaydi — dashboard'ga.
+  if (isPlatform) return <Navigate to={`/${lang}/admin`} replace />;
+  if (company) return <Navigate to={`/${lang}/dashboard`} replace />;
 
   return (
     <main className="min-h-screen bg-muted/30 py-8 px-4">

@@ -50,6 +50,8 @@ interface AuthStore {
   company: MeCompany | null;
   menus: MenuItem[];
   subscriptionActive: boolean;
+  // Platform (super admin panel) foydalanuvchisi — /admin ga yo'naltiriladi, onboarding emas.
+  isPlatform: boolean;
   stores: UserStoreLite[];
 
   login: (login: string, password: string) => Promise<void>;
@@ -98,6 +100,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   company: null,
   menus: [],
   subscriptionActive: false,
+  isPlatform: false,
   stores: [],
 
   login: async (login: string, password: string) => {
@@ -117,19 +120,25 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     localStorage.removeItem('crm_auth_time');
     localStorage.removeItem('active_store_id');
     clearCartStorage();
-    set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, stores: [] });
+    set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, isPlatform: false, stores: [] });
   },
 
   checkAuth: async () => {
     // Sessiya markeri bo'lmasa — /auth/me so'rovini umuman yubormaymiz (401 oldini olamiz).
     if (typeof window !== 'undefined' && !localStorage.getItem('crm_auth_time')) {
-      set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, stores: [], isLoading: false });
+      set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, isPlatform: false, stores: [], isLoading: false });
       return;
     }
     set({ isLoading: true });
     try {
       const me = await saasAuth.me();
       const stores = me.company ? await loadStores() : [];
+      // Platform (super admin panel) foydalanuvchisi — mustahkam aniqlash:
+      // backend `is_platform` yuborsa o'shani, aks holda super admin YOKI biror
+      // `platform.*` ruxsatdan hisoblaymiz (eski/stale backend bilan ham to'g'ri ishlaydi).
+      const isPlatform =
+        me.is_platform ??
+        (me.is_superuser || (me.permissions ?? []).some((p) => p.startsWith('platform.')));
       set({
         user: mapMeToUser(me),
         token: 'session',
@@ -137,13 +146,14 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         company: me.company,
         menus: me.menus,
         subscriptionActive: me.subscription_active,
+        isPlatform,
         stores,
         isLoading: false,
       });
     } catch {
       // Sessiya yaroqsiz/eskirgan — markerni tozalaymiz.
       if (typeof window !== 'undefined') localStorage.removeItem('crm_auth_time');
-      set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, stores: [], isLoading: false });
+      set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, isPlatform: false, stores: [], isLoading: false });
     }
   },
 

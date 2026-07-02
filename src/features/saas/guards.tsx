@@ -12,10 +12,13 @@ function useLang(): string {
 // Ildiz yo'naltirish: login / admin / onboarding / dashboard
 export function RootRedirect() {
   const lang = useLang();
-  const { user, company } = useAuthStore();
+  const { user, company, isPlatform } = useAuthStore();
 
   if (!user) return <Navigate to="/login" replace />;
-  if (user.is_superuser) return <Navigate to={`/${lang}/admin`} replace />;
+  // Platform (super admin panel) foydalanuvchisi — super admin YOKI platform roli bor.
+  // Bunday foydalanuvchi kompaniyaga tegishli emas, shuning uchun onboarding EMAS,
+  // to'g'ridan-to'g'ri super admin paneliga o'tadi.
+  if (isPlatform) return <Navigate to={`/${lang}/admin`} replace />;
   if (!company) return <Navigate to={`/${lang}/onboarding`} replace />;
   return <Navigate to={`/${lang}/dashboard`} replace />;
 }
@@ -26,20 +29,23 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+// Super admin panel: super admin YOKI platform roli/ruxsati bor foydalanuvchi.
+// (Har bir admin sahifa API-lari backend'da alohida platform.* ruxsati bilan gate qilinadi.)
 export function RequireSuperuser({ children }: { children: ReactNode }) {
   const lang = useLang();
-  const { user } = useAuthStore();
+  const { user, isPlatform } = useAuthStore();
   if (!user) return <Navigate to="/login" replace />;
-  if (!user.is_superuser) return <Navigate to={`/${lang}/dashboard`} replace />;
+  if (!isPlatform) return <Navigate to={`/${lang}/dashboard`} replace />;
   return <>{children}</>;
 }
 
-// Kompaniya foydalanuvchisi: company bo'lishi shart (aks holda onboarding)
+// Kompaniya foydalanuvchisi: company bo'lishi shart (aks holda onboarding).
+// Platform foydalanuvchisi bu yerga tushmaydi — super admin paneliga yo'naltiriladi.
 export function RequireCompany({ children }: { children: ReactNode }) {
   const lang = useLang();
-  const { user, company } = useAuthStore();
+  const { user, company, isPlatform } = useAuthStore();
   if (!user) return <Navigate to="/login" replace />;
-  if (user.is_superuser) return <Navigate to={`/${lang}/admin`} replace />;
+  if (isPlatform) return <Navigate to={`/${lang}/admin`} replace />;
   if (!company) return <Navigate to={`/${lang}/onboarding`} replace />;
   return <>{children}</>;
 }

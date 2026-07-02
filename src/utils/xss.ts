@@ -77,11 +77,28 @@ export function extractBarcodeFromUrl(url: string): string {
 
 /**
  * Generates a barcode data URL using the main thread canvas
+ *
+ * MUHIM: chop etish HTML'i `blob:` hujjatda ochiladi — u yerda nisbiy `/media/...`
+ * rasm YUKLANMAYDI (blob'ning base URL'i yo'q), prod'da esa media boshqa domenda.
+ * Shuning uchun URL berilsa ham fayl nomidan barcode QIYMATINI ajratib, rasmni
+ * shu yerda (data: URL) generatsiya qilamiz — blob hujjatda kafolatli ko'rinadi.
  */
 export function generateBarcodeDataUrl(value: string, options: any = {}): string {
   if (!value) return '';
   if (value.startsWith('/media/') || value.startsWith('http://') || value.startsWith('https://')) {
-    return value;
+    // Backend barcode rasmlari `<qiymat>.png` nomida saqlanadi — qiymatni ajratamiz.
+    const m = value.match(/\/([^/?#]+)\.(?:png|jpe?g|gif|svg)(?:[?#].*)?$/i);
+    if (m && m[1]) {
+      value = decodeURIComponent(m[1]);
+    } else {
+      // Qiymat ajratilmadi — hech bo'lmaganda absolyut URL qaytaramiz
+      // (nisbiy URL blob hujjatda umuman ishlamaydi).
+      try {
+        return new URL(value, window.location.origin).toString();
+      } catch {
+        return value;
+      }
+    }
   }
   if (typeof document === 'undefined') return '';
   const canvas = document.createElement('canvas');

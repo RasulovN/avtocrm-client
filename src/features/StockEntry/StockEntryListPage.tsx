@@ -257,7 +257,9 @@ const globalProductCache = new Map<string, { name: string; sku: string; barcode:
   };
 
   const handlePrintItem = (item: InventoryItem) => {
-    const barcodeValue = item.shtrix_code || item.product_barcode || '';
+    // Avval raqamli barcode qiymati — undan rasm lokal (data URL) generatsiya qilinadi.
+    // Rasm URL'i (shtrix_code) blob chop etish oynasida yuklanmasligi mumkin — faqat zaxira.
+    const barcodeValue = item.product_barcode || item.shtrix_code || '';
     if (!barcodeValue) return;
 
     const count = printCounts[item.id] || item.quantity || 1;
@@ -285,7 +287,8 @@ const globalProductCache = new Map<string, { name: string; sku: string; barcode:
     const selectedBarcodes = selectedInventory.items
       .filter(item => selectedItems.has(item.id))
       .flatMap(item => {
-        const barcodeValue = item.shtrix_code || item.product_barcode || '';
+        // Raqamli qiymat ustuvor — chop etishda rasm lokal generatsiya qilinadi.
+        const barcodeValue = item.product_barcode || item.shtrix_code || '';
         if (!barcodeValue) return [];
         const count = printCounts[item.id] || item.quantity || 1;
         return Array.from({ length: count }, () => ({
