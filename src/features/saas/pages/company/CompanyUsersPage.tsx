@@ -23,6 +23,7 @@ import {
 } from '../../../../components/ui';
 import { Badge } from '../../../../components/ui/Badge';
 import { rbacApi } from '../../services';
+import { usePlanLimits } from '../../usePlanLimits';
 import type { CompanyUser } from '../../types';
 
 const SCOPE = 'company' as const;
@@ -73,6 +74,9 @@ export function CompanyUsersPage() {
 
   const [toDelete, setToDelete] = useState<CompanyUser | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Tarif limiti (foydalanuvchi soni)
+  const { limits, userFull, reload: reloadLimits } = usePlanLimits();
 
   const loadUsers = (p = page) => {
     setLoading(true);
@@ -157,6 +161,7 @@ export function CompanyUsersPage() {
       }
       setOpen(false);
       loadUsers(editing ? page : 1);
+      void reloadLimits();
     } catch (err: unknown) {
       const e2 = err as { response?: { data?: Record<string, unknown> } };
       const data = e2.response?.data;
@@ -174,6 +179,7 @@ export function CompanyUsersPage() {
       toast.success(t('company.users.deleted', "Xodim o'chirildi"));
       setToDelete(null);
       loadUsers(page);
+      void reloadLimits();
     } catch (err: unknown) {
       const e2 = err as { response?: { data?: Record<string, unknown> } };
       const data = e2.response?.data;
@@ -198,11 +204,29 @@ export function CompanyUsersPage() {
             {t('company.users.subtitle', 'Kompaniya xodimlari va ularning rollarini boshqaring')}
           </p>
         </div>
-        <Button onClick={openCreate} className="h-10">
-          <Plus className="w-4 h-4 mr-2" />
-          {t('company.users.add', 'Xodim qoshish')}
-        </Button>
+        <div className="flex items-center gap-3">
+          {limits && limits.users.max !== null && (
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
+              {t('company.users.usage', 'Xodimlar')}: <b className="text-foreground">{limits.users.used}</b> / {limits.users.max}
+            </span>
+          )}
+          <Button
+            onClick={openCreate}
+            className="h-10"
+            disabled={userFull}
+            title={userFull ? t('company.users.limitReached', "Tarif limiti to'ldi. Ko'proq xodim uchun tarifni yangilang.") : undefined}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {t('company.users.add', 'Xodim qoshish')}
+          </Button>
+        </div>
       </div>
+
+      {userFull && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-300">
+          {t('company.users.limitReached', "Tarif limiti to'ldi. Ko'proq xodim uchun tarifni yangilang.")}
+        </div>
+      )}
 
       <Card>
         <CardContent className="p-0">

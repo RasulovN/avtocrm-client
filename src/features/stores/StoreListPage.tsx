@@ -13,6 +13,7 @@ import { useAuthStore } from '../../app/store';
 import type { Store, StoreFormData } from '../../types';
 import { latinToCyrillic } from '../../utils/transliteration';
 import { handleError } from '../../utils/errorHandler';
+import { usePlanLimits } from '../saas/usePlanLimits';
 
 export function StoreListPage() {
   const { t, i18n } = useTranslation();
@@ -25,6 +26,8 @@ export function StoreListPage() {
   // useMemo bilan barqaror reference — aks holda har renderda yangi massiv
   // loadStores'ni qayta yaratib, cheksiz fetch siklini keltirib chiqaradi.
   const userStores = useMemo(() => user?.stores ?? [], [user]);
+  // Tarif limiti (do'kon soni) — faqat admin uchun kerak.
+  const { limits, storeFull, reload: reloadLimits } = usePlanLimits();
   const [stores, setStores] = useState<Store[]>([]);
   const [currentStore, setCurrentStore] = useState<Store | null>(null);
   const [loading, setLoading] = useState(true);
@@ -120,6 +123,7 @@ export function StoreListPage() {
       setDeleting(true);
       await storeService.delete(deleteId);
       loadStores();
+      void reloadLimits();
     } catch (error) {
       handleError(error, { showToast: true });
     } finally {
@@ -292,6 +296,7 @@ export function StoreListPage() {
       }
       setDialogOpen(false);
       loadStores();
+      void reloadLimits();
     } catch (error) {
       handleError(error, { showToast: true });
     } finally {
@@ -359,12 +364,29 @@ export function StoreListPage() {
         title={isAdmin ? t('stores.title') : t('nav.storeInfo')}
         description={isAdmin ? t('stores.title') : t('stores.storeInfoDescription')}
         actions={isAdmin ? (
-          <Button onClick={() => handleOpenDialog()}>
-            <Plus className="h-4 w-4 mr-2" />
-            {t('stores.addStore')}
-          </Button>
+          <div className="flex items-center gap-3">
+            {limits && limits.stores.max !== null && (
+              <span className="text-sm text-muted-foreground whitespace-nowrap">
+                {t('stores.usage', "Do'konlar")}: <b className="text-foreground">{limits.stores.used}</b> / {limits.stores.max}
+              </span>
+            )}
+            <Button
+              onClick={() => handleOpenDialog()}
+              disabled={storeFull}
+              title={storeFull ? t('stores.limitReached', "Tarif limiti to'ldi. Ko'proq do'kon uchun tarifni yangilang.") : undefined}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('stores.addStore')}
+            </Button>
+          </div>
         ) : undefined}
       />
+
+      {isAdmin && storeFull && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-300">
+          {t('stores.limitReached', "Tarif limiti to'ldi. Ko'proq do'kon uchun tarifni yangilang.")}
+        </div>
+      )}
 
       {isAdmin && stores.length > 0 && (
         <div className="space-y-3 md:hidden">

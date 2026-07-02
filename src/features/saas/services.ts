@@ -152,12 +152,24 @@ export const plansApi = {
 };
 
 // ===================== SUBSCRIPTIONS =====================
+// Tarif limiti + foydalanish. `max: null` => cheksiz.
+export interface PlanLimitUsage {
+  plan_name: string | null;
+  stores: { used: number; max: number | null };
+  users: { used: number; max: number | null };
+}
+
 export const subscriptionsApi = {
   // months: 1 | 3 | 6 | 12 (oldindan to'lash). Bepul tarif uchun e'tiborga olinmaydi.
   subscribe: (planId: number, months = 1) =>
     apiClient.post<SubscribeResponse>('/subscriptions/', { plan_id: planId, months }).then((r) => r.data),
   me: () => apiClient.get<{ active: Subscription | null; history: Subscription[] }>('/subscriptions/me/').then((r) => r.data),
   active: () => apiClient.get<{ active: Subscription | null; days_left: number | null }>('/subscriptions/me/active/').then((r) => r.data),
+  // Joriy tarif limitlari + foydalanish (do'kon/foydalanuvchi). max=null => cheksiz.
+  limits: () =>
+    apiClient
+      .get<PlanLimitUsage>('/subscriptions/me/limits/', { skipGlobalErrorHandler: true })
+      .then((r) => r.data),
   // To'lovlar/obuna tarixi — pagination bilan
   history: (params?: { page?: number; limit?: number }) =>
     apiClient.get<Paginated<Subscription>>('/subscriptions/me/history/', { params }).then((r) => r.data),
