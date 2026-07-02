@@ -1,21 +1,18 @@
 import i18n from 'i18next';
-import type { Resource } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+// Faqat standart (fallback) til sinxron bundle'da — qolganlari kerak bo'lganda
+// dinamik chunk sifatida yuklanadi. Bu asosiy bundle'ni ~190KB ga kichraytiradi.
 import uz from './locales/uz.json';
-import cyrl from './locales/cyrl.json';
-import en from './locales/en.json';
-import ru from './locales/ru.json';
-
-const resources: Resource = {
-  uz: { translation: uz },
-  cyrl: { translation: cyrl },
-  en: { translation: en },
-  ru: { translation: ru },
-};
 
 type AppLanguage = 'uz' | 'cyrl' | 'en' | 'ru';
+
+const LAZY_LOCALES: Record<Exclude<AppLanguage, 'uz'>, () => Promise<{ default: Record<string, unknown> }>> = {
+  cyrl: () => import('./locales/cyrl.json'),
+  en: () => import('./locales/en.json'),
+  ru: () => import('./locales/ru.json'),
+};
 
 const normalizeLanguage = (lang: string | null | undefined): AppLanguage => {
   if (!lang) return 'uz';
@@ -25,6 +22,26 @@ const normalizeLanguage = (lang: string | null | undefined): AppLanguage => {
   if (lower.startsWith('en')) return 'en';
   if (lower.startsWith('uz')) return 'uz';
   return 'uz';
+};
+
+// Til paketi hali yuklanmagan bo'lsa — yuklab i18next'ga qo'shadi.
+// react-i18next `bindI18nStore: 'added'` orqali komponentlarni qayta chizadi.
+const loadingLocales = new Map<AppLanguage, Promise<void>>();
+export const ensureLocale = (lang: string): Promise<void> => {
+  const norm = normalizeLanguage(lang);
+  if (norm === 'uz' || i18n.hasResourceBundle(norm, 'translation')) return Promise.resolve();
+  let p = loadingLocales.get(norm);
+  if (!p) {
+    p = LAZY_LOCALES[norm]()
+      .then((m) => {
+        i18n.addResourceBundle(norm, 'translation', m.default, true, true);
+      })
+      .catch(() => {
+        loadingLocales.delete(norm); // keyingi urinishga ruxsat
+      });
+    loadingLocales.set(norm, p);
+  }
+  return p;
 };
 
 const isBrowser = typeof window !== 'undefined';
@@ -39,12 +56,17 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
+    resources: { uz: { translation: uz } },
+    partialBundledLanguages: true,
     fallbackLng: 'uz',
     supportedLngs: ['uz', 'cyrl', 'en', 'ru'],
     lng: normalizedLanguage,
     interpolation: {
       escapeValue: false,
+    },
+    react: {
+      bindI18n: 'languageChanged loaded',
+      bindI18nStore: 'added removed',
     },
     detection: {
       order: ['localStorage', 'navigator'],
@@ -53,11 +75,16 @@ i18n
     },
   });
 
+// Saqlangan til uz bo'lmasa — paketini darhol (parallel) yuklaymiz.
+if (normalizedLanguage !== 'uz') void ensureLocale(normalizedLanguage);
+// Til almashganda (masalan, landing'dagi select) paketi yuklanishini kafolatlaymiz.
+i18n.on('languageChanged', (lng) => { void ensureLocale(lng); });
+
 export default i18n;
 
 export const changeLanguage = (lang: string) => {
   const normalized = normalizeLanguage(lang);
-  i18n.changeLanguage(normalized);
+  void ensureLocale(normalized).then(() => i18n.changeLanguage(normalized));
   if (isBrowser) {
     localStorage.setItem('i18nextLng', normalized);
   }

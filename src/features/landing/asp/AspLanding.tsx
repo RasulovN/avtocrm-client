@@ -38,23 +38,19 @@ function hasAnyDiscount(plans: LandingPlan[]): boolean {
   return plans.some((p) => Array.isArray(p.pricing) && p.pricing.some((o) => o.discount_percent > 0))
 }
 
-// Muddat tanlash "pill"lari stili (faol / nofaol).
-const PILL_BASE =
-  "border:0;cursor:pointer;font:inherit;font-weight:700;font-size:13.5px;padding:8px 16px;border-radius:100px;transition:background .18s,color .18s,box-shadow .18s"
-function pillStyle(active: boolean): string {
-  return active
-    ? `${PILL_BASE};background:var(--primary);color:#fff;box-shadow:0 8px 18px -8px var(--primary)`
-    : `${PILL_BASE};background:transparent;color:var(--ink-3)`
+// Muddat tanlash "pill" klassi (faol / nofaol) — stil asp.css'da.
+function pillClass(active: boolean): string {
+  return `asp-pill${active ? ' is-active' : ''}`
 }
 
 // To'lov muddati tanlagich (grid ustuni bo'ylab to'liq kenglikda).
 function buildPeriodToggle(months: number, t: AspDict): string {
   const pills = PERIODS.map(
-    (m) => `<button type="button" data-asp-period="${m}" style="${pillStyle(m === months)}">${m} ${t.price.monthLabel}</button>`,
+    (m) => `<button type="button" data-asp-period="${m}" class="${pillClass(m === months)}">${m} ${t.price.monthLabel}</button>`,
   ).join('')
-  return `<div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:10px">
-    <span style="font-size:13px;font-weight:600;color:var(--ink-3)">${t.price.billing}</span>
-    <div style="display:inline-flex;gap:4px;background:var(--bg-soft2);border:1px solid var(--line);border-radius:100px;padding:5px">${pills}</div>
+  return `<div class="asp-pill-block">
+    <span class="asp-pill-label">${t.price.billing}</span>
+    <div class="asp-pill-group">${pills}</div>
   </div>`
 }
 
@@ -62,7 +58,7 @@ function buildPeriodToggle(months: number, t: AspDict): string {
 function buildPriceInner(p: LandingPlan, months: number, lang: LandingLang, t: AspDict): string {
   const base = formatPrice(p.price, lang)
   if (base.free) {
-    return `<span style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--ink)">${t.price.free}</span>`
+    return `<span class="num">${t.price.free}</span>`
   }
   const opt = Array.isArray(p.pricing) ? p.pricing.find((o) => o.months === months) : undefined
   const pct = opt ? opt.discount_percent : 0
@@ -83,7 +79,7 @@ function buildPriceInner(p: LandingPlan, months: number, lang: LandingLang, t: A
       : ''
   return `${badge}
     <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
-      <span style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--ink);line-height:1">${fmtNum(monthly, lang)}</span>
+      <span class="num">${fmtNum(monthly, lang)}</span>
       <span style="color:var(--ink-3);font-size:15px">${t.price.perMonth}</span>
       ${oldMonthly}
     </div>
@@ -96,7 +92,7 @@ function buildPlansHtml(plans: LandingPlan[], lang: LandingLang, t: AspDict, loa
     return [0, 1, 2]
       .map(
         () =>
-          `<div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;box-shadow:var(--shadow-sm);min-height:340px"><div style="height:18px;width:120px;border-radius:6px;background:var(--bg-soft2)"></div><div style="height:34px;width:160px;border-radius:8px;background:var(--bg-soft2);margin-top:18px"></div><div style="height:44px;border-radius:11px;background:var(--bg-soft2);margin-top:20px"></div></div>`,
+          `<div class="asp-skel"><i style="height:18px;width:120px"></i><i style="height:34px;width:160px;margin-top:18px"></i><i style="height:44px;margin-top:20px"></i></div>`,
       )
       .join('')
   }
@@ -111,13 +107,13 @@ function buildPlansHtml(plans: LandingPlan[], lang: LandingLang, t: AspDict, loa
       const feats = planFeatures(p.features)
       const li = (text: string) => `<li style="display:flex;gap:9px"><span style="color:var(--green)">✓</span>${text}</li>`
       return `
-      <div style="background:var(--card);border:${popular ? '2px solid var(--primary)' : '1px solid var(--line)'};border-radius:20px;padding:30px;box-shadow:${popular ? 'var(--shadow-lg)' : 'var(--shadow-sm)'};position:relative">
-        ${popular ? `<span style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:100px">${t.price.popular}</span>` : ''}
-        <h3 style="font-family:'Manrope';font-weight:800;font-size:15px;letter-spacing:.06em;color:${popular ? 'var(--primary)' : 'var(--ink-3)'}">${planName(p, lang)}</h3>
-        ${planDesc(p, lang) ? `<p style="font-size:14px;color:var(--ink-3);margin-top:6px">${planDesc(p, lang)}</p>` : ''}
-        <div data-price-block="${p.id}" style="margin:18px 0 4px">${buildPriceInner(p, months, lang, t)}</div>
-        <a href="#" data-asp-register data-plan="${p.id}" style="display:block;text-align:center;margin-top:20px;background:${popular ? 'var(--primary)' : 'var(--card)'};border:1px solid ${popular ? 'var(--primary)' : 'var(--line-2)'};color:${popular ? '#fff' : 'var(--ink)'};padding:12px;border-radius:11px;font-weight:600${popular ? ';box-shadow:0 12px 26px -10px var(--primary)' : ''}">${popular ? t.price.demo : t.price.choose}</a>
-        <ul style="list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:11px;font-size:14.5px">
+      <div class="asp-plan${popular ? ' asp-plan--popular' : ''}">
+        ${popular ? `<span class="asp-plan-badge">${t.price.popular}</span>` : ''}
+        <h3 class="asp-plan-name">${planName(p, lang)}</h3>
+        ${planDesc(p, lang) ? `<p class="asp-plan-desc">${planDesc(p, lang)}</p>` : ''}
+        <div data-price-block="${p.id}" class="asp-plan-price">${buildPriceInner(p, months, lang, t)}</div>
+        <a href="#" data-asp-register data-plan="${p.id}" class="asp-plan-cta${popular ? ' asp-plan-cta--primary' : ''}">${popular ? t.price.demo : t.price.choose}</a>
+        <ul class="asp-plan-features">
           ${p.max_stores != null ? li(`${p.max_stores} ${t.price.maxStores}`) : ''}
           ${p.max_users != null ? li(`${p.max_users} ${t.price.maxUsers}`) : ''}
           ${feats.map(li).join('')}
@@ -181,7 +177,6 @@ export function AspLanding() {
   const billingRef = useRef(1)
   const markup = useMemo(
     () => buildAspMarkup(t, buildPlansHtml(plans, lang, t, loading, billingRef.current), cfg, lang),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, plans, lang, loading, cfg],
   )
 
@@ -246,12 +241,33 @@ export function AspLanding() {
         const m = Number(period.getAttribute('data-asp-period')) || 1
         billingRef.current = m
         root.querySelectorAll<HTMLElement>('[data-asp-period]').forEach((b) => {
-          b.style.cssText = pillStyle(Number(b.getAttribute('data-asp-period')) === m)
+          b.classList.toggle('is-active', Number(b.getAttribute('data-asp-period')) === m)
         })
         root.querySelectorAll<HTMLElement>('[data-price-block]').forEach((host) => {
           const plan = plans.find((pp) => pp.id === Number(host.getAttribute('data-price-block')))
           if (plan) host.innerHTML = buildPriceInner(plan, m, lang, t)
         })
+        return
+      }
+      // Xarita facade: iframe faqat foydalanuvchi so'raganda yuklanadi.
+      const mapBtn = el.closest<HTMLElement>('[data-asp-map-load]')
+      if (mapBtn) {
+        e.preventDefault()
+        const host = mapBtn.closest<HTMLElement>('.asp-map')
+        const mLat = mapBtn.getAttribute('data-lat')
+        const mLng = mapBtn.getAttribute('data-lng')
+        if (host && mLat && mLng) {
+          const themeNow = root.getAttribute('data-theme') || 'light'
+          const iframe = document.createElement('iframe')
+          iframe.setAttribute('data-asp-map', '')
+          iframe.setAttribute('data-lat', mLat)
+          iframe.setAttribute('data-lng', mLng)
+          iframe.src = `https://yandex.uz/map-widget/v1/?ll=${mLng}%2C${mLat}&z=16&pt=${mLng},${mLat},pm2rdm&theme=${themeNow}`
+          iframe.title = mapBtn.getAttribute('data-title') || ''
+          iframe.setAttribute('allowfullscreen', 'true')
+          iframe.style.cssText = 'border:0;position:absolute;inset:0;width:100%;height:100%'
+          host.replaceChildren(iframe)
+        }
         return
       }
       const leadBtn = el.closest<HTMLElement>('[data-asp-lead-submit]')
@@ -280,7 +296,7 @@ export function AspLanding() {
       root.removeEventListener('change', onLangChange)
       ctrl.destroy()
     }
-  }, [markup, t, lang, navigate, location.pathname, i18n, toggleTheme])
+  }, [markup, t, lang, plans, navigate, location.pathname, i18n, toggleTheme])
 
   // Sync design theme + sun/moon icons + map theme with the app theme store.
   useEffect(() => {

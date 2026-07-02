@@ -265,7 +265,7 @@ function cell(c: string, L: Lang, first: boolean): string {
 }
 
 function table(cols: string[], rows: string[][], L: Lang): string {
-  return `<div style="border:1px solid var(--line);border-radius:12px;overflow:hidden"><table style="width:100%;border-collapse:collapse"><thead><tr>${cols
+  return `<div class="asp-table-wrap"><table><thead><tr>${cols
     .map((c) => `<th style="${TH}">${c}</th>`)
     .join('')}</tr></thead><tbody>${rows
     .map((r, i) => `<tr style="${i % 2 ? 'background:var(--bg-soft)' : ''}">${r.map((c, j) => cell(c, L, j === 0)).join('')}</tr>`)
@@ -277,7 +277,7 @@ function head(title: string, sub: string): string {
 }
 
 function kpiCards(items: { label: string; value: string; delta?: string; tone?: string }[]): string {
-  return `<div style="display:grid;grid-template-columns:repeat(${items.length},1fr);gap:12px;margin-bottom:16px">${items
+  return `<div class="asp-kpi-grid">${items
     .map(
       (k) => `<div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:14px"><div style="font-size:12px;color:var(--ink-3)">${k.label}</div><div style="font-family:'Manrope';font-weight:800;font-size:21px;color:var(--ink);margin-top:3px">${k.value}</div>${k.delta ? `<div style="font-size:11.5px;font-weight:600;margin-top:3px;color:${k.tone === 'red' ? 'var(--red)' : k.tone === 'amber' ? 'var(--amber)' : 'var(--green)'}">${k.delta}</div>` : ''}</div>`,
     )
@@ -302,7 +302,7 @@ function panelFor(key: string, L: Lang): string {
           { label: L.kpi.orders, value: '128', delta: '▲ 5', tone: 'green' },
           { label: L.kpi.lowStock, value: '14 SKU', delta: '!', tone: 'amber' },
         ]) +
-        `<h4 style="font-size:14px;font-weight:700;margin:4px 0 10px">${L.title.recent}</h4>` +
+        `<h3 style="font-size:14px;font-weight:700;margin:4px 0 10px">${L.title.recent}</h3>` +
         table(L.cols.dashboard, DATA.dashboardRecent, L)
       )
     case 'sales':
@@ -330,13 +330,13 @@ function panelFor(key: string, L: Lang): string {
           { label: L.kpi.avgCheck, value: '320 000', delta: '▲ 4%', tone: 'green' },
           { label: L.kpi.returns, value: '1.2%', delta: '▼ 0.3%', tone: 'green' },
         ]) +
-        `<h4 style="font-size:14px;font-weight:700;margin:4px 0 10px">${L.title.monthly}</h4>` +
+        `<h3 style="font-size:14px;font-weight:700;margin:4px 0 10px">${L.title.monthly}</h3>` +
         barsChart()
       )
     case 'settings':
       return (
         head(L.title.settings, '') +
-        `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">${L.settings
+        `<div class="asp-mini-grid">${L.settings
           .map(
             (s) => `<div style="background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:16px"><div style="font-weight:700;font-size:15px;color:var(--ink)">${s.title}</div><div style="font-size:13px;color:var(--ink-3);margin-top:4px">${s.desc}</div></div>`,
           )
@@ -352,7 +352,7 @@ export function buildDemo(lang: LandingLang): { tabs: string; panels: string } {
   const L = dict(lang)
   const tabs = MODULES.map(
     (m, i) =>
-      `<button data-tab="${m.key}" style="text-align:left;border:0;background:${i === 0 ? 'var(--primary)' : 'transparent'};color:${i === 0 ? '#fff' : 'var(--ink-2)'};padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:600;font-size:13.5px;font-family:inherit;display:flex;align-items:center;gap:9px;width:100%"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="${m.icon}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>${L.tabs[m.key]}</button>`,
+      `<button data-tab="${m.key}" class="asp-demo-tab${i === 0 ? ' is-active' : ''}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="${m.icon}" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>${L.tabs[m.key]}</button>`,
   ).join('')
   const panels = MODULES.map(
     (m, i) => `<div data-panel="${m.key}" style="display:${i === 0 ? 'block' : 'none'}">${panelFor(m.key, L)}</div>`,

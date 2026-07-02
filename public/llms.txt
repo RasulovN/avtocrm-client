@@ -1,0 +1,35 @@
+# Zumex
+
+> Zumex — do'konlar va savdo tarmoqlari uchun bulutli savdo, ombor va CRM boshqaruv tizimi (SaaS). Ombor va qoldiqlar, sotuv (POS), moliya, mijozlar va hisobotlarni bitta platformada birlashtiradi. O'zbekiston bozori uchun ishlab chiqilgan; uz (lotin/kirill), ru va en tillarida ishlaydi.
+
+Zumex is a cloud Retail ERP + CRM SaaS for stores and retail chains. It unifies
+inventory and stock control, sales (POS), finance, customer management and
+analytics in one system, built for the Uzbekistan market. It fits any retail
+vertical — from grocery and electronics to auto parts and building materials.
+
+## Asosiy sahifalar (Key pages)
+
+- [Bosh sahifa / Home](https://zumex.uz/): mahsulot tavsifi, imkoniyatlar, tariflar, demo so'rash
+- [Uzbek (latin)](https://zumex.uz/uz): asosiy til
+- [Русский](https://zumex.uz/ru): rus tilidagi versiya
+- [English](https://zumex.uz/en): inglizcha versiya
+- [Maxfiylik siyosati / Privacy](https://zumex.uz/privacy)
+- [Foydalanish shartlari / Terms](https://zumex.uz/terms)
+- [To'lovni qaytarish / Refunds](https://zumex.uz/refunds)
+
+## Imkoniyatlar (Features)
+
+- Ombor va zaxira nazorati (real vaqtda, shtrix-kod skaner bilan)
+- Sotuv (POS), qaytarishlar va chegirmalar
+- Ko'p do'kon: filiallar orasida transfer va yagona nazorat
+- CRM: mijozlar bazasi va yetkazib beruvchilar
+- Rollar va ruxsatlar (RBAC)
+- Hisobot va tahlil, CEO dashboard
+- Jonli bildirishnomalar
+- Payme / Click / Uzcard / Humo / VISA / Mastercard to'lovlari
+
+## Kontakt (Contact)
+
+- Sayt: https://zumex.uz
+- Ilova: https://zumex.uz (ro'yxatdan o'tish va login shu yerda)
+- Email: sales@zumex.uz

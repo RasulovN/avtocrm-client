@@ -15,13 +15,20 @@ export function initAsp(root: HTMLElement, t: AspDict): AspController {
   /* ---------- DEMO TABS ---------- */
   function setTab(tab: string) {
     root.querySelectorAll<HTMLElement>('#demo-tabs [data-tab]').forEach((b) => {
-      const on = b.getAttribute('data-tab') === tab
-      b.style.background = on ? 'var(--primary)' : 'transparent'
-      b.style.color = on ? '#fff' : 'var(--ink-2)'
+      b.classList.toggle('is-active', b.getAttribute('data-tab') === tab)
     })
     root.querySelectorAll<HTMLElement>('#demo-panels [data-panel]').forEach((p) => {
       p.style.display = p.getAttribute('data-panel') === tab ? 'block' : 'none'
     })
+  }
+
+  /* ---------- MOBIL MENYU ---------- */
+  function setMobileNav(open: boolean) {
+    const panel = root.querySelector<HTMLElement>('#asp-mobile-nav')
+    const btn = root.querySelector<HTMLElement>('[data-asp-nav-toggle]')
+    if (!panel || !btn) return
+    panel.classList.toggle('open', open)
+    btn.setAttribute('aria-expanded', String(open))
   }
 
   /* ---------- FAQ ---------- */
@@ -130,6 +137,14 @@ export function initAsp(root: HTMLElement, t: AspDict): AspController {
   /* ---------- EVENTS ---------- */
   const onClick = (e: Event) => {
     const target = e.target as HTMLElement
+    // Hamburger: mobil menyuni ochish/yopish.
+    const navToggle = target.closest<HTMLElement>('[data-asp-nav-toggle]')
+    if (navToggle) {
+      setMobileNav(navToggle.getAttribute('aria-expanded') !== 'true')
+      return
+    }
+    // Mobil menyu ichidagi havola bosilganda menyu yopiladi.
+    if (target.closest('#asp-mobile-nav a')) setMobileNav(false)
     // In-page anchor (nav menu): reveal everything so no skipped section stays hidden.
     if (target.closest('a[href^="#"]')) revealAll()
     const tab = target.closest<HTMLElement>('[data-tab]')

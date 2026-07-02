@@ -58,7 +58,7 @@ const RU: LegalDict = {
       'Настоящая Политика конфиденциальности описывает, как платформа Zumex («мы», «нас») собирает, использует, хранит и защищает персональные данные пользователей сайта и сервиса. Используя наш сайт и сервис, вы соглашаетесь с условиями настоящей Политики.',
     sections: [
       { h: '1. Общие положения', p: [
-        'Оператором персональных данных является компания Zumex, предоставляющая облачную ERP/CRM-платформу для управления автобизнесом.',
+        'Оператором персональных данных является компания Zumex, предоставляющая облачную ERP/CRM-платформу для управления торговлей, складом и продажами.',
         'Мы обрабатываем данные в соответствии с законодательством Республики Узбекистан о персональных данных и общепринятыми стандартами безопасности.',
       ] },
       { h: '2. Какие данные мы собираем', p: [
@@ -100,7 +100,7 @@ const RU: LegalDict = {
       'Настоящие Условия использования регулируют отношения между платформой Zumex и пользователями сервиса. Регистрируясь или используя сервис, вы принимаете данные Условия в полном объёме.',
     sections: [
       { h: '1. Общие положения', p: [
-        'Zumex предоставляет облачный сервис (SaaS) для управления автобизнесом — ERP и CRM функционал по модели подписки.',
+        'Zumex предоставляет облачный сервис (SaaS) для управления торговлей и складом — ERP и CRM функционал по модели подписки.',
         'Используя сервис, вы подтверждаете, что обладаете необходимыми полномочиями и дееспособностью для заключения соглашения.',
       ] },
       { h: '2. Использование сервиса', p: [
@@ -186,7 +186,7 @@ const UZ: LegalDict = {
       'Ushbu Maxfiylik siyosati Zumex platformasi («biz») sayt va xizmat foydalanuvchilarining shaxsiy ma’lumotlarini qanday yig‘ishi, ishlatishi, saqlashi va himoya qilishini tavsiflaydi. Saytdan va xizmatdan foydalanish orqali siz ushbu siyosat shartlariga rozilik bildirasiz.',
     sections: [
       { h: '1. Umumiy qoidalar', p: [
-        'Shaxsiy ma’lumotlar operatori — avtobiznesni boshqarish uchun bulutli ERP/CRM platformasini taqdim etuvchi Zumex kompaniyasi.',
+        'Shaxsiy ma’lumotlar operatori — savdo, ombor va sotuvni boshqarish uchun bulutli ERP/CRM platformasini taqdim etuvchi Zumex kompaniyasi.',
         'Biz ma’lumotlarni O‘zbekiston Respublikasining shaxsiy ma’lumotlar to‘g‘risidagi qonunchiligi va umumqabul qilingan xavfsizlik standartlariga muvofiq qayta ishlaymiz.',
       ] },
       { h: '2. Qanday ma’lumotlarni yig‘amiz', p: [
@@ -228,7 +228,7 @@ const UZ: LegalDict = {
       'Ushbu Foydalanish shartlari Zumex platformasi va xizmat foydalanuvchilari o‘rtasidagi munosabatlarni tartibga soladi. Ro‘yxatdan o‘tish yoki xizmatdan foydalanish orqali siz ushbu shartlarni to‘liq qabul qilasiz.',
     sections: [
       { h: '1. Umumiy qoidalar', p: [
-        'Zumex avtobiznesni boshqarish uchun bulutli xizmat (SaaS) — obuna modeli asosidagi ERP va CRM funksiyalarini taqdim etadi.',
+        'Zumex savdo, ombor va sotuvni boshqarish uchun bulutli xizmat (SaaS) — obuna modeli asosidagi ERP va CRM funksiyalarini taqdim etadi.',
         'Xizmatdan foydalanib, siz kelishuv tuzish uchun zarur vakolat va layoqatga ega ekanligingizni tasdiqlaysiz.',
       ] },
       { h: '2. Xizmatdan foydalanish', p: [
@@ -314,7 +314,7 @@ const EN: LegalDict = {
       'This Privacy Policy describes how the Zumex platform (“we”, “us”) collects, uses, stores and protects the personal data of website and service users. By using our website and service, you agree to the terms of this Policy.',
     sections: [
       { h: '1. General provisions', p: [
-        'The data controller is Zumex, a company providing a cloud ERP/CRM platform for managing auto businesses.',
+        'The data controller is Zumex, a company providing a cloud ERP/CRM platform for managing trade, warehouse and sales.',
         'We process data in accordance with the personal data legislation of the Republic of Uzbekistan and commonly accepted security standards.',
       ] },
       { h: '2. What data we collect', p: [
@@ -356,7 +356,7 @@ const EN: LegalDict = {
       'These Terms of Use govern the relationship between the Zumex platform and the users of the service. By registering or using the service, you accept these Terms in full.',
     sections: [
       { h: '1. General provisions', p: [
-        'Zumex provides a cloud service (SaaS) for managing auto businesses — ERP and CRM functionality on a subscription model.',
+        'Zumex provides a cloud service (SaaS) for managing trade and warehouse — ERP and CRM functionality on a subscription model.',
         'By using the service, you confirm that you have the authority and legal capacity to enter into this agreement.',
       ] },
       { h: '2. Use of the service', p: [

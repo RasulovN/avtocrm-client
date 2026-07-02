@@ -4,9 +4,10 @@ import { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore, useAuthStore } from './app/store';
 
-// Layouts
-import { CompanyLayout } from './features/saas/layouts/CompanyLayout';
-import { PlatformLayout } from './features/saas/layouts/PlatformLayout';
+// Layouts — lazy: landing/login ochilganda og'ir AppShell (menyu, socket,
+// bildirishnomalar) asosiy bundle'ga kirmasin.
+const CompanyLayout = lazy(() => import('./features/saas/layouts/CompanyLayout').then((m) => ({ default: m.CompanyLayout })));
+const PlatformLayout = lazy(() => import('./features/saas/layouts/PlatformLayout').then((m) => ({ default: m.PlatformLayout })));
 // Guards
 import {
   RootRedirect, RequireAuth, RequireSuperuser, RequireCompany, SubscriptionGate,
@@ -84,7 +85,7 @@ const SettingsPage = lazy(() => import('./features/settings/SettingsPage').then(
 const ReportsPage = lazy(() => import('./features/reports/ReportsPage').then((m) => ({ default: m.ReportsPage })));
 
 import './i18n/index';
-import InventoryPage from './features/inventory/InventoryPage';
+const InventoryPage = lazy(() => import('./features/inventory/InventoryPage'));
 
 function DocumentMetaSync() {
   const location = useLocation();

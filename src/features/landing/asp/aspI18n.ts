@@ -32,21 +32,24 @@ export interface AspDict {
   sec: { eyebrow: string; title: string; desc: string; items: string[] }
   story: { eyebrow: string; title: string; items: { quote: string; m: { l: string; v: string }[]; name: string; role: string; initials: string }[] }
   faq: { eyebrow: string; title: string; items: { q: string; a: string }[] }
-  contact: { eyebrow: string; title: string; sub: string; phoneLabel: string; phone: string; emailLabel: string; email: string; emailPh: string; tgLabel: string; tg: string; mapLabel: string; formTitle: string; formNote: string; name: string; namePh: string; phoneL: string; phonePh: string; company: string; companyPh: string; storesL: string; storeOpts: string[]; sourceL: string; sourceOpts: { v: string; l: string }[]; submit: string; privacy: string; sending: string; success: string; error: string }
+  contact: { eyebrow: string; title: string; sub: string; phoneLabel: string; phone: string; emailLabel: string; email: string; emailPh: string; tgLabel: string; tg: string; mapLabel: string; mapOpen: string; formTitle: string; formNote: string; name: string; namePh: string; phoneL: string; phonePh: string; company: string; companyPh: string; storesL: string; storeOpts: string[]; sourceL: string; sourceOpts: { v: string; l: string }[]; submit: string; privacy: string; sending: string; success: string; error: string }
   footer: { tagline: string; product: string; productLinks: string[]; industries: string; industryLinks: string[]; company: string; companyLinks: string[]; payTitle: string; rights: string; privacy: string; terms: string; refund: string }
+  // Qidiruv tizimlari uchun (title/description) — umumiy savdo/ombor/CRM
+  // pozitsiyasi; sahifadagi marketing matnlaridan mustaqil.
+  seo: { title: string; desc: string }
 }
 
 export const RU: AspDict = {
   nav: { features: 'Возможности', product: 'Продукт', industries: 'Отрасли', pricing: 'Тарифы', stories: 'Истории успеха', faq: 'FAQ', cta: 'Запросить демо', login: 'Войти' },
   hero: {
-    eyebrow: 'Retail ERP + CRM для автобизнеса',
-    h1: 'Управляйте всем\nавтобизнесом из\nодной системы',
-    sub: 'Zumex объединяет склад, продажи, финансы и клиентов в единой облачной платформе. Контролируйте сеть магазинов, ускоряйте продажи и принимайте решения на основе данных — в реальном времени.',
+    eyebrow: 'ERP + CRM для торговли и склада',
+    h1: 'Управляйте торговлей\nи складом из\nодной системы',
+    sub: 'Zumex объединяет склад, продажи, финансы и клиентов в единой облачной платформе. Контролируйте магазины и склады в любой отрасли, ускоряйте продажи и принимайте решения на основе данных — в реальном времени.',
     ctaDemo: 'Запросить демо', ctaWatch: 'Смотреть демо продукта', ctaRoi: 'Рассчитать ROI',
     s1: 'рост продаж', s2: 'точность склада', s3: 'экономия в неделю',
   },
   dash: { caption: 'CEO Dashboard · Zumex', live: 'Live', revenueToday: 'Выручка сегодня', vsYesterday: 'vs вчера', orders: 'Заказы', profit: 'Прибыль', stock: 'Остатки', clients: 'Клиенты', clientsGrow: '▲ 6.2% за месяц', expensesCtl: 'Расходы под контролем', expensesVal: '−14% издержек', stockRt: 'Склад · реальное время', stockAcc: '99.8% точность' },
-  trust: { kicker: 'Нам доверяют автобизнесы по всему региону', uptime: 'Аптайм системы', stores: 'Магазинов на платформе', csat: 'Удовлетворённость', impl: 'Успешных внедрений', support: 'Поддержка и SLA' },
+  trust: { kicker: 'Нам доверяют торговые и оптовые компании по всему региону', uptime: 'Аптайм системы', stores: 'Магазинов на платформе', csat: 'Удовлетворённость', impl: 'Успешных внедрений', support: 'Поддержка и SLA' },
   ch: {
     eyebrow: 'Проблема', title: 'Бизнес теряет деньги там, где нет контроля',
     sub: 'Excel, разрозненные программы и «учёт в тетради» приводят к потерям, которые не видно до конца месяца. Zumex закрывает каждую из этих дыр.',
@@ -71,7 +74,7 @@ export const RU: AspDict = {
   },
   feat: {
     eyebrow: 'Возможности', title: 'Почему компании выбирают Zumex',
-    sub: 'Один продукт закрывает весь цикл автобизнеса — от приёмки на склад до решения собственника.',
+    sub: 'Один продукт закрывает весь торговый цикл — от приёмки на склад до решения собственника.',
     items: [
       { title: 'Склад в реальном времени', desc: 'Никогда не теряйте товар и не затоваривайтесь — точные остатки по всем точкам экономят деньги на каждой закупке.' },
       { title: 'Автоматизация склада', desc: 'Приёмка и инвентаризация в разы быстрее и без пересортицы — меньше потерь, меньше ручного труда.' },
@@ -169,8 +172,8 @@ export const RU: AspDict = {
     items: [{ v: '500+', l: 'магазинов' }, { v: '4.8 млн', l: 'заказов обработано' }, { v: '12.6 млн', l: 'транзакций' }, { v: '38 млн', l: 'складских операций' }, { v: '3', l: 'страны' }, { v: '8+', l: 'лет на рынке' }],
   },
   ind: {
-    eyebrow: 'Отрасли', title: 'Создано для автобизнеса любого масштаба',
-    items: ['Магазины автозапчастей', 'Автоаксессуары', 'Розничные сети', 'Дистрибьюторы', 'Оптовые склады', 'Складская логистика', 'Автосервисы', 'Шинные центры', 'Магазины масел', 'Автоэлектроника', 'Франшизные сети', 'Wholesale-трейдеры'],
+    eyebrow: 'Отрасли', title: 'Создано для торговли и склада любого масштаба',
+    items: ['Розничные магазины', 'Оптовые склады', 'Дистрибуция', 'Продукты и FMCG', 'Стройматериалы', 'Электроника и техника', 'Одежда и обувь', 'Автозапчасти', 'Косметика и бытовая химия', 'Аптеки и медтовары', 'Складская логистика', 'Франшизные сети'],
   },
   cmp: {
     eyebrow: 'Сравнение', title: 'Почему переходят на Zumex',
@@ -226,9 +229,9 @@ export const RU: AspDict = {
   story: {
     eyebrow: 'Истории успеха', title: 'Цифры до и после внедрения',
     items: [
-      { quote: '«Впервые вижу прибыль по каждому магазину в реальном времени. Потери на складе упали почти до нуля.»', m: [{ l: 'Продажи', v: '+41%' }, { l: 'Потери', v: '−92%' }], name: 'Алишер Х.', role: 'Владелец, сеть AutoMax', initials: 'АХ' },
-      { quote: '«Перешли с Excel за неделю. Команда экономит десятки часов, а отчёты собираются сами.»', m: [{ l: 'Время', v: '−15ч/нед' }, { l: 'Издержки', v: '−18%' }], name: 'Дилноза К.', role: 'Операционный директор, DETALI.uz', initials: 'ДК' },
-      { quote: '«Масштабировали с 2 до 9 точек без хаоса. CEO Dashboard — то, чего нам не хватало годами.»', m: [{ l: 'Точки', v: '2 → 9' }, { l: 'ROI', v: '7 мес' }], name: 'Сардор Р.', role: 'CEO, ProTyre Network', initials: 'СР' },
+      { quote: '«Впервые вижу прибыль по каждому магазину в реальном времени. Потери на складе упали почти до нуля.»', m: [{ l: 'Продажи', v: '+41%' }, { l: 'Потери', v: '−92%' }], name: 'Алишер Х.', role: 'Владелец, сеть SavdoPlus', initials: 'АХ' },
+      { quote: '«Перешли с Excel за неделю. Команда экономит десятки часов, а отчёты собираются сами.»', m: [{ l: 'Время', v: '−15ч/нед' }, { l: 'Издержки', v: '−18%' }], name: 'Дилноза К.', role: 'Операционный директор, MegaStore', initials: 'ДК' },
+      { quote: '«Масштабировали с 2 до 9 точек без хаоса. CEO Dashboard — то, чего нам не хватало годами.»', m: [{ l: 'Точки', v: '2 → 9' }, { l: 'ROI', v: '7 мес' }], name: 'Сардор Р.', role: 'CEO, TradeHub', initials: 'СР' },
     ],
   },
   faq: {
@@ -259,7 +262,7 @@ export const RU: AspDict = {
   contact: {
     eyebrow: 'Свяжитесь с нами', title: 'Посмотрите Zumex в деле',
     sub: 'Покажем систему на ваших процессах за 30 минут. Персональная демонстрация и расчёт окупаемости.',
-    phoneLabel: 'Телефон', phone: '+998 (00) 000-00-00', emailLabel: 'Email', email: 'sales@zumex.uz', emailPh: 'Ваш email', tgLabel: 'Telegram', tg: '@zumex', mapLabel: 'Ташкент · офис продаж',
+    phoneLabel: 'Телефон', phone: '+998 (00) 000-00-00', emailLabel: 'Email', email: 'sales@zumex.uz', emailPh: 'Ваш email', tgLabel: 'Telegram', tg: '@zumex', mapLabel: 'Ташкент · офис продаж', mapOpen: 'Открыть карту',
     formTitle: 'Запросить демо', formNote: 'Ответим в течение рабочего дня.',
     name: 'Имя', namePh: 'Ваше имя', phoneL: 'Телефон', phonePh: '+998', company: 'Компания', companyPh: 'Название компании',
     storesL: 'Количество магазинов', storeOpts: ['1 магазин', '2–5 магазинов', '6–15 магазинов', '16+ / сеть'],
@@ -273,26 +276,30 @@ export const RU: AspDict = {
     sending: 'Отправляем…', success: 'Спасибо! Мы свяжемся с вами в ближайшее время.', error: 'Не удалось отправить. Попробуйте позже.',
   },
   footer: {
-    tagline: 'Облачная ERP и CRM платформа для управления и масштабирования автобизнеса.',
+    tagline: 'Облачная ERP и CRM платформа для управления торговлей, складом и продажами.',
     product: 'Продукт', productLinks: ['Возможности', 'Демо продукта', 'Тарифы', 'Документация'],
-    industries: 'Отрасли', industryLinks: ['Магазины автозапчастей', 'Шинные центры', 'Дистрибьюторы', 'Франшизы'],
+    industries: 'Отрасли', industryLinks: ['Розничные магазины', 'Оптовые склады', 'Дистрибьюторы', 'Франшизы'],
     company: 'Компания', companyLinks: ['Истории успеха', 'Контакты', 'Безопасность', 'Поддержка'],
     payTitle: 'Способы оплаты',
     rights: '© 2026 Zumex. Все права защищены.', privacy: 'Политика конфиденциальности', terms: 'Условия использования', refund: 'Политика возврата',
+  },
+  seo: {
+    title: 'Zumex — система управления торговлей, складом и CRM',
+    desc: 'Zumex — облачная система для магазинов и торговых сетей: склад и остатки, продажи (POS), штрих-коды, финансы, CRM и отчёты на одной платформе. Управляйте сетью магазинов и увеличивайте продажи. Попробуйте бесплатно.',
   },
 }
 
 export const UZ: AspDict = {
   nav: { features: 'Imkoniyatlar', product: 'Mahsulot', industries: 'Sohalar', pricing: 'Tariflar', stories: 'Muvaffaqiyat tarixi', faq: 'FAQ', cta: 'Demo so\'rash', login: 'Kirish' },
   hero: {
-    eyebrow: 'Avtobiznes uchun Retail ERP + CRM',
-    h1: 'Butun\navtobiznesni bitta\ntizimdan boshqaring',
-    sub: 'Zumex ombor, sotuv, moliya va mijozlarni yagona bulutli platformada birlashtiradi. Do\'konlar tarmog\'ini nazorat qiling, sotuvni tezlashtiring va ma\'lumotlarga asoslangan qarorlar qabul qiling — real vaqtda.',
+    eyebrow: 'Savdo, ombor va sotuv uchun ERP + CRM',
+    h1: 'Butun savdo va\nomborni bitta\ntizimdan boshqaring',
+    sub: 'Zumex ombor, sotuv, moliya va mijozlarni yagona bulutli platformada birlashtiradi. Har qanday sohadagi do\'kon va omborlaringizni nazorat qiling, sotuvni tezlashtiring va ma\'lumotlarga asoslangan qarorlar qabul qiling — real vaqtda.',
     ctaDemo: 'Demo so\'rash', ctaWatch: 'Mahsulot demosini ko\'rish', ctaRoi: 'ROI hisoblash',
     s1: 'sotuv o\'sishi', s2: 'ombor aniqligi', s3: 'haftalik tejam',
   },
   dash: { caption: 'CEO Dashboard · Zumex', live: 'Live', revenueToday: 'Bugungi tushum', vsYesterday: 'kechagiga nisbatan', orders: 'Buyurtmalar', profit: 'Foyda', stock: 'Qoldiqlar', clients: 'Mijozlar', clientsGrow: '▲ 6.2% oyiga', expensesCtl: 'Xarajatlar nazoratda', expensesVal: '−14% xarajat', stockRt: 'Ombor · real vaqt', stockAcc: '99.8% aniqlik' },
-  trust: { kicker: 'Mintaqadagi avtobizneslar bizga ishonadi', uptime: 'Tizim uptime', stores: 'Platformadagi do\'konlar', csat: 'Mamnunlik', impl: 'Muvaffaqiyatli joriy etish', support: 'Qo\'llab-quvvatlash va SLA' },
+  trust: { kicker: 'Mintaqadagi savdo va ulgurji kompaniyalar bizga ishonadi', uptime: 'Tizim uptime', stores: 'Platformadagi do\'konlar', csat: 'Mamnunlik', impl: 'Muvaffaqiyatli joriy etish', support: 'Qo\'llab-quvvatlash va SLA' },
   ch: {
     eyebrow: 'Muammo', title: 'Nazorat yo\'q joyda biznes pul yo\'qotadi',
     sub: 'Excel, tarqoq dasturlar va «daftarda hisob» oy oxirigacha ko\'rinmaydigan yo\'qotishlarga olib keladi. Zumex bu teshiklarning har birini yopadi.',
@@ -317,7 +324,7 @@ export const UZ: AspDict = {
   },
   feat: {
     eyebrow: 'Imkoniyatlar', title: 'Nega kompaniyalar Zumex ni tanlaydi',
-    sub: 'Bitta mahsulot avtobiznesning butun siklini qamrab oladi — omborga qabuldan tortib egasining qaroriga qadar.',
+    sub: 'Bitta mahsulot savdo biznesining butun siklini qamrab oladi — omborga qabuldan tortib egasining qaroriga qadar.',
     items: [
       { title: 'Real vaqtda ombor', desc: 'Hech qachon tovarni yo\'qotmang va ortiqcha zaxira to\'plamang — barcha nuqtalar bo\'yicha aniq qoldiqlar har bir xaridda pul tejaydi.' },
       { title: 'Ombor avtomatlashtirish', desc: 'Qabul va inventarizatsiya bir necha barobar tezroq va saralash xatosiz — kamroq yo\'qotish, kamroq qo\'l mehnati.' },
@@ -415,8 +422,8 @@ export const UZ: AspDict = {
     items: [{ v: '500+', l: 'do\'kon' }, { v: '4.8 mln', l: 'buyurtma qayta ishlangan' }, { v: '12.6 mln', l: 'tranzaksiya' }, { v: '38 mln', l: 'ombor operatsiyasi' }, { v: '3', l: 'mamlakat' }, { v: '8+', l: 'yil bozorda' }],
   },
   ind: {
-    eyebrow: 'Sohalar', title: 'Istalgan miqyosdagi avtobiznes uchun yaratilgan',
-    items: ['Avtoehtiyot qismlar do\'konlari', 'Avtoaksessuarlar', 'Chakana tarmoqlar', 'Distribyutorlar', 'Ulgurji omborlar', 'Ombor logistikasi', 'Avtoservislar', 'Shina markazlari', 'Moy do\'konlari', 'Avtoelektronika', 'Franshiza tarmoqlari', 'Wholesale-treyderlar'],
+    eyebrow: 'Sohalar', title: 'Istalgan sohadagi savdo va ombor uchun yaratilgan',
+    items: ['Chakana do\'konlar', 'Ulgurji (optom) omborlar', 'Distribyutsiya', 'Oziq-ovqat va FMCG', 'Qurilish mollari', 'Elektronika va texnika', 'Kiyim-kechak va poyabzal', 'Avtoehtiyot qismlar', 'Kosmetika va maishiy kimyo', 'Dorixona va tibbiy mollar', 'Ombor logistikasi', 'Franshiza tarmoqlari'],
   },
   cmp: {
     eyebrow: 'Taqqoslash', title: 'Nega Zumex ga o\'tishadi',
@@ -472,9 +479,9 @@ export const UZ: AspDict = {
   story: {
     eyebrow: 'Muvaffaqiyat tarixi', title: 'Joriy etishdan oldin va keyin raqamlar',
     items: [
-      { quote: '«Birinchi marta har bir do\'kon bo\'yicha foydani real vaqtda ko\'ryapman. Omborda yo\'qotishlar deyarli nolga tushdi.»', m: [{ l: 'Sotuvlar', v: '+41%' }, { l: 'Yo\'qotishlar', v: '−92%' }], name: 'Alisher X.', role: 'Egasi, AutoMax tarmog\'i', initials: 'AX' },
-      { quote: '«Bir haftada Exceldan o\'tdik. Jamoa o\'nlab soatlarni tejaydi, hisobotlar esa o\'zi yig\'iladi.»', m: [{ l: 'Vaqt', v: '−15soat/hafta' }, { l: 'Xarajatlar', v: '−18%' }], name: 'Dilnoza K.', role: 'Operatsion direktor, DETALI.uz', initials: 'DK' },
-      { quote: '«2 dan 9 ta nuqtaga xaossiz masshtabladik. CEO Dashboard — yillar davomida bizga yetishmagan narsa.»', m: [{ l: 'Nuqtalar', v: '2 → 9' }, { l: 'ROI', v: '7 oy' }], name: 'Sardor R.', role: 'CEO, ProTyre Network', initials: 'SR' },
+      { quote: '«Birinchi marta har bir do\'kon bo\'yicha foydani real vaqtda ko\'ryapman. Omborda yo\'qotishlar deyarli nolga tushdi.»', m: [{ l: 'Sotuvlar', v: '+41%' }, { l: 'Yo\'qotishlar', v: '−92%' }], name: 'Alisher X.', role: 'Egasi, SavdoPlus tarmog\'i', initials: 'AX' },
+      { quote: '«Bir haftada Exceldan o\'tdik. Jamoa o\'nlab soatlarni tejaydi, hisobotlar esa o\'zi yig\'iladi.»', m: [{ l: 'Vaqt', v: '−15soat/hafta' }, { l: 'Xarajatlar', v: '−18%' }], name: 'Dilnoza K.', role: 'Operatsion direktor, MegaStore', initials: 'DK' },
+      { quote: '«2 dan 9 ta nuqtaga xaossiz masshtabladik. CEO Dashboard — yillar davomida bizga yetishmagan narsa.»', m: [{ l: 'Nuqtalar', v: '2 → 9' }, { l: 'ROI', v: '7 oy' }], name: 'Sardor R.', role: 'CEO, TradeHub', initials: 'SR' },
     ],
   },
   faq: {
@@ -505,7 +512,7 @@ export const UZ: AspDict = {
   contact: {
     eyebrow: 'Biz bilan bog\'laning', title: 'Zumex ni ish jarayonida ko\'ring',
     sub: '30 daqiqada tizimni sizning jarayonlaringizda ko\'rsatamiz. Shaxsiy namoyish va qoplanish hisobi.',
-    phoneLabel: 'Telefon', phone: '+998 (00) 000-00-00', emailLabel: 'Email', email: 'sales@zumex.uz', emailPh: 'Email manzilingiz', tgLabel: 'Telegram', tg: '@zumex', mapLabel: 'Toshkent · sotuv ofisi',
+    phoneLabel: 'Telefon', phone: '+998 (00) 000-00-00', emailLabel: 'Email', email: 'sales@zumex.uz', emailPh: 'Email manzilingiz', tgLabel: 'Telegram', tg: '@zumex', mapLabel: 'Toshkent · sotuv ofisi', mapOpen: 'Xaritani ochish',
     formTitle: 'Demo so\'rash', formNote: 'Ish kuni davomida javob beramiz.',
     name: 'Ism', namePh: 'Ismingiz', phoneL: 'Telefon', phonePh: '+998', company: 'Kompaniya', companyPh: 'Kompaniya nomi',
     storesL: 'Do\'konlar soni', storeOpts: ['1 do\'kon', '2–5 do\'kon', '6–15 do\'kon', '16+ / tarmoq'],
@@ -519,26 +526,30 @@ export const UZ: AspDict = {
     sending: 'Yuborilmoqda…', success: 'Rahmat! Tez orada siz bilan bog\'lanamiz.', error: 'Yuborib bo\'lmadi. Keyinroq urinib ko\'ring.',
   },
   footer: {
-    tagline: 'Avtobiznesni boshqarish va masshtablash uchun bulutli ERP va CRM platformasi.',
+    tagline: 'Savdo, ombor va sotuvni boshqarish va masshtablash uchun bulutli ERP va CRM platformasi.',
     product: 'Mahsulot', productLinks: ['Imkoniyatlar', 'Mahsulot demosi', 'Tariflar', 'Hujjatlar'],
-    industries: 'Sohalar', industryLinks: ['Avtoehtiyot qismlar do\'konlari', 'Shina markazlari', 'Distribyutorlar', 'Franshizalar'],
+    industries: 'Sohalar', industryLinks: ['Chakana do\'konlar', 'Ulgurji omborlar', 'Distribyutorlar', 'Franshizalar'],
     company: 'Kompaniya', companyLinks: ['Muvaffaqiyat tarixi', 'Kontaktlar', 'Xavfsizlik', 'Qo\'llab-quvvatlash'],
     payTitle: 'To\'lov usullari',
     rights: '© 2026 Zumex. Barcha huquqlar himoyalangan.', privacy: 'Maxfiylik siyosati', terms: 'Foydalanish shartlari', refund: 'Pulni qaytarish siyosati',
+  },
+  seo: {
+    title: 'Zumex — Savdo, ombor va CRM boshqaruv tizimi',
+    desc: "Zumex — do'konlar va savdo tarmoqlari uchun bulutli tizim: ombor va qoldiqlar, sotuv (POS), shtrix-kod, moliya, CRM va hisobotlar bitta platformada. Savdoni tezlashtiring, nazoratni kuchaytiring. Bepul sinab ko'ring.",
   },
 }
 
 export const EN: AspDict = {
   nav: { features: 'Features', product: 'Product', industries: 'Industries', pricing: 'Pricing', stories: 'Success Stories', faq: 'FAQ', cta: 'Request a Demo', login: 'Log In' },
   hero: {
-    eyebrow: 'Retail ERP + CRM for the auto business',
-    h1: 'Run your entire\nauto business from\none system',
-    sub: 'Zumex unites warehouse, sales, finance and customers in a single cloud platform. Control your store network, speed up sales and make data-driven decisions — in real time.',
+    eyebrow: 'ERP + CRM for retail & warehouse',
+    h1: 'Run your sales and\nwarehouse from\none system',
+    sub: 'Zumex unites warehouse, sales, finance and customers in a single cloud platform. Control your stores and warehouses in any industry, speed up sales and make data-driven decisions — in real time.',
     ctaDemo: 'Request a Demo', ctaWatch: 'Watch product demo', ctaRoi: 'Calculate ROI',
     s1: 'sales growth', s2: 'inventory accuracy', s3: 'savings per week',
   },
   dash: { caption: 'CEO Dashboard · Zumex', live: 'Live', revenueToday: 'Revenue today', vsYesterday: 'vs yesterday', orders: 'Orders', profit: 'Profit', stock: 'Stock', clients: 'Customers', clientsGrow: '▲ 6.2% this month', expensesCtl: 'Expenses under control', expensesVal: '−14% costs', stockRt: 'Warehouse · real time', stockAcc: '99.8% accuracy' },
-  trust: { kicker: 'Trusted by auto businesses across the region', uptime: 'System uptime', stores: 'Stores on the platform', csat: 'Satisfaction', impl: 'Successful rollouts', support: 'Support & SLA' },
+  trust: { kicker: 'Trusted by retail & wholesale businesses across the region', uptime: 'System uptime', stores: 'Stores on the platform', csat: 'Satisfaction', impl: 'Successful rollouts', support: 'Support & SLA' },
   ch: {
     eyebrow: 'The Problem', title: 'Business loses money where there is no control',
     sub: 'Excel, scattered programs and "pen-and-paper accounting" lead to losses that stay invisible until the end of the month. Zumex closes every one of these gaps.',
@@ -563,7 +574,7 @@ export const EN: AspDict = {
   },
   feat: {
     eyebrow: 'Features', title: 'Why companies choose Zumex',
-    sub: 'One product covers the entire auto-business cycle — from warehouse receiving to the owner\'s decision.',
+    sub: 'One product covers the entire retail cycle — from warehouse receiving to the owner\'s decision.',
     items: [
       { title: 'Real-time warehouse', desc: 'Never lose stock or overstock — accurate inventory across all locations saves money on every purchase.' },
       { title: 'Warehouse automation', desc: 'Receiving and stocktaking many times faster and without mismatches — fewer losses, less manual work.' },
@@ -661,8 +672,8 @@ export const EN: AspDict = {
     items: [{ v: '500+', l: 'stores' }, { v: '4.8 mln', l: 'orders processed' }, { v: '12.6 mln', l: 'transactions' }, { v: '38 mln', l: 'warehouse operations' }, { v: '3', l: 'countries' }, { v: '8+', l: 'years on the market' }],
   },
   ind: {
-    eyebrow: 'Industries', title: 'Built for auto businesses of any size',
-    items: ['Auto parts stores', 'Auto accessories', 'Retail chains', 'Distributors', 'Wholesale warehouses', 'Warehouse logistics', 'Auto service centers', 'Tire centers', 'Oil stores', 'Auto electronics', 'Franchise networks', 'Wholesale traders'],
+    eyebrow: 'Industries', title: 'Built for retail & wholesale of any size',
+    items: ['Retail stores', 'Wholesale warehouses', 'Distribution', 'Grocery & FMCG', 'Building materials', 'Electronics & appliances', 'Apparel & footwear', 'Auto parts', 'Cosmetics & household', 'Pharmacies & medical', 'Warehouse logistics', 'Franchise networks'],
   },
   cmp: {
     eyebrow: 'Comparison', title: 'Why businesses switch to Zumex',
@@ -718,9 +729,9 @@ export const EN: AspDict = {
   story: {
     eyebrow: 'Success Stories', title: 'The numbers before and after rollout',
     items: [
-      { quote: '"For the first time I can see profit for each store in real time. Warehouse losses dropped almost to zero."', m: [{ l: 'Sales', v: '+41%' }, { l: 'Losses', v: '−92%' }], name: 'Alisher Kh.', role: 'Owner, AutoMax network', initials: 'AK' },
-      { quote: '"We moved off Excel in a week. The team saves dozens of hours, and reports build themselves."', m: [{ l: 'Time', v: '−15h/wk' }, { l: 'Costs', v: '−18%' }], name: 'Dilnoza K.', role: 'Operations Director, DETALI.uz', initials: 'DK' },
-      { quote: '"We scaled from 2 to 9 locations without chaos. The CEO Dashboard is what we had been missing for years."', m: [{ l: 'Locations', v: '2 → 9' }, { l: 'ROI', v: '7 mo' }], name: 'Sardor R.', role: 'CEO, ProTyre Network', initials: 'SR' },
+      { quote: '"For the first time I can see profit for each store in real time. Warehouse losses dropped almost to zero."', m: [{ l: 'Sales', v: '+41%' }, { l: 'Losses', v: '−92%' }], name: 'Alisher Kh.', role: 'Owner, SavdoPlus network', initials: 'AK' },
+      { quote: '"We moved off Excel in a week. The team saves dozens of hours, and reports build themselves."', m: [{ l: 'Time', v: '−15h/wk' }, { l: 'Costs', v: '−18%' }], name: 'Dilnoza K.', role: 'Operations Director, MegaStore', initials: 'DK' },
+      { quote: '"We scaled from 2 to 9 locations without chaos. The CEO Dashboard is what we had been missing for years."', m: [{ l: 'Locations', v: '2 → 9' }, { l: 'ROI', v: '7 mo' }], name: 'Sardor R.', role: 'CEO, TradeHub', initials: 'SR' },
     ],
   },
   faq: {
@@ -751,7 +762,7 @@ export const EN: AspDict = {
   contact: {
     eyebrow: 'Contact us', title: 'See Zumex in action',
     sub: 'We will show the system on your processes in 30 minutes. A personal demo and payback calculation.',
-    phoneLabel: 'Phone', phone: '+998 (00) 000-00-00', emailLabel: 'Email', email: 'sales@zumex.uz', emailPh: 'Your email', tgLabel: 'Telegram', tg: '@zumex', mapLabel: 'Tashkent · sales office',
+    phoneLabel: 'Phone', phone: '+998 (00) 000-00-00', emailLabel: 'Email', email: 'sales@zumex.uz', emailPh: 'Your email', tgLabel: 'Telegram', tg: '@zumex', mapLabel: 'Tashkent · sales office', mapOpen: 'Open the map',
     formTitle: 'Request a Demo', formNote: 'We will reply within one business day.',
     name: 'Name', namePh: 'Your name', phoneL: 'Phone', phonePh: '+998', company: 'Company', companyPh: 'Company name',
     storesL: 'Number of stores', storeOpts: ['1 store', '2–5 stores', '6–15 stores', '16+ / network'],
@@ -765,12 +776,16 @@ export const EN: AspDict = {
     sending: 'Sending…', success: 'Thank you! We will contact you shortly.', error: 'Could not send. Please try again later.',
   },
   footer: {
-    tagline: 'A cloud ERP and CRM platform for managing and scaling your auto business.',
+    tagline: 'A cloud ERP and CRM platform for managing trade, warehouse and sales.',
     product: 'Product', productLinks: ['Features', 'Product demo', 'Pricing', 'Documentation'],
-    industries: 'Industries', industryLinks: ['Auto parts stores', 'Tire centers', 'Distributors', 'Franchises'],
+    industries: 'Industries', industryLinks: ['Retail stores', 'Wholesale warehouses', 'Distributors', 'Franchises'],
     company: 'Company', companyLinks: ['Success Stories', 'Contacts', 'Security', 'Support'],
     payTitle: 'Payment methods',
     rights: '© 2026 Zumex. All rights reserved.', privacy: 'Privacy Policy', terms: 'Terms of Use', refund: 'Refund Policy',
+  },
+  seo: {
+    title: 'Zumex — Retail, Inventory & CRM Management System',
+    desc: 'Zumex is a cloud platform for stores and retail chains: inventory and stock, sales (POS), barcodes, finance, CRM and reports in one system. Manage multiple stores and grow your sales. Try it free.',
   },
 }
 

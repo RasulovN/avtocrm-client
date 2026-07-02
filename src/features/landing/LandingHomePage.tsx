@@ -6,6 +6,6 @@ import { useSeo } from './useSeo'
 export function LandingHomePage() {
   const { lang } = useLanding()
   const t = getAspDict(lang)
-  useSeo(`Zumex — ${t.hero.eyebrow}`, t.hero.sub)
+  useSeo(t.seo.title, t.seo.desc)
   return <AspLanding />
 }

@@ -43,6 +43,22 @@ const parsePaginatedResponse = <T>(data: any, defaultLimit = 10): PaginatedRespo
   };
 };
 
+// Excel import natijasi (backend /contract/entry/import/ javobi)
+export interface StockEntryImportSkipped {
+  row: number;
+  reason: string;
+}
+export interface StockEntryImportResult {
+  entry_id: number | null;
+  created: number;
+  skipped: StockEntryImportSkipped[];
+  total_amount: string;
+  paid_amount: string;
+  debt_amount: string;
+  payment_type: string | null;
+  detail?: string;
+}
+
 export const inventoryService = {
   getAll: async (params?: { page?: number; limit?: number }): Promise<PaginatedResponse<Inventory>> => {
     const searchParams = new URLSearchParams();
@@ -89,6 +105,34 @@ export const inventoryService = {
   getSupplierPayment: async (id: string) => {
     const response = await apiClient.get<SupplierPayment[]>(`/contract/supplier-payments/${id}/`);
     return response.data;
-  }
+  },
+
+  // Kirim import shablonini yuklab olish (.xlsx)
+  downloadImportTemplate: async (): Promise<Blob> => {
+    const response = await apiClient.get<Blob>('/contract/entry/import/template/', {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Excel fayldan kirim yaratish (multipart)
+  importEntries: async (data: {
+    file: File;
+    supplier: number | string;
+    cash_amount?: string;
+    card_amount?: string;
+    store?: number | string;
+  }): Promise<StockEntryImportResult> => {
+    const formData = new FormData();
+    formData.append('file', data.file);
+    formData.append('supplier', String(data.supplier));
+    if (data.cash_amount) formData.append('cash_amount', data.cash_amount);
+    if (data.card_amount) formData.append('card_amount', data.card_amount);
+    if (data.store) formData.append('store', String(data.store));
+    const response = await apiClient.post<StockEntryImportResult>('/contract/entry/import/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
 };
 
