@@ -27,7 +27,7 @@ export interface AspDict {
   ind: { eyebrow: string; title: string; items: string[] }
   cmp: { eyebrow: string; title: string; sub: string; feature: string; cols: string[]; rows: { label: string; vals: number[] }[] }
   roi: { eyebrow: string; title: string; sub: string; storesLabel: string; revLabel: string; savings: string; extra: string; payback: string; cta: string; perYear: string; mln: string; mlrd: string; month: string; months: string }
-  price: { eyebrow: string; title: string; sub: string; popular: string; choose: string; demo: string; contactUs: string; free: string; perMonth: string; allIncl: string; allItems: string[]; note: string; loading: string; empty: string; durationDays: string; maxStores: string; maxUsers: string }
+  price: { eyebrow: string; title: string; sub: string; popular: string; choose: string; demo: string; contactUs: string; free: string; perMonth: string; billing: string; monthLabel: string; totalLabel: string; currency: string; allIncl: string; allItems: string[]; note: string; loading: string; empty: string; durationDays: string; maxStores: string; maxUsers: string }
   impl: { eyebrow: string; title: string; steps: { t: string; d: string }[] }
   sec: { eyebrow: string; title: string; desc: string; items: string[] }
   story: { eyebrow: string; title: string; items: { quote: string; m: { l: string; v: string }[]; name: string; role: string; initials: string }[] }
@@ -199,6 +199,7 @@ export const RU: AspDict = {
     sub: 'Выберите тариф под размер бизнеса. Поможем рассчитать окупаемость до старта.',
     popular: 'Популярный выбор', choose: 'Начать', demo: 'Запросить демо', contactUs: 'Связаться с нами',
     free: 'Бесплатно', perMonth: 'сум/мес',
+    billing: 'Период оплаты', monthLabel: 'мес', totalLabel: 'итого', currency: 'сум',
     allIncl: 'Во всех тарифах:', allItems: ['Облачный хостинг', 'Регулярные обновления', 'Онбординг и обучение', 'Поддержка 24/7', 'Ежедневные бэкапы'],
     note: 'Поможем рассчитать окупаемость до старта и подберём оптимальный тариф под ваш бизнес.',
     loading: 'Загружаем тарифы…', empty: 'Тарифы скоро появятся. Свяжитесь с нами для расчёта.',
@@ -444,6 +445,7 @@ export const UZ: AspDict = {
     sub: 'Biznes hajmiga mos tarifni tanlang. Startdan oldin qoplanishni hisoblashga yordam beramiz.',
     popular: 'Ommabop tanlov', choose: 'Boshlash', demo: 'Demo so\'rash', contactUs: 'Biz bilan bog\'lanish',
     free: 'Bepul', perMonth: 'so\'m/oy',
+    billing: 'To\'lov muddati', monthLabel: 'oy', totalLabel: 'jami', currency: 'so\'m',
     allIncl: 'Barcha tariflarda:', allItems: ['Bulutli xosting', 'Muntazam yangilanishlar', 'Onboarding va o\'qitish', 'Qo\'llab-quvvatlash 24/7', 'Kunlik zaxira nusxalar'],
     note: 'Startdan oldin qoplanishni hisoblashga yordam beramiz va biznesingizga eng maqbul tarifni tanlaymiz.',
     loading: 'Tariflar yuklanmoqda…', empty: 'Tariflar tez orada paydo bo\'ladi. Hisob uchun biz bilan bog\'laning.',
@@ -689,6 +691,7 @@ export const EN: AspDict = {
     sub: 'Choose a plan to match your business size. We will help you calculate the payback before you start.',
     popular: 'Popular choice', choose: 'Get started', demo: 'Request a Demo', contactUs: 'Contact us',
     free: 'Free', perMonth: 'UZS/mo',
+    billing: 'Billing period', monthLabel: 'mo', totalLabel: 'total', currency: 'UZS',
     allIncl: 'Included in all plans:', allItems: ['Cloud hosting', 'Regular updates', 'Onboarding and training', '24/7 support', 'Daily backups'],
     note: 'We will help calculate the payback before you start and pick the optimal plan for your business.',
     loading: 'Loading plans…', empty: 'Plans coming soon. Contact us for a calculation.',

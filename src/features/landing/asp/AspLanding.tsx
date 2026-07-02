@@ -15,18 +15,83 @@ import { leadsApi, siteSettingsApi } from '../../saas/services'
 import { LANDING_LANGS } from '../content'
 import type { LandingLang, LandingPlan } from '../types'
 
+// Oldindan to'lash muddatlari (oy) — backend PERIOD_MONTHS bilan mos.
+const PERIODS = [1, 3, 6, 12] as const
+
 function formatPrice(price: string, lang: LandingLang): { value: string; free: boolean } {
   const n = Number(price)
   if (!n || n <= 0) return { value: '', free: true }
   const locale = lang === 'ru' ? 'ru-RU' : lang === 'en' ? 'en-US' : 'uz-UZ'
   return { value: new Intl.NumberFormat(locale).format(n), free: false }
 }
+function fmtNum(v: string | number, lang: LandingLang): string {
+  const n = Number(v)
+  if (!isFinite(n)) return String(v)
+  const locale = lang === 'ru' ? 'ru-RU' : lang === 'en' ? 'en-US' : 'uz-UZ'
+  return new Intl.NumberFormat(locale).format(Math.round(n))
+}
 function planFeatures(features: unknown): string[] {
   return Array.isArray(features) ? (features.filter((x) => typeof x === 'string') as string[]) : []
 }
+// Biror tarifda uzoq muddat chegirmasi bormi? (yo'q bo'lsa — muddat tanlagich ko'rsatilmaydi)
+function hasAnyDiscount(plans: LandingPlan[]): boolean {
+  return plans.some((p) => Array.isArray(p.pricing) && p.pricing.some((o) => o.discount_percent > 0))
+}
+
+// Muddat tanlash "pill"lari stili (faol / nofaol).
+const PILL_BASE =
+  "border:0;cursor:pointer;font:inherit;font-weight:700;font-size:13.5px;padding:8px 16px;border-radius:100px;transition:background .18s,color .18s,box-shadow .18s"
+function pillStyle(active: boolean): string {
+  return active
+    ? `${PILL_BASE};background:var(--primary);color:#fff;box-shadow:0 8px 18px -8px var(--primary)`
+    : `${PILL_BASE};background:transparent;color:var(--ink-3)`
+}
+
+// To'lov muddati tanlagich (grid ustuni bo'ylab to'liq kenglikda).
+function buildPeriodToggle(months: number, t: AspDict): string {
+  const pills = PERIODS.map(
+    (m) => `<button type="button" data-asp-period="${m}" style="${pillStyle(m === months)}">${m} ${t.price.monthLabel}</button>`,
+  ).join('')
+  return `<div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="font-size:13px;font-weight:600;color:var(--ink-3)">${t.price.billing}</span>
+    <div style="display:inline-flex;gap:4px;background:var(--bg-soft2);border:1px solid var(--line);border-radius:100px;padding:5px">${pills}</div>
+  </div>`
+}
+
+// Bitta tarif kartasidagi narx bloki (tanlangan muddat va chegirma bilan).
+function buildPriceInner(p: LandingPlan, months: number, lang: LandingLang, t: AspDict): string {
+  const base = formatPrice(p.price, lang)
+  if (base.free) {
+    return `<span style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--ink)">${t.price.free}</span>`
+  }
+  const opt = Array.isArray(p.pricing) ? p.pricing.find((o) => o.months === months) : undefined
+  const pct = opt ? opt.discount_percent : 0
+  const monthly = opt ? opt.monthly : p.price
+  const badge =
+    pct > 0
+      ? `<div style="margin-bottom:8px"><span style="background:var(--green);color:#fff;font-size:12px;font-weight:800;padding:3px 9px;border-radius:100px">-${pct}%</span></div>`
+      : ''
+  // Chegirma bo'lsa — asl oylik narx ustidan chizilgan holda.
+  const oldMonthly =
+    pct > 0
+      ? `<span style="color:var(--ink-4);font-size:16px;text-decoration:line-through">${fmtNum(p.price, lang)}</span>`
+      : ''
+  // 1 oydan uzoq muddatda — jami summa (chegirma bo'lsa asl summa ustidan chizilgan).
+  const totalLine =
+    months > 1 && opt
+      ? `<div style="margin-top:8px;font-size:13.5px;color:var(--ink-3)">${months} ${t.price.monthLabel} ${t.price.totalLabel}: <b style="color:var(--ink-2)">${fmtNum(opt.total, lang)} ${t.price.currency}</b>${pct > 0 ? ` <span style="text-decoration:line-through;color:var(--ink-4);font-weight:400">${fmtNum(opt.gross, lang)}</span>` : ''}</div>`
+      : ''
+  return `${badge}
+    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+      <span style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--ink);line-height:1">${fmtNum(monthly, lang)}</span>
+      <span style="color:var(--ink-3);font-size:15px">${t.price.perMonth}</span>
+      ${oldMonthly}
+    </div>
+    ${totalLine}`
+}
 
 // Pricing cards (API-driven), styled to match the landing design.
-function buildPlansHtml(plans: LandingPlan[], lang: LandingLang, t: AspDict, loading: boolean): string {
+function buildPlansHtml(plans: LandingPlan[], lang: LandingLang, t: AspDict, loading: boolean, months: number): string {
   if (loading) {
     return [0, 1, 2]
       .map(
@@ -39,21 +104,18 @@ function buildPlansHtml(plans: LandingPlan[], lang: LandingLang, t: AspDict, loa
     return `<div style="grid-column:1/-1;text-align:center;color:var(--ink-3);font-size:16px;padding:40px 0">${t.price.empty}</div>`
   }
   const popularIdx = plans.length >= 3 ? 1 : -1
-  return plans
+  const toggle = hasAnyDiscount(plans) ? buildPeriodToggle(months, t) : ''
+  const cards = plans
     .map((p, i) => {
       const popular = i === popularIdx
-      const price = formatPrice(p.price, lang)
       const feats = planFeatures(p.features)
       const li = (text: string) => `<li style="display:flex;gap:9px"><span style="color:var(--green)">✓</span>${text}</li>`
-      const priceBlock = price.free
-        ? `<span style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--ink)">${t.price.free}</span>`
-        : `<span style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--ink)">${price.value}</span><span style="color:var(--ink-3);font-size:15px">${t.price.perMonth}</span>`
       return `
       <div style="background:var(--card);border:${popular ? '2px solid var(--primary)' : '1px solid var(--line)'};border-radius:20px;padding:30px;box-shadow:${popular ? 'var(--shadow-lg)' : 'var(--shadow-sm)'};position:relative">
         ${popular ? `<span style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:100px">${t.price.popular}</span>` : ''}
         <h3 style="font-family:'Manrope';font-weight:800;font-size:15px;letter-spacing:.06em;color:${popular ? 'var(--primary)' : 'var(--ink-3)'}">${planName(p, lang)}</h3>
         ${planDesc(p, lang) ? `<p style="font-size:14px;color:var(--ink-3);margin-top:6px">${planDesc(p, lang)}</p>` : ''}
-        <div style="margin:18px 0 4px;display:flex;align-items:baseline;gap:6px">${priceBlock}</div>
+        <div data-price-block="${p.id}" style="margin:18px 0 4px">${buildPriceInner(p, months, lang, t)}</div>
         <a href="#" data-asp-register data-plan="${p.id}" style="display:block;text-align:center;margin-top:20px;background:${popular ? 'var(--primary)' : 'var(--card)'};border:1px solid ${popular ? 'var(--primary)' : 'var(--line-2)'};color:${popular ? '#fff' : 'var(--ink)'};padding:12px;border-radius:11px;font-weight:600${popular ? ';box-shadow:0 12px 26px -10px var(--primary)' : ''}">${popular ? t.price.demo : t.price.choose}</a>
         <ul style="list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:11px;font-size:14.5px">
           ${p.max_stores != null ? li(`${p.max_stores} ${t.price.maxStores}`) : ''}
@@ -63,6 +125,7 @@ function buildPlansHtml(plans: LandingPlan[], lang: LandingLang, t: AspDict, loa
       </div>`
     })
     .join('')
+  return toggle + cards
 }
 
 export function AspLanding() {
@@ -112,7 +175,15 @@ export function AspLanding() {
   }, [])
 
   const t = useMemo(() => getAspDict(lang), [lang])
-  const markup = useMemo(() => buildAspMarkup(t, buildPlansHtml(plans, lang, t, loading), cfg, lang), [t, plans, lang, loading, cfg])
+  // Muddat tanlash faqat DOM'da yangilanadi — React qayta render qilmaydi (aks holda
+  // reveal animatsiyasi qayta ishga tushib kartalar "ko'rinmay qolardi"). Tanlangan
+  // muddat ref'da saqlanadi; til/mavzu almashib markup qayta chizilganda ham saqlanib qoladi.
+  const billingRef = useRef(1)
+  const markup = useMemo(
+    () => buildAspMarkup(t, buildPlansHtml(plans, lang, t, loading, billingRef.current), cfg, lang),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, plans, lang, loading, cfg],
+  )
 
   // Wire interactivity + theme + language + CTA after each (re)render of markup.
   useEffect(() => {
@@ -168,6 +239,21 @@ export function AspLanding() {
     const onClick = (e: Event) => {
       const el = e.target as HTMLElement
       if (el.closest('[data-action="theme"]')) { e.preventDefault(); toggleTheme(); return }
+      // To'lov muddati tanlash: markup'ni qayta chizmasdan, faqat narx bloklarini yangilaymiz.
+      const period = el.closest<HTMLElement>('[data-asp-period]')
+      if (period) {
+        e.preventDefault()
+        const m = Number(period.getAttribute('data-asp-period')) || 1
+        billingRef.current = m
+        root.querySelectorAll<HTMLElement>('[data-asp-period]').forEach((b) => {
+          b.style.cssText = pillStyle(Number(b.getAttribute('data-asp-period')) === m)
+        })
+        root.querySelectorAll<HTMLElement>('[data-price-block]').forEach((host) => {
+          const plan = plans.find((pp) => pp.id === Number(host.getAttribute('data-price-block')))
+          if (plan) host.innerHTML = buildPriceInner(plan, m, lang, t)
+        })
+        return
+      }
       const leadBtn = el.closest<HTMLElement>('[data-asp-lead-submit]')
       if (leadBtn) { e.preventDefault(); void submitLead(leadBtn); return }
       const legal = el.closest<HTMLElement>('[data-legal]')
