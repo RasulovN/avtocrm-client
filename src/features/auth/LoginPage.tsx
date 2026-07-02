@@ -12,7 +12,7 @@ import { Logo } from '../../components/shared/Logo';
 export function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { login, isLoading, error } = useAuthStore();
+  const { login, isLoading, error, blockedMessage } = useAuthStore();
   const [loginField, setLoginField] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -49,6 +49,11 @@ export function LoginPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-4">
+            {blockedMessage && (
+              <div className="mb-4 flex items-start gap-2 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                <p className="text-sm text-destructive font-medium">{blockedMessage}</p>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="login" className="text-sm font-semibold">{t('auth.loginField', 'Telefon yoki email')}</Label>

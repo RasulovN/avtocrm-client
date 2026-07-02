@@ -27,12 +27,35 @@ export function AdminProfilePage() {
   });
   const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
   const [saving, setSaving] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
 
   const handleChange = (field: keyof PasswordFormData, value: string) =>
     setPasswordData((prev) => ({ ...prev, [field]: value }));
 
   const toggleVisibility = (field: keyof typeof showPasswords) =>
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
+
+  // Joriy parol esdan chiqqan bo'lsa — tiklash havolasini admin emailiga yuboramiz
+  // (mavjud forgot-password oqimi: email -> /reset-password/:uidb64/:token sahifasi).
+  const handleForgotPassword = async () => {
+    const email = user?.email;
+    if (!email) {
+      toast.error(t('auth.noEmailForReset', 'Hisobingizda email ko‘rsatilmagan.'));
+      return;
+    }
+    try {
+      setSendingReset(true);
+      await authService.forgotPassword({ email });
+      toast.success(
+        t('auth.resetLinkSent', 'Parolni tiklash havolasi emailingizga yuborildi: {{email}}', { email }),
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('errors.generic', 'Xatolik yuz berdi');
+      toast.error(message);
+    } finally {
+      setSendingReset(false);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -133,6 +156,19 @@ export function AdminProfilePage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                {/* Joriy parol esdan chiqqan bo'lsa — emailga tiklash havolasi yuboriladi */}
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={sendingReset}
+                    className="text-sm text-primary hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {sendingReset
+                      ? t('auth.resetLinkSending', 'Yuborilmoqda…')
+                      : t('auth.forgotPassword', 'Parolni unutdingizmi?')}
                   </button>
                 </div>
               </div>

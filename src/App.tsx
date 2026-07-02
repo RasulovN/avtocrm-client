@@ -111,6 +111,22 @@ function App() {
   const authed = !!user || !!token;
 
   useEffect(() => { checkAuth(); }, [checkAuth]);
+  // Tab yana ko'rinadigan bo'lganda kontekstni yangilaymiz — shunda admin kompaniyani
+  // yoki obunani nofaollashtirsa, foydalanuvchida tez orada aks etadi (menyu bloklash /
+  // "faolsizlantirilgan" xabari). Faqat sessiya bor bo'lsa.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && localStorage.getItem('crm_auth_time')) {
+        void useAuthStore.getState().checkAuth();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('focus', onVisible);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('focus', onVisible);
+    };
+  }, []);
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);

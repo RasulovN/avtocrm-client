@@ -185,6 +185,9 @@ export const subscriptionsApi = {
     apiClient.get<Paginated<Subscription>>('/subscriptions/payments/', { params }).then((r) => r.data),
   manage: (id: number, action: 'activate' | 'cancel' | 'extend', days?: number) =>
     apiClient.patch(`/subscriptions/${id}/`, { action, days }).then((r) => r.data),
+  // super admin — kompaniya obunasining tarifini o'zgartirish
+  changePlan: (id: number, planId: number, months?: number) =>
+    apiClient.patch<Subscription>(`/subscriptions/${id}/plan/`, { plan_id: planId, months }).then((r) => r.data),
   // super admin — soliq (OFD) fiskal chek havolasini biriktirish/tozalash
   setFiscal: (id: number, fiscalUrl: string | null) =>
     apiClient.put<Subscription>(`/subscriptions/${id}/fiscal/`, { fiscal_url: fiscalUrl }).then((r) => r.data),

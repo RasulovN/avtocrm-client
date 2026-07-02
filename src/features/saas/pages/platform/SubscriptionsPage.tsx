@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { Ban, CalendarPlus, Check, CheckCircle2, ChevronLeft, ChevronRight, Loader2, FileText } from 'lucide-react';
+import { Ban, CalendarPlus, Check, CheckCircle2, ChevronLeft, ChevronRight, Loader2, FileText, Repeat } from 'lucide-react';
 import {
   Button, Card, CardContent, Input, Label,
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -9,8 +9,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../../../../components/ui';
 import { Badge } from '../../../../components/ui/Badge';
-import { subscriptionsApi } from '../../services';
-import type { Subscription } from '../../types';
+import { subscriptionsApi, plansApi } from '../../services';
+import type { Subscription, Plan } from '../../types';
 import { PaymentReceiptModal, type ReceiptData } from '../../components/PaymentReceiptModal';
 
 const PAGE_SIZE = 10;
@@ -74,6 +74,12 @@ export function SubscriptionsPage() {
   const [extendDays, setExtendDays] = useState('');
   const [extending, setExtending] = useState(false);
 
+  // Tarifni o'zgartirish dialogi
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [changeTarget, setChangeTarget] = useState<Subscription | null>(null);
+  const [changePlanId, setChangePlanId] = useState('');
+  const [changing, setChanging] = useState(false);
+
   // To'lov cheki (receipt) modali
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const openReceipt = (s: Subscription) => setReceipt({
@@ -102,6 +108,31 @@ export function SubscriptionsPage() {
   }, [page, statusFilter, t]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Tariflar ro'yxati (o'zgartirish dialogi uchun) — bir marta yuklanadi.
+  useEffect(() => {
+    plansApi.adminList().then(setPlans).catch(() => { /* ignore */ });
+  }, []);
+
+  const openChange = (s: Subscription) => {
+    setChangeTarget(s);
+    setChangePlanId(s.plan?.id ? String(s.plan.id) : '');
+  };
+
+  const confirmChange = async () => {
+    if (!changeTarget || !changePlanId) return;
+    setChanging(true);
+    try {
+      await subscriptionsApi.changePlan(changeTarget.id, Number(changePlanId));
+      toast.success(t('sub.planChanged', 'Tarif o\'zgartirildi'));
+      setChangeTarget(null);
+      load();
+    } catch (err) {
+      toast.error(apiError(err, t('common.error', 'Xatolik yuz berdi')));
+    } finally {
+      setChanging(false);
+    }
+  };
 
   const totalPages = Math.ceil(count / PAGE_SIZE);
 
@@ -257,6 +288,14 @@ export function SubscriptionsPage() {
                               <CalendarPlus className="h-4 w-4 text-primary" />
                             </Button>
                           )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openChange(s)}
+                            title={t('sub.changePlan', 'Tarifni o\'zgartirish')}
+                          >
+                            <Repeat className="h-4 w-4 text-amber-600" />
+                          </Button>
                           {s.status !== 'cancelled' && (
                             <Button
                               variant="ghost"
@@ -367,6 +406,44 @@ export function SubscriptionsPage() {
             <Button onClick={confirmExtend} disabled={extending}>
               {extending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t('sub.extend', 'Uzaytirish')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tarifni o'zgartirish dialogi */}
+      <Dialog open={!!changeTarget} onOpenChange={(o) => !o && !changing && setChangeTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('sub.changePlanTitle', 'Tarifni o\'zgartirish')}</DialogTitle>
+            <DialogDescription>
+              <span className="font-medium text-foreground">{changeTarget?.company?.name ?? '-'}</span>
+              {' — '}
+              {t('sub.changePlanDesc', 'Kompaniya uchun yangi tarifni tanlang. Summa yangi tarif narxiga ko\'ra qayta hisoblanadi.')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 py-2">
+            <Label>{t('sub.plan', 'Tarif')}</Label>
+            <Select value={changePlanId} onValueChange={setChangePlanId}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('common.select', 'Tanlang')} />
+              </SelectTrigger>
+              <SelectContent>
+                {plans.map((p) => (
+                  <SelectItem key={p.id} value={String(p.id)}>
+                    {p.name} — {formatPrice(p.price)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setChangeTarget(null)} disabled={changing}>
+              {t('common.cancel', 'Bekor qilish')}
+            </Button>
+            <Button onClick={confirmChange} disabled={changing || !changePlanId}>
+              {changing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t('common.save', 'Saqlash')}
             </Button>
           </DialogFooter>
         </DialogContent>

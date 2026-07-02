@@ -168,6 +168,24 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // 403 maxsus kodlari: kompaniya nofaollashtirilgan / obuna faol emas.
+    if (status === 403) {
+      const data = error.response?.data as { code?: string; detail?: string } | undefined;
+      if (data?.code === 'company_disabled') {
+        // Sessiyani tozalab, login sahifasida xabar ko'rsatamiz.
+        useAuthStore.getState().setBlocked(
+          data.detail || 'Sizning tizimingiz administrator tomonidan faolsizlantirilgan.',
+        );
+        if (typeof window !== 'undefined') window.location.assign('/login');
+        return Promise.reject(error);
+      }
+      if (data?.code === 'subscription_inactive') {
+        // Obuna faol emas — menyularni bloklaymiz (SubscriptionGate /subscription'ga yo'naltiradi).
+        useAuthStore.getState().markSubscriptionInactive();
+        return Promise.reject(error);
+      }
+    }
+
     if (status === 401) {
       if (matchesAny(url, AUTH_ENDPOINTS)) {
         void removeAuth();

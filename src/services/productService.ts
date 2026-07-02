@@ -3,15 +3,16 @@ import { latinToCyrillic } from '../utils/transliteration';
 import type { Product, ProductFormData, ProductFilters, PaginatedResponse, ApiResponse, ProductStoreInventory } from '../types';
 import { logger } from '../utils/logger';
 
-const BACKEND_FALLBACK_URL = 'https://api.zumex.uz/api';
-
 const resolveImageUrl = (image?: string | unknown) => {
   if (typeof image !== 'string' || !image) return '';
   if (image.startsWith('http://') || image.startsWith('https://')) return image;
-  
-  // If we are running locally and API_ORIGIN is empty, fallback to actual server host
-  const origin = API_ORIGIN && API_ORIGIN.trim() !== "" ? API_ORIGIN : BACKEND_FALLBACK_URL;
-  
+
+  // Dev'da API_ORIGIN bo'sh — nisbiy `/media/...` qoladi va Vite proxy uni lokal
+  // backendga uzatadi. Prod'da API_ORIGIN = https://api.zumex.uz bo'ladi.
+  // DIQQAT: bu yerga `/api` prefiksli fallback qo'yish MUMKIN EMAS — media `/media/`
+  // yo'lida xizmat qilinadi, `/api/media/...` esa 404 (rasm ko'rinmay qolardi).
+  const origin = API_ORIGIN?.trim() ?? '';
+
   if (image.startsWith('/')) {
     return `${origin}${image}`;
   }

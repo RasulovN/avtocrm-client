@@ -53,6 +53,8 @@ interface AuthStore {
   // Platform (super admin panel) foydalanuvchisi — /admin ga yo'naltiriladi, onboarding emas.
   isPlatform: boolean;
   stores: UserStoreLite[];
+  // Kompaniya admin tomonidan nofaollashtirilganda ko'rsatiladigan xabar (login sahifasida).
+  blockedMessage: string | null;
 
   login: (login: string, password: string) => Promise<void>;
   logout: () => void;
@@ -62,6 +64,11 @@ interface AuthStore {
   isSuperUser: () => boolean;
   isStoreScopedUser: () => boolean;
   hasPermission: (code: string) => boolean;
+  // Interceptor/checkAuth chaqiradi: obuna faolsizlanganda menyularni bloklash.
+  markSubscriptionInactive: () => void;
+  // Kompaniya nofaollashtirilganda: sessiyani tozalab, xabar ko'rsatadi.
+  setBlocked: (message: string) => void;
+  clearBlocked: () => void;
 }
 
 // /auth/me user -> legacy `User` shakliga map qilish
@@ -102,9 +109,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   subscriptionActive: false,
   isPlatform: false,
   stores: [],
+  blockedMessage: null,
 
   login: async (login: string, password: string) => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null, blockedMessage: null });
     try {
       await saasAuth.login(login, password);
       localStorage.setItem('crm_auth_time', Date.now().toString());
@@ -150,10 +158,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         stores,
         isLoading: false,
       });
-    } catch {
+    } catch (err) {
       // Sessiya yaroqsiz/eskirgan — markerni tozalaymiz.
       if (typeof window !== 'undefined') localStorage.removeItem('crm_auth_time');
-      set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, isPlatform: false, stores: [], isLoading: false });
+      // Kompaniya admin tomonidan nofaollashtirilgan bo'lsa — aniq xabar saqlaymiz.
+      const e = err as { response?: { status?: number; data?: { code?: string; detail?: string } } };
+      const blocked =
+        e?.response?.status === 403 && e.response.data?.code === 'company_disabled'
+          ? e.response.data.detail ?? 'Sizning tizimingiz administrator tomonidan faolsizlantirilgan.'
+          : get().blockedMessage;
+      set({ user: null, token: null, permissions: [], company: null, menus: [], subscriptionActive: false, isPlatform: false, stores: [], blockedMessage: blocked, isLoading: false });
     }
   },
 
@@ -180,4 +194,19 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (user?.is_superuser) return true;
     return permissions.includes(code);
   },
+
+  markSubscriptionInactive: () => set({ subscriptionActive: false }),
+
+  setBlocked: (message: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('crm_auth_time');
+      localStorage.removeItem('active_store_id');
+    }
+    set({
+      user: null, token: null, permissions: [], company: null, menus: [],
+      subscriptionActive: false, isPlatform: false, stores: [], blockedMessage: message,
+    });
+  },
+
+  clearBlocked: () => set({ blockedMessage: null }),
 }));
