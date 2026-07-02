@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '../../components/ui/Select';
 import { productService } from '../../services/productService';
-import { API_ORIGIN, MEDIA_URL } from '../../services/api';
+import { API_ORIGIN } from '../../services/api';
 import type { ProductFormData, ProductUnit, CategoryFormData, ProductUnitFormData } from '../../types';
 import { latinToCyrillic } from '../../utils/transliteration';
 import { useCategories } from '../../context/CategoryContext';
@@ -619,8 +619,10 @@ export function ProductFormPage() {
                 <div className="mt-2 grid grid-cols-3 gap-2">
                   {existingImages.map((img, idx) => (
                     <div key={`existing-${img.id ?? idx}`} className="relative">
+                      {/* img.url allaqachon to'liq URL (resolveImageUrl) — prefiks qo'shilmaydi,
+                          aks holda "http://...http://..." buzuq manzil bo'lib rasm chiqmaydi. */}
                       <img
-                        src={`${MEDIA_URL}${img.url}`}
+                        src={img.url}
                         alt={formData.name || `Product image ${idx + 1}`}
                         className="h-24 w-24 rounded-md border object-cover"
                       />

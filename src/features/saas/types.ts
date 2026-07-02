@@ -74,6 +74,10 @@ export interface CompanyUser {
   is_active: boolean;
   role: string | null;
   role_id: number | null;
+  // Do'kon konteksti (xodim biriktirilgan do'kon) — company scope.
+  store_id?: number | null;
+  store_name?: string | null;
+  store_role?: 'm' | 's' | null;
 }
 
 // ---- Companies / address / categories ----

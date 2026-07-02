@@ -23,6 +23,7 @@ import {
 } from '../../../../components/ui';
 import { Badge } from '../../../../components/ui/Badge';
 import { rbacApi } from '../../services';
+import { apiClient } from '../../../../services/api';
 import { usePlanLimits } from '../../usePlanLimits';
 import type { CompanyUser } from '../../types';
 
@@ -33,6 +34,12 @@ interface AssignableRole {
   id: number;
   name: string;
   is_system: boolean;
+}
+
+// Do'kon (yengil shakl) — xodimni biriktirish uchun.
+interface StoreLite {
+  id: number;
+  name: string;
 }
 
 const selectCls =
